@@ -16,7 +16,7 @@ The package is in development. Reviews, comments and pull requests are welcome.
 
 github
 ```R
-devtools::install_github('guilbran/nowcasting')
+devtools::install_github('nmecsys/nowcasting')
 ```
 CRAN
 ```R
