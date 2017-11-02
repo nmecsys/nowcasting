@@ -1,2 +1,11 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^packrat/
+^\.Rprofile$
+^\.gitignore
+^\appveyor.yml
+^\.appveyor.yml
+^appveyor\.yml$
+^vignette/nowcasting-vignette.html
+^README\.md
+
