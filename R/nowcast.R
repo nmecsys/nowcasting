@@ -51,7 +51,7 @@
 
 nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks=NULL){
 
-  if(is.null(q) & is.null(r) & is.null(p)){
+  if(is.null(q) | is.null(r) | is.null(p)){
     warnings('Parameters q, r and p must be specified.')
   }
   
