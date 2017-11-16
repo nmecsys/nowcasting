@@ -63,13 +63,13 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks=NULL)
     # voltar da padronização
     fit<-matrix(factors$dynamic_factors,ncol = r*p)[,1:r]%*%t(factors$eigen$vectors[,1:r])
     colnames(fit)<-colnames(x)
-    x <- x
-    z <- x
-    s <- apply(z, MARGIN = 2, FUN = sd,na.rm=T)
-    M <- apply(z, MARGIN = 2, FUN = mean,na.rm=T)
-    for(i in 1:dim(x)[2]){
-      z[,i] <- (x[,i] - M[i])/s[i]
-    }
+    s <- apply(x, MARGIN = 2, FUN = sd,na.rm=T)
+    M <- apply(x, MARGIN = 2, FUN = mean,na.rm=T)
+    # x <- x
+    # z <- x
+    # for(i in 1:dim(x)[2]){
+    #   z[,i] <- (x[,i] - M[i])/s[i]
+    # }
     x1<-fit
     fore_x<-x[,colnames(x) %in% colnames(fit)]
     for(i in colnames(fit)){
@@ -92,13 +92,13 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks=NULL)
     # voltar da padronização
     fit<-matrix(factors$dynamic_factors,ncol = r*p)[,1:r]%*%t(factors$eigen$vectors[,1:r])
     colnames(fit)<-colnames(x)
-    x <- x
-    z <- x
-    s <- apply(z, MARGIN = 2, FUN = sd,na.rm=T)
-    M <- apply(z, MARGIN = 2, FUN = mean,na.rm=T)
-    for(i in 1:dim(x)[2]){
-      z[,i] <- (x[,i] - M[i])/s[i]
-    }
+    s <- apply(x, MARGIN = 2, FUN = sd,na.rm=T)
+    M <- apply(x, MARGIN = 2, FUN = mean,na.rm=T)
+    # x <- x
+    # z <- x
+    # for(i in 1:dim(x)[2]){
+    #   z[,i] <- (x[,i] - M[i])/s[i]
+    # }
     x1<-fit
     fore_x<-x[,colnames(x) %in% colnames(fit)]
     for(i in colnames(fit)){
