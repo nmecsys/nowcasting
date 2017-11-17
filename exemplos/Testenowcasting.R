@@ -33,14 +33,17 @@ nowcast.plot(now_2sq,type = 'eigenvalues')
 ### Method 2sm
 x<-Bpanel(base,rep(3,dim(base)[2]),aggregate = F)
 x1<-Bpanel(base,rep(4,dim(base)[2]),aggregate = F)
-now_2sm<-nowcast(y,x,q,r,p,method = '2sm')
+now_2sm<-nowcast(y,x1,q,r,p,method = '2sm')
 now_2sm$main
 nowcast.plot(now_2sm)
 nowcast.plot(now_2sm,type = 'factors')
 nowcast.plot(now_2sm,type = 'month_y')
 
-i<-2
+
+
+i<-5
 ts.plot(cbind(x[,i],x1[,i]),col=1:2)
+cor(x[,i],x1[,i],use = "complete.obs")
 
 ### Method EM
 now_em<-nowcast(y,x,q,r,p,'EM')
