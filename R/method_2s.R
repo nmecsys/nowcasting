@@ -15,7 +15,7 @@ bridge <- function(y,x){
   
   # estimação do modelo de regressão
   dados <- cbind(y, fatoresTRI)
-  colnames(dados) <- c("Y", paste0("X",1:ncol(data.frame(fatoresTRI))))
+  colnames(dados) <- c("Y", paste0("Factor",1:ncol(data.frame(fatoresTRI))))
   reg <- stats::lm(Y ~ ., data = na.omit(data.frame(dados)))
   fit <- stats::ts(fitted(reg), end = end(na.omit(dados)), frequency = 4)
   
@@ -25,7 +25,7 @@ bridge <- function(y,x){
   # previsão
   # newbase <- data.frame(dados[-(1:(Qmax-1)),-1])
   newbase <- data.frame(dados[-(1:Qmax),-1])
-  colnames(newbase) <- paste0("X",1:ncol(data.frame(fatoresTRI)))
+  #colnames(newbase) <- paste0("Fac",1:ncol(data.frame(fatoresTRI)))
   
   ## função auxiliar
   # tail.ts <- function(data,n) {
@@ -165,7 +165,7 @@ FactorExtraction <- function(x = NULL,q = NULL,r = NULL,p = NULL,
   ind <- size(VF,3)
   fatores <-  t(xsmooth)
   
-  nomes_colunas <- c("data", paste0("Fator",1:ncol(fatores)))
+  nomes_colunas <- c("data", paste0("Factor",1:ncol(fatores)))
   fator_final <- data.frame(datas, fatores)
   colnames(fator_final) <- nomes_colunas
   
@@ -174,7 +174,9 @@ FactorExtraction <- function(x = NULL,q = NULL,r = NULL,p = NULL,
                                                   substr(datas[length(datas)],6,7)))
                          ,frequency = 12)
   
-  
+  if(p > 1){
+    fatoresTS <- fatoresTS[,1:r]
+  }
   list(dynamic_factors = fatoresTS,A = A,C = C,Q = Q,R =  R,initx =  initx,initV =  initV,eigen = a)
 }
 
