@@ -61,8 +61,8 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks=NULL)
     prev <- bridge(y,fatores)
 
     # voltar da padronização
-    fit<-matrix(factors$dynamic_factors,ncol = r*p)[,1:r]%*%t(factors$eigen$vectors[,1:r])
-    colnames(fit)<-colnames(x)
+    fit <- as.matrix(factors$dynamic_factors) %*% t(factors$eigen$vectors[,1:r])
+    colnames(fit) <- colnames(x)
     s <- apply(x, MARGIN = 2, FUN = sd,na.rm=T)
     M <- apply(x, MARGIN = 2, FUN = mean,na.rm=T)
     # x <- x
@@ -77,7 +77,8 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks=NULL)
       fore_x[is.na(fore_x[,i]),i] <- x1[is.na(fore_x[,i]),i]
     }
  
-    res<-list(main = prev$main, reg = prev$reg, factors = factors,fore_x = fore_x)
+    names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV","eigen")
+    res <-list(yfcst = prev$main, reg = prev$reg, factors = factors, xfcst = fore_x)
     
   }else if(method=='2sm'){
     factors <- FactorExtraction(x, q = q, r = r, p = p)
@@ -90,8 +91,8 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks=NULL)
     month_y<-ts(aux_fator_month%*%prev$reg$coefficients,start=start(factors$dynamic_factors),frequency=12)
     
     # voltar da padronização
-    fit<-matrix(factors$dynamic_factors,ncol = r*p)[,1:r]%*%t(factors$eigen$vectors[,1:r])
-    colnames(fit)<-colnames(x)
+    fit <- as.matrix(factors$dynamic_factors) %*% t(factors$eigen$vectors[,1:r])
+    colnames(fit) <- colnames(x)
     s <- apply(x, MARGIN = 2, FUN = sd,na.rm=T)
     M <- apply(x, MARGIN = 2, FUN = mean,na.rm=T)
     # x <- x
@@ -106,7 +107,8 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks=NULL)
       fore_x[is.na(fore_x[,i]),i] <- x1[is.na(fore_x[,i]),i]
     }
     
-    res<-list(main = prev$main, reg = prev$reg, factors = factors,fore_x = fore_x,month_y = month_y)
+    names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV","eigen")
+    res <- list(yfcst = prev$main, reg = prev$reg, factors = factors, xfcst = fore_x, month_y = month_y)
     
     
   }else if(method=='EM'){
@@ -145,7 +147,8 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks=NULL)
     fore_x = fore_x[,-dim(fore_x)[2]]
     colnames(fore_x)<-colnames(x)
     
-    res <- list(main = Y,factors = factors,fore_x = fore_x, month_y = month_y)
+    names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV","eigen")
+    res <- list(yfcst = Y,factors = factors, xfcst = fore_x, month_y = month_y)
     
   }
 
