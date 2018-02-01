@@ -42,7 +42,7 @@ nowcast.plot <- function(out, type = "fcst"){
     graphics::lines(data[,"out"], type = "l", lty = 2, lwd = 1, col = "orangered")
     graphics::par(xpd = T)
     graphics::legend("topright", inset=c(-0.11,0), legend=c("y","yhat","fcst"), bty = "n",
-           lty = c(3,1,2), lwd = c(1,1,1), col = c("darkgrey","dodgerblue","orangered"))
+           lty = c(3,1,2), lwd = c(1,1,1), col = c(1,"dodgerblue","orangered"))
     graphics::title(main = list("Forecasting", font = 1, cex = 0.9))
 
   }else if(type == "eigenvalues"){
