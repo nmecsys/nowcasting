@@ -29,7 +29,7 @@ nowcast.plot <- function(out, type = "fcst"){
   
   if(type == "fcst"){
     
-    data <- data.frame(date = as.Date(out$main), out$main)
+    data <- data.frame(date = as.Date(out$yfcst), out$yfcst)
     data[max(which(is.na(data$out))),"out"] <- data[max(which(is.na(data$out))),"in."] 
     
     graphics::par(mar=c(5.1, 4.1, 4.1, 6), xpd = F)
@@ -37,7 +37,7 @@ nowcast.plot <- function(out, type = "fcst"){
          col = "#FFFFFF", ylab = "y unit", xlab = "Time")
     graphics::grid(col = "#D9D9D9")
     graphics::axis(1, at = seq(1,nrow(data),4), labels = substr(data[seq(1,nrow(data),4),"date"],1,7), las=1, cex = 0.7)
-    graphics::lines(data[,"y"], type = "l", lty = 3, col = "darkgrey")
+    graphics::lines(data[,"y"], type = "l", lty = 3, col = 1)
     graphics::lines(data[,"in."], type = "l", lty = 1, lwd = 1, col = "dodgerblue")
     graphics::lines(data[,"out"], type = "l", lty = 2, lwd = 1, col = "orangered")
     graphics::par(xpd = T)
@@ -84,7 +84,7 @@ nowcast.plot <- function(out, type = "fcst"){
     
   }else if(type == 'month_y'){
     
-    Y<-stats::ts(rep(out$main[,1],each=3),end=end(qtr2month(out$main[,1])),frequency = 12)
+    Y<-stats::ts(rep(out$yfcst[,1],each=3),end=end(qtr2month(out$yfcst[,1])),frequency = 12)
     YY<-cbind(out$month_y,Y)
     ## add extra space to right margin of plot within frame
     graphics::par(mar=c(5, 4, 4, 5.7) + 0.1,xpd=F)
