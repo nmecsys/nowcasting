@@ -147,7 +147,7 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks=NULL)
     fore_x = fore_x[,-dim(fore_x)[2]]
     colnames(fore_x)<-colnames(x)
     
-    names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV","eigen")
+    names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV")
     res <- list(yfcst = Y,factors = factors, xfcst = fore_x, month_y = month_y)
     
   }
