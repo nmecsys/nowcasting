@@ -47,6 +47,10 @@ nowcast.plot <- function(out, type = "fcst"){
 
   }else if(type == "eigenvalues"){
   
+    if(!("reg" %in% names(out))){
+      stop('Graph not available for EM method')
+    }
+    
     graphics::par(mar = c(5.1,4.1,4.1,2.1), xpd = F)
     eig <- out$factors$eigen$values/sum(out$factors$eigen$values)*100
     n <- min(20,length(eig))
@@ -56,6 +60,10 @@ nowcast.plot <- function(out, type = "fcst"){
     graphics::title(main = list("eigenvalues: percentual variance", font = 1, cex = 0.9))
 
   }else if(type == "eigenvectors"){
+    
+    if(!("reg" %in% names(out))){
+      stop('Graph not available for EM method')
+    }
     
     graphics::par(mar = c(5.1,4.1,4.1,6), xpd = F)
     vec <- out$factors$eigen$vectors[,1]
@@ -83,6 +91,10 @@ nowcast.plot <- function(out, type = "fcst"){
            col = c(1,"orangered","blue"), lty = c(1,2,3), cex = 0.9)
     
   }else if(type == 'month_y'){
+    
+    if("reg" %in% names(out)){
+      stop("Graph not available for '2sq' and '2sm' methods")
+    }
     
     Y<-stats::ts(rep(out$yfcst[,1],each=3),end=end(qtr2month(out$yfcst[,1])),frequency = 12)
     YY<-cbind(out$month_y,Y)

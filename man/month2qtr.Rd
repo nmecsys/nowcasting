@@ -2,15 +2,18 @@
 % Please edit documentation in R/month2qtr.R
 \name{month2qtr}
 \alias{month2qtr}
-\title{Monthly to quarterly agregation}
+\title{Monthly to quarterly transformation}
 \usage{
 month2qtr(x)
 }
 \arguments{
-\item{x}{Variable in month frequency}
+\item{x}{a \code{ts} or \code{mts} in monthly frequency}
+}
+\value{
+The correspondent quarterly transformation.
 }
 \description{
-It transforsms a monthly time series in a quarterly one, selecting the last value of the last month of the quarter to represent it.
+It transforms a monthly time series in a quarterly one, selecting the last month of the quarter to represent the value of the quarter.
 }
 \examples{
 # Selecting only last month of matrix time series BRGDP:

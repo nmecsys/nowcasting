@@ -12,23 +12,23 @@ nowcast.plot(out, type = "fcst")
 \item{type}{'fcst', 'factors', 'eigenvalues','eigenvectors', 'month_y'}
 }
 \description{
-Make plot to visualize the output of nowcast function
+Make a plot to visualize the output of nowcast function
 }
 \examples{
 \dontrun{
-trans <- USGDP$Legenda$Transformation[-length(USGDP$Legenda$Transformation)]
-base <- USGDP$Base[,-dim(USGDP$Base)[2]]
-gdp <- month2qtr(USGDP$Base[,dim(USGDP$Base)[2]])
-x <- Bpanel(base = base, trans = trans)
-now <- nowcast(y = gdp, x = x,method = '2sq')
+trans <- USGDP$legend$Transformation[-length(USGDP$legend$Transformation)]
+base <- USGDP$base[,-dim(USGDP$base)[2]]
+gdp <- month2qtr(USGDP$base[,dim(USGDP$base)[2]])
+x <- Bpanel(base = base, trans = trans, aggregate = TRUE)
+now <- nowcast(y = gdp, x = x,method = '2sq', q = 1, r = 2, p = 1)
 
 nowcast.plot(now, type = "fcst")
 nowcast.plot(now, type = "factors")
 nowcast.plot(now, type = "eigenvalues")
 nowcast.plot(now, type = "eigenvectors")
 
-x2 <- Bpanel(base = base, trans = trans,aggregate = F)
-now2 <- nowcast(y = gdp, x = x2, q = 2, r = 3,method = '2sm')
+x2 <- Bpanel(base = base, trans = trans, aggregate = FALSE)
+now2 <- nowcast(y = gdp, x = x2, q = 2, r = 3, p = 1, method = '2sm')
 
 nowcast.plot(now2, type = "fcst")
 nowcast.plot(now2, type = "factors")

@@ -4,11 +4,10 @@
 \alias{nowcast}
 \title{Nowcasting of a quarterly time serie using a dynamic factor.}
 \usage{
-nowcast(y, x, q = NULL, r = NULL, p = NULL, method = "2sq",
-  blocks = NULL)
+nowcast(y, x, q = NULL, r = NULL, p = NULL, method = "2sq", blocks = NULL)
 }
 \arguments{
-\item{y}{Stationary quarterly time-series}
+\item{y}{Stationary quarterly time series}
 
 \item{x}{A time series matrix (\code{mts}) representing the regressors of interest. The series must be stationary.}
 
@@ -20,21 +19,21 @@ nowcast(y, x, q = NULL, r = NULL, p = NULL, method = "2sq",
 
 \item{method}{2sq: Two stages quarterly as in Giannone et al. 2008; 2sm: Two stages monthly as in Bańbura and Runstler 2011; EM: Expected Maximization as in Bańbura et al. 2011}
 
-\item{blocks}{only for EM method. Select which factors impact the variables (global, nominal or real).}
+\item{blocks}{a binary matrix Nx3 that characterizes the regressors variables in global (1st column), nominal (2nd column) and real (3rd column). If \code{NULL}, only the global factors are presented.}
+
 }
 \value{
-A \code{list} containing two elements:
+A \code{list} containing the following elements:
 
-A \code{mts} named \code{main} contains the original serie, the estimation in the sample, the estimation out of the sample;
+\item{yfcst}{the original \code{y} series and its in-sample and out-of-sample estimations.}
+\item{reg}{regression model between \code{y} and the estimated factors. Not available for EM method.}
+\item{factors}{the estimated factors and DFM model coefficients.}
+\item{xfcst}{the original regressors and their out-of-sample estimations.}
+\item{month_y}{the monthly measure for quarterly \code{y} variable. Only available for EM method.}
 
-A \code{list} named \code{factors} contains the estimated factors and coeffients.
-
-A \code{mts} named \code{fore_x} contains the output of all regressors.
-
-A \code{mts} named \code{month_y} contains the a monthly measure for GDP.
 }
 \description{
-Estimate nowcasting and foreacasting for a quarterly time serie. For more details read the Vignettes.
+Estimate nowcasting and forecasting for a quarterly series. For more details read the Vignettes.
 }
 \examples{
 \dontrun{

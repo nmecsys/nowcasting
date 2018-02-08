@@ -49,7 +49,7 @@
 #' @seealso \code{\link[nowcasting]{base_extraction}}
 #' @export
 
-nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks=NULL){
+nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks = NULL){
 
   if(is.null(q) | is.null(r) | is.null(p)){
     warnings('Parameters q, r and p must be specified.')
@@ -112,6 +112,11 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks=NULL)
     
     
   }else if(method=='EM'){
+    
+    if(p > 5){
+      stop('Parameter p must be less than 5.')
+    }
+    
     # y1<-qtr2month(y)
     # y1[rep(which(!is.na(y1)),each=2)-c(2,1)]<-rep(y1[!is.na(y1)],each=2)
     # X<-cbind(x,y1)
@@ -130,8 +135,16 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks=NULL)
               q = matrix(rep(0,4),4,1),nQ = 1,
               blocks = blocks)
     Res<-EM_DFM_SS_block_idioQARMA_restrMQ(X,Par)
-    factors<-list(dynamic_factors = Res$FF,A = Res$A, C = Res$C, Q = Res$Q, R = Res$R, initx = Res$Z_0,
-            initV = Res$V_0)
+    
+    factors<-list(dynamic_factors = ts(Res$FF[,c(1:r, (r*5 + 1):(r*5 + r), (2*r*5 + 1):(2*r*5 + r))], start = start(x), freq = 12),
+                  A = Res$A, C = Res$C, Q = Res$Q, R = Res$R, initx = Res$Z_0,
+                  initV = Res$V_0)
+    colnames(factors$dynamic_factors) <- c(paste0("globalFactor",1:r),paste0("nominalFactor",1:r),paste0("realFactor",1:r))
+    
+    if(is.null(blocks)){
+      factors$dynamic_factors <- factors$dynamic_factors[,1:r]
+    }
+    
     # fore_x<-ts(Res$X_sm[,-dim(Res$X_sm)[2]],start=start(X),frequency = 12)
     fore_x<-ts(Res$X_sm,start=start(X),frequency = 12)
     yprev<-month2qtr(ts(Res$X_sm[,dim(Res$X_sm)[2]],start=start(X),frequency = 12))
@@ -141,13 +154,14 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks=NULL)
     colnames(Y)<-c('y','in','out')
     
     ind<-c(1:r,1:r+r*5,1:r+r*5*2,dim(Res$C)[2]-4)
-    month_y<-ts(Res$Mx[length(Res$Mx)]/9+Res$FF[,ind]%*%Res$C[7,ind]*Res$Wx[length(Res$Wx)],start=start(X),frequency = 12)
+    month_y<-ts(Res$Mx[length(Res$Mx)]/9+Res$FF[,ind]%*%Res$C[nrow(Res$C),ind]*Res$Wx[length(Res$Wx)],start=start(X),frequency = 12)
+
     # Essa é uma medida trimestral do PIB acumulado nos últimos três meses
     # month_y<-ts(Res$X_sm[,dim(Res$X_sm)[2]],start=start(X),frequency = 12)
     fore_x = fore_x[,-dim(fore_x)[2]]
     colnames(fore_x)<-colnames(x)
     
-    names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV")
+    names(factors) <- c("dynamic_factors", "T", "Z","Q","R","initx","initV")
     res <- list(yfcst = Y,factors = factors, xfcst = fore_x, month_y = month_y)
     
   }
