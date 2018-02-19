@@ -40,8 +40,8 @@
 
 Bpanel <- function(base = NULL, trans = NULL, aggregate = F,k_ma=3){
   
-  if(!(is.vector(trans))){
-    warning('trans must be a vector')
+  if(is.null(trans)){
+    stop('trans can not to be NULL')
   }
   
   # Transformar os dados de acordo com a especificação dada
