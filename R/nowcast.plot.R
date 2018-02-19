@@ -27,12 +27,20 @@
 
 nowcast.plot <- function(out, type = "fcst"){
   
+  add_legend <- function(...) {
+    opar <- par(fig=c(0, 1, 0, 1), oma=c(0, 0, 0, 0), 
+                mar=c(0, 0, 0, 0), new=TRUE)
+    on.exit(par(opar))
+    plot(0, 0, type='n', bty='n', xaxt='n', yaxt='n')
+    legend(...)
+  }
+  
   if(type == "fcst"){
     
     data <- data.frame(date = as.Date(out$yfcst), out$yfcst)
     data[max(which(is.na(data$out))),"out"] <- data[max(which(is.na(data$out))),"in."] 
     
-    graphics::par(mar=c(5.1, 4.1, 4.1, 6), xpd = F)
+    graphics::par(mar=c(5.1, 4.1, 4.1, 5), xpd = F)
     graphics::plot(data[,"y"], xaxt = "n", main = "",  bty = "l",
          col = "#FFFFFF", ylab = "y unit", xlab = "Time")
     graphics::grid(col = "#D9D9D9")
@@ -41,7 +49,7 @@ nowcast.plot <- function(out, type = "fcst"){
     graphics::lines(data[,"in."], type = "l", lty = 1, lwd = 1, col = "dodgerblue")
     graphics::lines(data[,"out"], type = "l", lty = 2, lwd = 1, col = "orangered")
     graphics::par(xpd = T)
-    graphics::legend("topright", inset=c(-0.11,0), legend=c("y","yhat","fcst"), bty = "n",
+    add_legend("topright", legend=c("y","yhat","fcst"), bty = "n",
            lty = c(3,1,2), lwd = c(1,1,1), col = c(1,"dodgerblue","orangered"))
     graphics::title(main = list("Forecasting", font = 1, cex = 0.9))
 
@@ -65,7 +73,7 @@ nowcast.plot <- function(out, type = "fcst"){
       stop('Graph not available for EM method')
     }
     
-    graphics::par(mar = c(5.1,4.1,4.1,6), xpd = F)
+    graphics::par(mar = c(5.1,4.1,4.1,5), xpd = F)
     vec <- out$factors$eigen$vectors[,1]
     pvec <- (out$factors$eigen$vectors[,1]^2)*100
     color <- ifelse(vec >= 0, "dodgerblue", "orangered")
@@ -73,21 +81,21 @@ nowcast.plot <- function(out, type = "fcst"){
     graphics::axis(1, at = seq(1,length(vec),1), labels = seq(1,length(vec),1), las=1, cex = 0.7)
     graphics::title(main = list("Variable Percentual Weight in Factor 1", font = 1, cex = 0.9))
     graphics::par(xpd = T)
-    graphics::text(y = max(pvec)*1.08, x = length(pvec)*1.1, labels = "signal weights:", col = 1, cex = 0.8)
-    graphics::text(y = max(pvec), x = length(pvec)*1.1, labels = "positive", col = "dodgerblue", cex = 0.8)
-    graphics::text(y = max(pvec)*0.92, x = length(pvec)*1.1, labels = "negative", col = "orangered", cex = 0.8)
+    graphics::text(y = max(pvec), x = length(pvec)*1.1, labels = "signal weights:", col = 1, cex = 0.8)
+    graphics::text(y = max(pvec)*0.94, x = length(pvec)*1.1, labels = "positive", col = "dodgerblue", cex = 0.8)
+    graphics::text(y = max(pvec)*0.88, x = length(pvec)*1.1, labels = "negative", col = "orangered", cex = 0.8)
 
     
   }else if(type == "factors"){
     
-    graphics::par(mar=c(5.1, 4.1, 4.1, 6), xpd = F)
+    graphics::par(mar=c(5.1, 4.1, 4.1, 5), xpd = F)
     n <- ncol(data.frame(out$factors$dynamic_factors))
     stats::ts.plot(out$factors$dynamic_factors, col = c(1,"orangered","blue"), lty = c(1,2,3), gpars = list(bty = "l"))
     anos <- unique(as.numeric(substr(as.Date(out$factors$dynamic_factors),1,4)))
     graphics::grid()
     graphics::par(xpd = T)
     graphics::title(main = list("Estimated Factors", font = 1, cex = 1))
-    graphics::legend("topright", inset = -0.11, legend = paste("Factor", 1:n), bty = "n",
+    add_legend("topright", legend = paste("Factor", 1:n), bty = "n",
            col = c(1,"orangered","blue"), lty = c(1,2,3), cex = 0.9)
     
   }else if(type == 'month_y'){
