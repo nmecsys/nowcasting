@@ -1,6 +1,7 @@
-#' @title Monthly to quarterly agregation
-#' @description It transforsms a monthly time series in a quarterly one, selecting the last value of the last month of the quarter to represent it.
-#' @param x Variable in month frequency
+#' @title Monthly to quarterly transformation
+#' @description It transforms a monthly time series in a quarterly one, selecting the last month of the quarter to represent the value of the quarter.
+#' @param x a \code{ts} or \code{mts} in monthly frequency
+#' @return The correspondent quarterly transformation.
 #' @examples 
 #' # Selecting only last month of matrix time series BRGDP:
 #' month2qtr(BRGDP)

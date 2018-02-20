@@ -6,7 +6,7 @@
 #'- attr(*, "dimnames")=List of 2
 #'..$ : NULL
 #'..$ : chr [1:7] "serie1" "serie12" "serie1373" "serie1453" ... 
-#' @description This is a panel containning a piece of the information set of a specific date for Brazilian economic activity. The panel is formated as a matrix time series \code{mts} containing: Exchange rate - Free - United States dollar (1); Interest rate - CDI (12); Vehicles production (1373); Credit Sales Index (1453); Retail sales (1455); Current economic conditions index (4394); Industrial production, general index (21859); Quarterly GDP - observed data - GDP at market prices (22099). 
+#' @description This is a panel containing a piece of the information set of a specific date for Brazilian economic activity. The panel is formated as a matrix time series \code{mts} containing: Exchange rate - Free - United States dollar (1); Interest rate - CDI (12); Vehicles production (1373); Credit Sales Index (1453); Retail sales (1455); Current economic conditions index (4394); Industrial production, general index (21859); Quarterly GDP - observed data - GDP at market prices (22099). 
 #' @usage BRGDP
 #' @keywords datasets
 NULL

@@ -2,35 +2,34 @@
 % Please edit documentation in R/nowcast.R
 \name{nowcast}
 \alias{nowcast}
-\title{Nowcasting of a quarterly time serie using a dynamic factor.}
+\title{Nowcasting of a quarterly time series using a dynamic factor model.}
 \usage{
-nowcast(y, x, q = NULL, r = NULL, p = NULL, method = "2sq", blocks = NULL)
+nowcast(y, x, q = NULL, r = NULL, p = NULL, method = "2sq",
+  blocks = NULL)
 }
 \arguments{
-\item{y}{Stationary quarterly time series}
+\item{y}{Stationary quarterly time series.}
 
-\item{x}{A time series matrix (\code{mts}) representing the regressors of interest. The series must be stationary.}
+\item{x}{A monthly time series matrix (\code{mts}) representing regressors variables. The series must be stationary.}
 
 \item{q}{Dynamic rank. Number of error terms.}
 
-\item{r}{Static rank or number of factors (r>=q, for methods 2sq and 2sm).}
+\item{r}{number of commom factors.}
 
-\item{p}{AR order of factors.}
+\item{p}{AR order of factor model.}
 
-\item{method}{2sq: Two stages quarterly as in Giannone et al. 2008; 2sm: Two stages monthly as in Bańbura and Runstler 2011; EM: Expected Maximization as in Bańbura et al. 2011}
+\item{method}{There are three options: \code{"2sq"}: "Two stages: quarterly factors" as in Giannone et al. 2008; \code{"2sm"}: "Two stages: monthly factors" as in Bańbura and Runstler 2011; \code{"EM"}: Expected Maximization as in Bańbura et al. 2011.}
 
-\item{blocks}{a binary matrix Nx3 that characterizes the regressors variables in global (1st column), nominal (2nd column) and real (3rd column). If \code{NULL}, only the global factors are presented.}
-
+\item{blocks}{a binary matrix Nx3 that characterizes the regressors variables in global (1st column), nominal (2nd column) and real (3rd column). If \code{NULL}, the matrix assume 1 for all cells.}
 }
 \value{
-A \code{list} containing the following elements:
+A \code{list} containing two elements:
 
 \item{yfcst}{the original \code{y} series and its in-sample and out-of-sample estimations.}
 \item{reg}{regression model between \code{y} and the estimated factors. Not available for EM method.}
 \item{factors}{the estimated factors and DFM model coefficients.}
 \item{xfcst}{the original regressors and their out-of-sample estimations.}
 \item{month_y}{the monthly measure for quarterly \code{y} variable. Only available for EM method.}
-
 }
 \description{
 Estimate nowcasting and forecasting for a quarterly series. For more details read the Vignettes.

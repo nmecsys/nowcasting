@@ -1,21 +1,19 @@
-#' @title Nowcasting of a quarterly time serie using a dynamic factor.
-#' @description Estimate nowcasting and foreacasting for a quarterly time serie. For more details read the Vignettes.
-#' @param y Stationary quarterly time-series 
-#' @param x A time series matrix (\code{mts}) representing the regressors of interest. The series must be stationary.
+#' @title Nowcasting of a quarterly time series using a dynamic factor model.
+#' @description Estimate nowcasting and forecasting for a quarterly series. For more details read the Vignettes.
+#' @param y Stationary quarterly time series. 
+#' @param x A monthly time series matrix (\code{mts}) representing regressors variables. The series must be stationary.
 #' @param q Dynamic rank. Number of error terms.
-#' @param r Static rank or number of factors (r>=q, for methods 2sq and 2sm).
-#' @param p AR order of factors.
-#' @param method 2sq: Two stages quarterly as in Giannone et al. 2008; 2sm: Two stages monthly as in Bańbura and Runstler 2011; EM: Expected Maximization as in Bańbura et al. 2011
-#' @param blocks only for EM method. Select which factors impact the variables (global, nominal or real).
+#' @param r number of commom factors.
+#' @param p AR order of factor model.
+#' @param method There are three options: \code{"2sq"}: "Two stages: quarterly factors" as in Giannone et al. 2008; \code{"2sm"}: "Two stages: monthly factors" as in Bańbura and Runstler 2011; \code{"EM"}: Expected Maximization as in Bańbura et al. 2011.
+#' @param blocks a binary matrix Nx3 that characterizes the regressors variables in global (1st column), nominal (2nd column) and real (3rd column). If \code{NULL}, the matrix assume 1 for all cells.
 #' @return A \code{list} containing two elements:
 #' 
-#' A \code{mts} named \code{main} contains the original serie, the estimation in the sample, the estimation out of the sample;
-#' 
-#' A \code{list} named \code{factors} contains the estimated factors and coeffients.
-#' 
-#' A \code{mts} named \code{fore_x} contains the output of all regressors.
-#' 
-#' A \code{mts} named \code{month_y} contains the a monthly measure for GDP. 
+#' \item{yfcst}{the original \code{y} series and its in-sample and out-of-sample estimations.}
+#' \item{reg}{regression model between \code{y} and the estimated factors. Not available for EM method.}
+#' \item{factors}{the estimated factors and DFM model coefficients.}
+#' \item{xfcst}{the original regressors and their out-of-sample estimations.}
+#' \item{month_y}{the monthly measure for quarterly \code{y} variable. Only available for EM method.}
 #' 
 #' @references Giannone, D., Reichlin, L., & Small, D. (2008). Nowcasting: The real-time informational content of macroeconomic data. Journal of Monetary Economics, 55(4), 665-676.<doi:10.1016/j.jmoneco.2008.05.010>
 #' 
@@ -79,7 +77,8 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks = NUL
  
     names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV","eigen")
     res <-list(yfcst = prev$main, reg = prev$reg, factors = factors, xfcst = fore_x)
-    
+    res$reg$call$data <- NULL
+
   }else if(method=='2sm'){
     factors <- FactorExtraction(x, q = q, r = r, p = p)
     fatores <- stats::filter(factors$dynamic_factors, c(1,2,3,2,1), sides = 1)
@@ -109,7 +108,7 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks = NUL
     
     names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV","eigen")
     res <- list(yfcst = prev$main, reg = prev$reg, factors = factors, xfcst = fore_x, month_y = month_y)
-    
+    res$reg$call$data <- NULL
     
   }else if(method=='EM'){
     

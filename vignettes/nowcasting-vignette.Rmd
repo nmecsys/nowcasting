@@ -56,7 +56,7 @@ now_2sq<-nowcast(y,x,q,r,p,method = '2sq')
 The main output is a `mts` containing the dependent variable, the estimation in-sample and out-sample.
 
 ```{r}
-window(now_2sq$main,start=c(2017,1),frequency=4)
+window(now_2sq$yfcst,start=c(2017,1),frequency=4)
 ```
 
 
@@ -88,7 +88,7 @@ q<-1
 r<-2
 p<-1
 now_2sm<-nowcast(y,x,q,r,p,method = '2sm')
-nowcast.plot(now_2sm,type = 'month_y')
+#nowcast.plot(now_2sm,type = 'month_y')
 ```
 
 ### Expected Maximization
@@ -115,7 +115,7 @@ knitr::kable(df1,row.names = T)
 ```
 
 ```{r, echo=FALSE, results='asis'}
-df<-now_em$fore_x
+df<-now_em$xfcst
 row.names(df)<-as.character(datas)
 ind<-which(rownames(df)==as.Date('2017-10-01'))
 df1<-df[(ind-6):ind,]
@@ -158,8 +158,8 @@ It contains the time series with its values. Example of some series:
 
 ```{r, echo=FALSE, results='asis'}
 USGDP<-nowcasting::USGDP
-datas<-zoo::as.Date(USGDP$Base)
-df<-data.frame(USGDP$Base)
+datas<-zoo::as.Date(USGDP$base)
+df<-data.frame(USGDP$base)
 row.names(df)<-datas
 knitr::kable(tail(data.frame(df[,1:5]),5),row.names = T)
 ```
@@ -169,7 +169,7 @@ knitr::kable(tail(data.frame(df[,1:5]),5),row.names = T)
 It contains the legend with the specifications of the model and the series. Example of some series:
 
 ```{r, echo=FALSE, results='asis'}
-df<-USGDP$Legenda
+df<-USGDP$legend
 knitr::kable(tail(data.frame(df[,1:5]),5),row.names = T)
 ```
 

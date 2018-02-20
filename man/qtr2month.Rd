@@ -7,13 +7,13 @@
 qtr2month(x)
 }
 \arguments{
-\item{x}{a \code{ts} or \code{mts} in quaterly frequency}
+\item{x}{a \code{ts} or \code{mts} in quarterly frequency}
 }
 \value{
-The correspondent monthly transformation.
+The correpondent monthly transformation or agregation.
 }
 \description{
-It transforms a quarterly time series in a monthly one. To the last month of the quarter is set the value of the quarter.
+It transforsms a quarterly time series in a monthly. To the last month of the monthly \code{ts} is set the value of the quarterly \code{ts}.
 }
 \examples{
 # Selecting only last month of matrix time series BRGDP:

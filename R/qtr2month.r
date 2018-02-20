@@ -1,6 +1,6 @@
-#' @title Quarterly to monthly desagregation
+#' @title Quarterly to monthly transformation
 #' @description It transforsms a quarterly time series in a monthly. To the last month of the monthly \code{ts} is set the value of the quarterly \code{ts}.
-#' @param x Variable in quarterly frequency
+#' @param x a \code{ts} or \code{mts} in quarterly frequency
 #' @return The correpondent monthly transformation or agregation.
 #' @examples 
 #' # Selecting only last month of matrix time series BRGDP:

@@ -9,36 +9,35 @@ Bpanel(base = NULL, trans = NULL, aggregate = F, k_ma = 3)
 \arguments{
 \item{base}{A \code{mts} with the series to be transformed.}
 
-\item{trans}{A \code{vector} where each coordinate is a code for the transformation of the correspondent coordinate in the \code{base} argument. 
-The transformation is specified by codes, as follows:
+\item{trans}{A \code{vector} where each coordinate is a code for the transformation of the correspondent coordinate in the \code{base} argument. The transformation is specified by codes, as follows:
 \itemize{
-\item{transf = 0: the original serie is preserved;}
-
-\item{transf = 1: monthly rate of change
-
-\deqn{\frac{x_{i,t} - x_{i,t-1}}{x_{i,t-1}}}}
-
-\item{transf = 2: monthly difference
-
-\deqn{x_{i,t} - x_{i,t-1}}}
-
-\item{transf = 3: monthly difference of year-over-year rate of change
-
-\deqn{\frac{x_{i,t} - x_{i,t-12}}{x_{i,t-12}}  -  \frac{x_{i,t-1} - x_{i,t-13}}{x_{i,t-13}}}}
-
-\item{transf = 4:  monthly difference of year difference
-
-\deqn{(x_{i,t} - x_{i,t-12})  -  (x_{i,t-1} - x_{i,t-13})}}
+  \item{transf = 0: the original serie is preserved;}
+  
+  \item{transf = 1: monthly rate of change
+  
+  \deqn{\frac{x_{i,t} - x_{i,t-1}}{x_{i,t-1}}}}
+  
+  \item{transf = 2: monthly difference
+  
+  \deqn{x_{i,t} - x_{i,t-1}}}
+  
+  \item{transf = 3: monthly difference of year-over-year rate of change
+  
+  \deqn{\frac{x_{i,t} - x_{i,t-12}}{x_{i,t-12}}  -  \frac{x_{i,t-1} - x_{i,t-13}}{x_{i,t-13}}}}
+  
+  \item{transf = 4:  monthly difference of year difference
+  
+  \deqn{(x_{i,t} - x_{i,t-12})  -  (x_{i,t-1} - x_{i,t-13})}}
 }}
 
 \item{aggregate}{A \code{bolean} representing if you want aggregate the monthly variables to represent quarterly quantities. If \code{TRUE} the aggregation is made following the approximation of \emph{Mariano and Murasawsa 2003}.}
 
-\item{k_ma}{A \code{numeric} representing the degree of the moving average correction.}
+\item{k_ma}{A \code{numeric} representing the degrre of the moving average correction.}
 }
 \description{
-This function transforms the original monthly time series to its stationary representation following the user specification. The time series with more than 1/3 missings (NAs) are deleted, and the remaining are modified such that the missings and outliers are replaced by an approximated value.
+This function transforms the original monthly time series to its stationary representation following the user specification. The time series with more than 1/3 missing, i.e. NAs are deleted, and the remaining are modified such that the missings and outiliers are replaced by an approximated value.
 
-The missings and outliers are “corrected” following the same method avaible in the replication files of Giannone et al. 2008. Outliers are defined as observations that lie more than 4 IQR from the median. All missings and outliers are replaced by the median. A centered moving average of degree **k** is calculated, forming a new panel. Then the missings and outliers are replaced by their equivalent observations on this new panel. We've made an important modification on the outlier_correction function found in the above mentioned files: Here the median of an even-sized sample is calculated by the mean of the two most central values, rather than using the largest of those numbers. Because of this modification the results obtained with the original replication files are slightly different than those found here.
+The missings and outliers are “corrected” following the same method avaible in the replication files of Giannone et al. 2008. Outliers are defined as observations that lie more than 4 IQR from the median. All missings and outliers are replaced by the median. A centered moving average of degree **k** is calculated, forming a new panel. Then the missings and outliers are replaced by their equivalent observations on this new panel. We've made an important modification on the outlier_correction function found in the above mentioned files: Here the median of an even-sized sample is calculated by the mean of the two most central values, rather than using the largest of those numbers. Because of this modification the results obtained with the original replication files in (USGDP) are slightly different than those found here.
 }
 \examples{
 # Example from database BRGDP:
