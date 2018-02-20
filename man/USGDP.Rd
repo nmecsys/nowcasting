@@ -7,8 +7,8 @@
 \format{A \code{list} with 2 elements: 
 
 \itemize{
-\item \code{base} is a \code{mts} with 193 series and 312 observations;
-\item \code{legend} is a \code{data.frame} with specifications of the series in Base.
+\item \code{base} is a \code{mts} with 193 series and 312 observations. There are missing values;
+\item \code{legend} is a \code{data.frame} with specifications of the series in USGDP$base.
 }}
 \source{
 This dataset is available as \emph{replication files} of the seminal work \emph{Giannone 2008}.

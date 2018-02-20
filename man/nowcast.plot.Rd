@@ -7,32 +7,35 @@
 nowcast.plot(out, type = "fcst")
 }
 \arguments{
-\item{out}{Output of function nowcast}
+\item{out}{output of nowcast function.}
 
-\item{type}{'fcst', 'factors', 'eigenvalues','eigenvectors', 'month_y'}
+\item{type}{'fcst', 'factors', 'eigenvalues','eigenvectors' or 'month_y'. This last one is only available for EM method. 'eigenvalues' and 'eigenvectors' only available to two stages methods.}
 }
 \description{
 Make plot to visualize the output of nowcast function
 }
 \examples{
 \dontrun{
-trans <- USGDP$Legenda$Transformation[-length(USGDP$Legenda$Transformation)]
-base <- USGDP$Base[,-dim(USGDP$Base)[2]]
-gdp <- month2qtr(USGDP$Base[,dim(USGDP$Base)[2]])
-x <- Bpanel(base = base, trans = trans)
-now <- nowcast(y = gdp, x = x,method = '2sq')
+gdp <- month2qtr(x = USGDP$base[,"RGDPGR"])
+gdp_position <- which(colnames(USGDP$base) == "RGDPGR")
+base <- Bpanel(base = USGDP$base[,-gdp_position],
+               trans = USGDP$legend$Transformation[-gdp_position],
+               aggregate = TRUE)
+now2sq <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2sq')
 
-nowcast.plot(now, type = "fcst")
-nowcast.plot(now, type = "factors")
-nowcast.plot(now, type = "eigenvalues")
-nowcast.plot(now, type = "eigenvectors")
+nowcast.plot(now2sq, type = "fcst")
+nowcast.plot(now2sq, type = "factors")
+nowcast.plot(now2sq, type = "eigenvalues")
+nowcast.plot(now2sq, type = "eigenvectors")
 
-x2 <- Bpanel(base = base, trans = trans,aggregate = F)
-now2 <- nowcast(y = gdp, x = x2, q = 2, r = 3,method = '2sm')
+base <- Bpanel(base = USGDP$base[,-gdp_position],
+               trans = USGDP$legend$Transformation[-gdp_position],
+               aggregate = FALSE)
+now2sq <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2sm')
 
-nowcast.plot(now2, type = "fcst")
-nowcast.plot(now2, type = "factors")
-nowcast.plot(now2, type = "eigenvalues")
-nowcast.plot(now2, type = "eigenvectors")
+nowcast.plot(now2sm, type = "fcst")
+nowcast.plot(now2sm, type = "factors")
+nowcast.plot(now2sm, type = "eigenvalues")
+nowcast.plot(now2sm, type = "eigenvectors")
 }
 }

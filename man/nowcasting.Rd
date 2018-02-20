@@ -11,8 +11,8 @@ This package is an initiative of the Center for Statistical and Computational Me
 The purpose of this package is to disseminate to the community of \code{R} users the statistical tools and techniques of 'nowcast' already known in the academic literature. One can find in this package a simple and practical way to reproduce several of these techniques for their studies.
 
 In this version of the package we present three methods, based on seminal articles in this literature:
-\emph{Giannone et al. 2008}, \emph{Bańbura et al. 2011} and \emph{Bańbura and Rünstler 2011}
-Some backend functions are adaptations and translations of these paper's \emph{replication files} avaible in MATLAB. One can find these \emph{replication files} in the following url:
+\emph{Giannone et al. 2008}, \emph{Bańbura et al. 2011} and \emph{Bańbura and Rünstler 2011}.
+Some backend functions are adaptations and translations of these paper's \emph{replication files} available in MATLAB. One can find these \emph{replication files} in the following url:
 \url{https://www.newyorkfed.org/research/economists/giannone/pub}
 }
 \note{
@@ -27,7 +27,7 @@ Bańbura, M., & Rünstler, G. (2011). A look into the factor model black box: pu
 Bańbura M., Giannone, D. & Reichlin, L. (2011). Nowcasting, in Michael P. Clements and David F. Hendry, editors, Oxford Handbook on Economic Forecasting, pages 193-224, January 2011. <doi:10.1093/oxfordhb/9780195398649.001.0001>
 }
 \author{
-Daiane Mattos \email{daiane.mattos@fgv.br},
-        Guilherme Branco \email{guilherme.branco@fgv.br},
-        Pedro Costa Ferreira \email{pedro.guilherme@fgv.br}
+Daiane Marcolino de Mattos \email{daimmattos@gmail.com},
+        Guilherme Branco Gomes \email{guilbran@gmail.com},
+        Pedro G. Costa Ferreira \email{pedro.guilherme@fgv.br}
 }

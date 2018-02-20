@@ -6,16 +6,16 @@
 #' The purpose of this package is to disseminate to the community of \code{R} users the statistical tools and techniques of 'nowcast' already known in the academic literature. One can find in this package a simple and practical way to reproduce several of these techniques for their studies.
 #' 
 #' In this version of the package we present three methods, based on seminal articles in this literature:
-#' \emph{Giannone et al. 2008}, \emph{Bańbura et al. 2011} and \emph{Bańbura and Rünstler 2011}
-#' Some backend functions are adaptations and translations of these paper's \emph{replication files} avaible in MATLAB. One can find these \emph{replication files} in the following url:
+#' \emph{Giannone et al. 2008}, \emph{Bańbura et al. 2011} and \emph{Bańbura and Rünstler 2011}.
+#' Some backend functions are adaptations and translations of these paper's \emph{replication files} available in MATLAB. One can find these \emph{replication files} in the following url:
 #' \url{https://www.newyorkfed.org/research/economists/giannone/pub}
 #'
 #' @note The authors would like to thank the support by the Getulio 
 #' Vargas Foundation (FGV).
 #' 
-#' @author Daiane Mattos \email{daiane.mattos@fgv.br},
-#'         Guilherme Branco \email{guilherme.branco@fgv.br},
-#'         Pedro Costa Ferreira \email{pedro.guilherme@fgv.br}
+#' @author Daiane Marcolino de Mattos \email{daimmattos@gmail.com},
+#'         Guilherme Branco Gomes \email{guilbran@gmail.com},
+#'         Pedro G. Costa Ferreira \email{pedro.guilherme@fgv.br}
 #' @references Giannone, D., Reichlin, L., & Small, D. (2008). Nowcasting: The real-time informational content of macroeconomic data. Journal of Monetary Economics, 55(4), 665-676.<doi:10.1016/j.jmoneco.2008.05.010>
 #' 
 #' Bańbura, M., & Rünstler, G. (2011). A look into the factor model black box: publication lags and the role of hard and soft data in forecasting GDP. International Journal of Forecasting, 27(2), 333-346. <doi:10.1016/j.ijforecast.2010.01.011>

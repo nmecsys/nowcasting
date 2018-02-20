@@ -23,31 +23,27 @@
 #' 
 #' @examples
 #' \dontrun{
-#' # nowcast function examples:
-#' ### Method 2sq
-#' pib<-BRGDP[,8]
-#' y<-month2qtr(diff(diff(pib,3),12))
-#' x<-Bpanel(BRGDP[,-8],rep(4,dim(BRGDP)[2]),aggregate = T)
-#' q<-1
-#' r<-2
-#' p<-1
-#' now_2sq<-nowcast(y,x,q,r,p,method = '2sq')
+#' ### Method 2sq (two stages: quarterly factors)
+#' gdp <- month2qtr(x = USGDP$base[,"RGDPGR"])
+#' gdp_position <- which(colnames(USGDP$base) == "RGDPGR")
+#' base <- Bpanel(base = USGDP$base[,-gdp_position],
+#'                trans = USGDP$legend$Transformation[-gdp_position],
+#'                aggregate = TRUE)
+#' now2sq <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2sq')
 #'
-#' ### Method 2sm
-#' pib<-BRGDP[,8]
-#' y<-month2qtr(diff(diff(pib,3),12))
-#' x<-Bpanel(BRGDP[,-8],rep(4,dim(BRGDP)[2]),aggregate = F)
-#' now_2sm<-nowcast(y,x,q,r,p,method = '2sm')
+#' ### Method 2sm (two stages: monthly factors)
+#' base <- Bpanel(base = USGDP$base[,-gdp_position],
+#'                trans = USGDP$legend$Transformation[-gdp_position],
+#'                aggregate = F)
+#' now2sm <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2sm')
 #'
 #' ### Method EM
-#' y<-month2qtr(diff(diff(pib,3),12))
-#' x<-Bpanel(BRGDP[,-8],rep(4,dim(BRGDP)[2]),aggregate = F)
-#' now_em<-nowcast(y,x,q,r,p,'EM')
+#' nowEM <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = 'EM')
 #' }
 #' @seealso \code{\link[nowcasting]{base_extraction}}
 #' @export
 
-nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks = NULL){
+nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method='2sq', blocks = NULL){
 
   if(is.null(q) | is.null(r) | is.null(p)){
     warnings('Parameters q, r and p must be specified.')
@@ -136,7 +132,7 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL,method='2sq',blocks = NUL
     Res<-EM_DFM_SS_block_idioQARMA_restrMQ(X,Par)
     
     factors<-list(
-      dynamic_factors = ts(Res$FF[,c(1:r, (r*5 + 1):(r*5 + r), (2*r*5 + 1):(2*r*5 + r))], start = start(x), freq = 12),
+      dynamic_factors = ts(Res$FF[,c(1:r, (r*5 + 1):(r*5 + r), (2*r*5 + 1):(2*r*5 + r))], start = start(x), frequency = 12),
       T = Res$A,
       Z = Res$C,
       #xBart = ts(Res$X_sm, start = start(x), freq = 12),

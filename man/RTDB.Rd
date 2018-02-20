@@ -7,18 +7,24 @@
 RTDB(series_code = NULL, vintage = NULL)
 }
 \arguments{
-\item{series_code}{Vector with the series encoding follow the Bacen (Banco Central do Brasil) standards.}
+\item{series_code}{vector with the series encoding follow the Bacen (Banco Central do Brasil) standards.}
 
-\item{vintage}{The vintage encoded by the day of the extraction}
+\item{vintage}{the vintage encoded by the day of the extraction}
 }
 \description{
 Create a time series matrix \code{mts} replicating the information available in a given date.
 }
 \examples{
+\dontrun{
 # Show series available:
-# RTDB()
-# Show vintages available for a serie:
-# RTDB(series_code=1)
+RTDB()
+
+# Show vintages available for the series 1:
+RTDB(series_code = 1)
+
+# Show series 1 data at vintage 2017-04-04:
+RTDB(series_code = 1, vintage = "2017-04-04")
+}
 }
 \references{
 Central Bank of Brazil

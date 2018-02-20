@@ -4,8 +4,8 @@
 #' @format  A \code{list} with 2 elements: 
 #' 
 #' \itemize{
-#' \item \code{base} is a \code{mts} with 193 series and 312 observations;
-#' \item \code{legend} is a \code{data.frame} with specifications of the series in Base.
+#' \item \code{base} is a \code{mts} with 193 series and 312 observations. There are missing values;
+#' \item \code{legend} is a \code{data.frame} with specifications of the series in USGDP$base.
 #' }
 #' @description Dataset available to replicate the results in \emph{Giannone et al. 2008}. 
 #' @usage USGDP

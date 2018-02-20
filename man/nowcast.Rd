@@ -36,26 +36,22 @@ Estimate nowcasting and forecasting for a quarterly series. For more details rea
 }
 \examples{
 \dontrun{
-# nowcast function examples:
-### Method 2sq
-pib<-BRGDP[,8]
-y<-month2qtr(diff(diff(pib,3),12))
-x<-Bpanel(BRGDP[,-8],rep(4,dim(BRGDP)[2]),aggregate = T)
-q<-1
-r<-2
-p<-1
-now_2sq<-nowcast(y,x,q,r,p,method = '2sq')
+### Method 2sq (two stages: quarterly factors)
+gdp <- month2qtr(x = USGDP$base[,"RGDPGR"])
+gdp_position <- which(colnames(USGDP$base) == "RGDPGR")
+base <- Bpanel(base = USGDP$base[,-gdp_position],
+               trans = USGDP$legend$Transformation[-gdp_position],
+               aggregate = TRUE)
+now2sq <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2sq')
 
-### Method 2sm
-pib<-BRGDP[,8]
-y<-month2qtr(diff(diff(pib,3),12))
-x<-Bpanel(BRGDP[,-8],rep(4,dim(BRGDP)[2]),aggregate = F)
-now_2sm<-nowcast(y,x,q,r,p,method = '2sm')
+### Method 2sm (two stages: monthly factors)
+base <- Bpanel(base = USGDP$base[,-gdp_position],
+               trans = USGDP$legend$Transformation[-gdp_position],
+               aggregate = F)
+now2sm <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2sm')
 
 ### Method EM
-y<-month2qtr(diff(diff(pib,3),12))
-x<-Bpanel(BRGDP[,-8],rep(4,dim(BRGDP)[2]),aggregate = F)
-now_em<-nowcast(y,x,q,r,p,'EM')
+nowEM <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = 'EM')
 }
 }
 \references{
