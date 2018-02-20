@@ -45,12 +45,12 @@ nowcast.plot <- function(out, type = "fcst"){
          col = "#FFFFFF", ylab = "y unit", xlab = "Time")
     graphics::grid(col = "#D9D9D9")
     graphics::axis(1, at = seq(1,nrow(data),4), labels = substr(data[seq(1,nrow(data),4),"date"],1,7), las=1, cex = 0.7)
-    graphics::lines(data[,"y"], type = "l", lty = 3, col = 1)
-    graphics::lines(data[,"in."], type = "l", lty = 1, lwd = 1, col = "dodgerblue")
-    graphics::lines(data[,"out"], type = "l", lty = 2, lwd = 1, col = "orangered")
+    graphics::lines(data[,"y"], type = "l", lty = 1, col = 1)
+    graphics::lines(data[,"in."], type = "l", lty = 1, lwd = 2, col = "dodgerblue")
+    graphics::lines(data[,"out"], type = "l", lty = 4, lwd = 2, col = "orangered")
     graphics::par(xpd = T)
     add_legend("topright", legend=c("y","yhat","fcst"), bty = "n",
-           lty = c(3,1,2), lwd = c(1,1,1), col = c(1,"dodgerblue","orangered"))
+           lty = c(1,1,4), lwd = c(1,2,2), col = c(1,"dodgerblue","orangered"))
     graphics::title(main = list("Forecasting", font = 1, cex = 0.9))
 
   }else if(type == "eigenvalues"){
