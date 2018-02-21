@@ -32,7 +32,7 @@ Bpanel(base = NULL, trans = NULL, aggregate = F, k_ma = 3)
 
 \item{aggregate}{A \code{bolean} representing if you want aggregate the monthly variables to represent quarterly quantities. If \code{TRUE} the aggregation is made following the approximation of \emph{Mariano and Murasawsa 2003}.}
 
-\item{k_ma}{A \code{numeric} representing the degrre of the moving average correction.}
+\item{k_ma}{A \code{numeric} representing the degree of the moving average correction.}
 }
 \description{
 This function transforms the original monthly time series to its stationary representation following the user specification. The time series with more than 1/3 missing, i.e. NAs are deleted, and the remaining are modified such that the missings and outiliers are replaced by an approximated value.
@@ -41,7 +41,7 @@ The missings and outliers are “corrected” following the same method avaible 
 }
 \examples{
 # Example from database BRGDP:
-Bpanel(BRGDP,rep(3,dim(BRGDP)[2]))
+Bpanel(BRGDP,rep(3,ncol(BRGDP)))
 }
 \references{
 Giannone, D., Reichlin, L., & Small, D. (2008). Nowcasting: The real-time informational content of macroeconomic data. Journal of Monetary Economics, 55(4), 665-676.<doi:10.1016/j.jmoneco.2008.05.010>
