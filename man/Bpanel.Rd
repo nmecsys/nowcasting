@@ -11,21 +11,21 @@ Bpanel(base = NULL, trans = NULL, aggregate = F, k_ma = 3)
 
 \item{trans}{A \code{vector} where each coordinate is a code for the transformation of the correspondent coordinate in the \code{base} argument. The transformation is specified by codes, as follows:
 \itemize{
-  \item{transf = 0: the original serie is preserved;}
+  \item{trans = 0: the original serie is preserved;}
   
-  \item{transf = 1: monthly rate of change
+  \item{trans = 1: monthly rate of change
   
   \deqn{\frac{x_{i,t} - x_{i,t-1}}{x_{i,t-1}}}}
   
-  \item{transf = 2: monthly difference
+  \item{trans = 2: monthly difference
   
   \deqn{x_{i,t} - x_{i,t-1}}}
   
-  \item{transf = 3: monthly difference of year-over-year rate of change
+  \item{trans = 3: monthly difference of year-over-year rate of change
   
   \deqn{\frac{x_{i,t} - x_{i,t-12}}{x_{i,t-12}}  -  \frac{x_{i,t-1} - x_{i,t-13}}{x_{i,t-13}}}}
   
-  \item{transf = 4:  monthly difference of year difference
+  \item{trans = 4:  monthly difference of year difference
   
   \deqn{(x_{i,t} - x_{i,t-12})  -  (x_{i,t-1} - x_{i,t-13})}}
 }}
