@@ -51,7 +51,24 @@ base <- Bpanel(base = USGDP$base[,-gdp_position],
 now2sm <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2sm')
 
 ### Method EM
-nowEM <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = 'EM')
+# selecting and transforming y  
+gdp <- month2qtr(x = USGDPshort$base[,"GDPUS"])
+gdp <- ts(c(gdp,NA,NA,NA,NA), start = start(gdp), frequency = 4)
+gdp_stationary <- gdp/lag(gdp, k = -1) -1
+gdp_position <- which(colnames(USGDPshort$base) == "GDPUS")
+
+# selecting and transforming x 
+base <- USGDPshort$base[,-gdp_position]
+trans <- USGDPshort$legend[-gdp_position,"transformation"]
+stationaryBase <- cbind(base[,trans == 1]/lag(base[,trans == 1], k = -1) - 1, diff(base[,trans == 2]))
+colnames(stationaryBase) <- colnames(base)[c(which(trans == 1),which(trans == 2)) ]
+stationaryBase <- stationaryBase[,colnames(base)]
+
+# DFM estimation via EM
+blocks <- matrix(c(1,0,1,1,0,1,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,
+                   0,1,1,0,1,1,0,1,0,1,1,1,0,1,1,0,1,0,1,1,1,0,1,1,0,1,
+                   1,0,1,0,1,1,0,1,1,0,1,1,0,1,1,1,0,1,0,1,1,0,1,1,1,0), byrow = T, ncol = 3)
+nowEM <- nowcast(y = gdp_stationary, x = stationaryBase, r = 1, p = 1, q = 1, method = 'EM', blocks = blocks)
 }
 }
 \references{

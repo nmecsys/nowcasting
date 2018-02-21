@@ -98,8 +98,14 @@ nowcast.plot <- function(out, type = "fcst"){
     graphics::grid()
     graphics::par(xpd = T)
     graphics::title(main = list("Estimated Factors", font = 1, cex = 1))
-    add_legend("topright", legend = paste("Factor", 1:n), bty = "n",
-           col = c(1,"orangered","blue"), lty = c(1,2,3), cex = 0.9)
+    
+    if("month_y" %in% names(out)){
+      leg <- colnames(out$factors$dynamic_factors)
+    }else{
+      leg <- paste("Factor", 1:n)
+    }
+    add_legend("topright", legend = leg, bty = "n",
+           col = c(1,"orangered","blue"), lty = c(1,2,3), lwd = c(1,1,1,2,2,2), cex = 0.9)
     
   }else if(type == 'month_y'){
     

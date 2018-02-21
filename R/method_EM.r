@@ -52,7 +52,9 @@ remNaNs_spline <-function(X,options){
     # nanEnd <- which(rem1[length(rem1):1])
     # nanLE <- c(nanEnd,nanLead)
     nanLE<-nanLead
-    X<-X[-nanLE,]
+    if(length(nanLE) != 0){
+      X <- X[-nanLE,]
+    }
     indNaN=is.na(X)
     
   }else if(options$method == 4){ # remove rows with leading and closing zeros & replace missing values
@@ -740,7 +742,7 @@ FIS <- function(Y,Z,R,TT,Q,S){
 }
 
 SKF <-function(Y,Z,R,TT,Q,A_0,P_0){
-  
+  #Y = y; Z = C; TT = A; A_0 = x_0; P_0 = Sig_0
   
   # %______________________________________________________________________
   # % Kalman filter for stationary systems with time-varying system matrices
@@ -760,6 +762,7 @@ SKF <-function(Y,Z,R,TT,Q,A_0,P_0){
   # %        S.loglik   Value of likelihood function
   # 
   # % Output structure & dimensions
+  
   
   n <- dim(Z)[1]
   m <- dim(Z)[2]
@@ -883,6 +886,8 @@ MissData <- function(y,C,R){
 # %--------------------------------------------------------------------------
 
 runKF <- function(y, A, C, Q, R, x_0, Sig_0){
+  
+  # x_0 = Z_0; Sig_0 = V_0
   S <- SKF(y,C,R,A,Q, x_0, Sig_0);
   S <- FIS(y,C,R,A,Q,S);
   
