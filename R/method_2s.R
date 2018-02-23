@@ -25,7 +25,7 @@ bridge <- function(y,x){
   # previsão
   # newbase <- data.frame(dados[-(1:(Qmax-1)),-1])
   newbase <- data.frame(dados[-(1:Qmax),-1])
-  #colnames(newbase) <- paste0("Fac",1:ncol(data.frame(fatoresTRI)))
+  colnames(newbase) <- paste0("Factor",1:ncol(data.frame(fatoresTRI)))
   
   ## função auxiliar
   # tail.ts <- function(data,n) {
