@@ -242,7 +242,7 @@ InitCond<-function(xNaN,r,p,blocks,optNaN,R_mat,q,nQ,i_idio){
   }
   
   
-  R = diag(apply(resNaN, 2, var, na.rm = T))
+  R = diag(apply(resNaN, 2, stats::var, na.rm = T))
   
   eyeN = eye(N)
   eyeN<-eyeN[,i_idio]

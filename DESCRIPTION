@@ -1,14 +1,14 @@
 Package: nowcasting
 Type: Package
 Title: Nowcast Analysis and Create Real-Time Data Basis
-Version: 0.1.1
+Version: 0.1.3
 Depends: R (>= 3.3.2)
-Date: 2017-11-06
-Authors@R: c( person("Guilherme","Branco Gomes",email = "guilherme.branco@fgv.br",role=c("aut","cre")),
-              person("Daiane", "Mattos", email = "daiane.mattos@fgv.br",role=c("aut")),
+Date: 2018-03-01
+Authors@R: c( person("Daiane", "Mattos", email = "daiane.mattos@fgv.br",role=c("aut","cre")),
+              person("Guilherme","Branco Gomes",email = "guilherme.branco.gomes@gmail.com",role=c("aut")),
               person("Pedro","Costa Ferreira",email = "pedro.guilherme@fgv.br",role=c("aut"))
               )
-Maintainer: Guilherme Branco Gomes <guilherme.branco@fgv.br>
+Maintainer: Daiane Marcolino de Mattos <daiane.mattos@fgv.br>
 Description: Methods and tools to estimate 'forecasts' of Brazilian macroeconomic variables in the near future or the recent past, i.e. 'nowcast'. It allows: extract information in real time, creating a real time data base; estimate relationship between macroeconomic variables via dynamic factors; forecast time series in previous periods of reference; forecast time series in the current period of reference (nowcasting); recreate a data base simulating the information available in the past for evaluating forecasting models accuracy (pseudo real-time data base); access information available in a specific date in the past (real-time data base), for some variables.
 License: GPL-3
 BugReports: https://github.com/nmecsys/nowcasting/issues
@@ -17,7 +17,6 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
 NeedsCompilation: no
-VignetteBuilder: knitr
 Suggests: knitr
 Imports: corpcor, httr, lubridate, matlab, RCurl, xts, zoo, DBI, magic, RMySQL, Matrix
 
