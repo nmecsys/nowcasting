@@ -12,7 +12,7 @@ The backend functions of this package are based on Giannone et al. (2008) and Ba
 
 The package is in development. Reviews, comments and pull requests are welcome.
 
-Read more about using the package in https://goo.gl/kAL5Qs
+Read more about using the package at https://goo.gl/kAL5Qs
 
 ## Installation
 
