@@ -12,6 +12,8 @@ The backend functions of this package are based on Giannone et al. (2008) and Ba
 
 The package is in development. Reviews, comments and pull requests are welcome.
 
+Read more about using the package in https://goo.gl/kAL5Qs
+
 ## Installation
 
 github
@@ -29,3 +31,6 @@ install.packages('nowcasting')
 - Optimize the estimation using other Kalman Filter packages as fkf for instance;
 
 - Class output to use plot() instead of nowcast.plot().
+
+
+
