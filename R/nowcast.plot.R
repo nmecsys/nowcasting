@@ -62,7 +62,7 @@ nowcast.plot <- function(out, type = "fcst"){
     graphics::barplot(eig[1:n], col = "#ADD8E6", border = "steelblue", names.arg = 1:n, ylim = c(0, seq(0,100,5)[min(which(!(max(eig[1:n]) > seq(0,100,5))))]),
             xlab = "eigenvalues", ylab = "%")
     graphics::grid(col = "#D9D9D9")
-    graphics::title(main = list("eigenvalues: percentual variance", font = 1, cex = 0.9))
+    graphics::title(main = list("eigenvalues: percentage variance", font = 1, cex = 0.9))
 
   }else if(type == "eigenvectors"){
     
@@ -76,7 +76,7 @@ nowcast.plot <- function(out, type = "fcst"){
     color <- ifelse(vec >= 0, "dodgerblue", "orangered")
     graphics::plot(pvec, main = "",  bty = "l", xaxt = "n", type = "h", ylab = "weight (%)", xlab = "variable", col = color)
     graphics::axis(1, at = seq(1,length(vec),1), labels = seq(1,length(vec),1), las=1, cex = 0.7)
-    graphics::title(main = list("Variable Percentual Weight in Factor 1", font = 1, cex = 0.9))
+    graphics::title(main = list("Variable Percentage Weight in Factor 1", font = 1, cex = 0.9))
     graphics::par(xpd = T)
     graphics::text(y = max(pvec), x = length(pvec)*1.1, labels = "signal weights:", col = 1, cex = 0.8)
     graphics::text(y = max(pvec)*0.94, x = length(pvec)*1.1, labels = "positive", col = "dodgerblue", cex = 0.8)
