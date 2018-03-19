@@ -1,6 +1,6 @@
 #' @title Create Real Time Data Base
 #' @description Create a time series matrix \code{mts} replicating the information available in a given date.
-#' @param series_code vector with the series encoding follow the Bacen (Banco Central do Brasil) standards.
+#' @param series_code vector with the series encoding following the Bacen (Banco Central do Brasil) standards.
 #' @param vintage the vintage encoded by the day of the extraction
 #' @import DBI RMySQL xts zoo
 #' @importFrom stats ts

@@ -9,15 +9,15 @@ PRTDB(mts, delay, vintage = Sys.Date())
 \arguments{
 \item{mts}{A \code{mts} with the series data.}
 
-\item{delay}{A numeric vector with the delay in days the information is available after the reference month. Each element correspond to the series in the respective column in \code{mts}.}
+\item{delay}{A numeric vector with the delay in days the information is available after the reference month. Each element corresponds to the series in the respective column in \code{mts}.}
 
-\item{vintage}{The day where the data is supposed to be collected.}
+\item{vintage}{The day when the data is supposed to be collected.}
 }
 \value{
 A \code{mts} with the series transformed.
 }
 \description{
-Create a pseudo real time data base based on data and delays of disclosure estipulated by the user.
+Create a pseudo real time data base based on data and delays of disclosure stipulated by the user.
 }
 \examples{
 # Pseudo Real Time Data Base from data base BRGDP

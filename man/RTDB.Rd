@@ -7,7 +7,7 @@
 RTDB(series_code = NULL, vintage = NULL)
 }
 \arguments{
-\item{series_code}{vector with the series encoding follow the Bacen (Banco Central do Brasil) standards.}
+\item{series_code}{vector with the series encoding following the Bacen (Banco Central do Brasil) standards.}
 
 \item{vintage}{the vintage encoded by the day of the extraction}
 }

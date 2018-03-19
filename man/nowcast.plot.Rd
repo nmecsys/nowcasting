@@ -12,7 +12,7 @@ nowcast.plot(out, type = "fcst")
 \item{type}{'fcst', 'factors', 'eigenvalues','eigenvectors' or 'month_y'. This last one is only available for EM method. 'eigenvalues' and 'eigenvectors' only available to two stages methods.}
 }
 \description{
-Make plot to visualize the output of nowcast function
+Make plots to visualize the output of nowcast function
 }
 \examples{
 \dontrun{

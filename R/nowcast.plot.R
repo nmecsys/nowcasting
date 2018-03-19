@@ -1,5 +1,5 @@
 #' @title Plot for nowcast output function
-#' @description Make plot to visualize the output of nowcast function
+#' @description Make plots to visualize the output of nowcast function
 #' @param out output of nowcast function.
 #' @param type 'fcst', 'factors', 'eigenvalues','eigenvectors' or 'month_y'. This last one is only available for EM method. 'eigenvalues' and 'eigenvectors' only available to two stages methods.
 #' @examples
