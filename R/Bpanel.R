@@ -12,7 +12,7 @@
 #'   
 #'   \deqn{\frac{x_{i,t} - x_{i,t-1}}{x_{i,t-1}}}}
 #'   
-#'   \item{trans = 2: monthly difference
+#'   \item{trans = 2: monthly difference in
 #'   
 #'   \deqn{x_{i,t} - x_{i,t-1}}}
 #'   
