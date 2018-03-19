@@ -17,7 +17,7 @@ Bpanel(base = NULL, trans = NULL, aggregate = F, k_ma = 3)
   
   \deqn{\frac{x_{i,t} - x_{i,t-1}}{x_{i,t-1}}}}
   
-  \item{trans = 2: monthly difference in
+  \item{trans = 2: monthly difference
   
   \deqn{x_{i,t} - x_{i,t-1}}}
   
@@ -25,7 +25,7 @@ Bpanel(base = NULL, trans = NULL, aggregate = F, k_ma = 3)
   
   \deqn{\frac{x_{i,t} - x_{i,t-12}}{x_{i,t-12}}  -  \frac{x_{i,t-1} - x_{i,t-13}}{x_{i,t-13}}}}
   
-  \item{trans = 4: monthly difference of year difference
+  \item{trans = 4: monthly difference in year difference
   
   \deqn{(x_{i,t} - x_{i,t-12})  -  (x_{i,t-1} - x_{i,t-13})}}
 }}
