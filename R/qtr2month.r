@@ -1,5 +1,5 @@
 #' @title Quarterly to monthly transformation
-#' @description It transforms quarterly a  time series in a monthly one. The values of the quarterly \code{ts} are set to the last month of the quarter.
+#' @description It transforms a quarterly  time series in a monthly one. The values of the quarterly \code{ts} are set to the last month of the quarter.
 #' @param x a \code{ts} or \code{mts} in quarterly frequency
 #' @return The correpondent monthly transformation.
 #' @examples 

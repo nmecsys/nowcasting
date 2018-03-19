@@ -1,7 +1,7 @@
 #' @title Balanced panel
-#' @description This function transforms the original monthly time series to its stationary representation following the user specification. The time series with more than 1/3 missing, i.e. NAs are deleted, and the remaining are modified such that the missings and outiliers are replaced by an approximated value.
+#' @description This function transforms the original monthly time series to its stationary representation following the user specification. The time series with more than 1/3 missing, i.e. NAs, are deleted and the remaining are modified such that the missings and outliers are replaced by an approximated value.
 #'
-#' The missings and outliers are “corrected” following the same method avaible in the replication files of Giannone et al. 2008. Outliers are defined as observations that lie more than 4 IQR from the median. All missings and outliers are replaced by the median. A centered moving average of degree **k** is calculated, forming a new panel. Then the missings and outliers are replaced by their equivalent observations on this new panel. We've made an important modification on the outlier_correction function found in the above mentioned files: Here the median of an even-sized sample is calculated by the mean of the two most central values, rather than using the largest of those numbers. Because of this modification the results obtained with the original replication files in (USGDP) are slightly different than those found here.
+#' The missings and outliers are “corrected” following the same method available in the replication files of Giannone et al. 2008. Outliers are defined as observations that lie more than 4 IQR from the median. All missings and outliers are replaced by the median. A centered moving average of degree **k** is calculated, forming a new panel. Then the missings and outliers are replaced by their equivalent observations on this new panel. We've made an important modification on the outlier_correction function found in the above mentioned files: Here the median of an even-sized sample is calculated by the mean of the two most central values, rather than using the largest of those numbers. Because of this modification the results obtained with the original replication files in (USGDP) are slightly different from those found here.
 #' 
 #' @param base A \code{mts} with the series to be transformed. 
 #' @param trans A \code{vector} where each coordinate is a code for the transformation of the correspondent coordinate in the \code{base} argument. The transformation is specified by codes, as follows:
@@ -16,15 +16,15 @@
 #'   
 #'   \deqn{x_{i,t} - x_{i,t-1}}}
 #'   
-#'   \item{trans = 3: monthly difference of year-over-year rate of change
+#'   \item{trans = 3: monthly difference in year-over-year rate of change
 #'   
 #'   \deqn{\frac{x_{i,t} - x_{i,t-12}}{x_{i,t-12}}  -  \frac{x_{i,t-1} - x_{i,t-13}}{x_{i,t-13}}}}
 #'   
-#'   \item{trans = 4:  monthly difference of year difference
+#'   \item{trans = 4: monthly difference of year difference
 #'   
 #'   \deqn{(x_{i,t} - x_{i,t-12})  -  (x_{i,t-1} - x_{i,t-13})}}
 #' }
-#' @param aggregate A \code{bolean} representing if you want aggregate the monthly variables to represent quarterly quantities. If \code{TRUE} the aggregation is made following the approximation of \emph{Mariano and Murasawsa 2003}.
+#' @param aggregate A \code{boolean} representing if you want aggregate the monthly variables to represent quarterly quantities. If \code{TRUE} the aggregation is made following the approximation of \emph{Mariano and Murasawsa 2003}.
 #' @param k_ma A \code{numeric} representing the degree of the moving average correction.
 #' @references Giannone, D., Reichlin, L., & Small, D. (2008). Nowcasting: The real-time informational content of macroeconomic data. Journal of Monetary Economics, 55(4), 665-676.<doi:10.1016/j.jmoneco.2008.05.010>
 #' 
@@ -89,7 +89,7 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k_ma = 3){
   base2 <- base1[, which(SerOk)]
   
   if (sum(!SerOk)>0){
-  warning(paste(sum(!SerOk),'serie(s) ruled out due to lack in observations (more than 1/3 is NA).'))
+  warning(paste(sum(!SerOk),'series ruled out due to lack in observations (more than 1/3 is NA).'))
   }
   
   seriesdeletadas<-colnames(base1[, which(!SerOk)])

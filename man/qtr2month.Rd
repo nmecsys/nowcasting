@@ -13,7 +13,7 @@ qtr2month(x)
 The correpondent monthly transformation.
 }
 \description{
-It transforms quarterly a  time series in a monthly one. The values of the quarterly \code{ts} are set to the last month of the quarter.
+It transforms a quarterly  time series in a monthly one. The values of the quarterly \code{ts} are set to the last month of the quarter.
 }
 \examples{
 # Selecting the quarterly GDP variable in BRGDP
