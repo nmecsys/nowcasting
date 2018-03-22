@@ -6,3 +6,4 @@ packrat/lib*/
 appveyor.yml
 README.md
 vignette/nowcasting-vignette.html
+inst/doc
