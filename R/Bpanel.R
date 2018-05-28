@@ -23,7 +23,15 @@
 #'   \item{trans = 4: monthly difference in year difference
 #'   
 #'   \deqn{(x_{i,t} - x_{i,t-12})  -  (x_{i,t-1} - x_{i,t-13})}}
-#' }
+#'   
+#'   \item{trans = 5: year difference
+#'   
+#'   \deqn{(x_{i,t} - x_{i,t-12})}
+#'   
+#'   \item{trans = 6: year-over-year rate of change
+#'   
+#'   \deqn{\frac{x_{i,t} - x_{i,t-12}}{x_{i,t-12}}} 
+#' 
 #' @param aggregate A \code{boolean} representing if you want aggregate the monthly variables to represent quarterly quantities. If \code{TRUE} the aggregation is made following the approximation of \emph{Mariano and Murasawsa 2003}.
 #' @param k_ma A \code{numeric} representing the degree of the moving average correction.
 #' @references Giannone, D., Reichlin, L., & Small, D. (2008). Nowcasting: The real-time informational content of macroeconomic data. Journal of Monetary Economics, 55(4), 665-676.<doi:10.1016/j.jmoneco.2008.05.010>
@@ -59,7 +67,13 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k_ma = 3){
     }else if(trans[j] == 4){ # DIFERENÇA MENSAL DA DIFERENÇA ANUAL
       temp <- diff(diff(base[,j],12))
       base1[-c(1:13),j] <- temp
-    }else{ # SEM TRANSFORMAÇÃO
+    }else if(trans[j] == 5){ # DIFERENÇA ANUAL
+      temp <- diff(base[,j],12)
+      base1[-c(1:12),j] <- temp  
+    }else if(trans[j] == 6){ # VARIAÇÃO ANUAL
+      temp <- base[,j]/stats::lag(base[,j],-12)
+      base1[-c(1:12),j] <- temp  
+    }else if(trans[j] == 0){ # SEM TRANSFORMAÇÃO
       base1[,j] <- base[,j]
     }
   }

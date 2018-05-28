@@ -2,8 +2,8 @@ Package: nowcasting
 Type: Package
 Title: Nowcast Analysis and Create Real-Time Data Basis
 Version: 0.1.3
-Depends: R (>= 3.3.3)
-Date: 2018-03-01
+Depends: R (>= 3.4.0)
+Date: 2018-04-25
 Authors@R: c( person("Daiane", "Mattos", email = "daiane.mattos@fgv.br",role=c("aut","cre")),
               person("Guilherme","Branco Gomes",email = "guilherme.branco.gomes@gmail.com",role=c("aut")),
               person("Pedro","Costa Ferreira",email = "pedro.guilherme@fgv.br",role=c("aut"))

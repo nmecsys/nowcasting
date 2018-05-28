@@ -9,27 +9,6 @@ Bpanel(base = NULL, trans = NULL, aggregate = F, k_ma = 3)
 \arguments{
 \item{base}{A \code{mts} with the series to be transformed.}
 
-\item{trans}{A \code{vector} where each coordinate is a code for the transformation of the correspondent coordinate in the \code{base} argument. The transformation is specified by codes, as follows:
-\itemize{
-  \item{trans = 0: the original serie is preserved;}
-  
-  \item{trans = 1: monthly rate of change
-  
-  \deqn{\frac{x_{i,t} - x_{i,t-1}}{x_{i,t-1}}}}
-  
-  \item{trans = 2: monthly difference
-  
-  \deqn{x_{i,t} - x_{i,t-1}}}
-  
-  \item{trans = 3: monthly difference in year-over-year rate of change
-  
-  \deqn{\frac{x_{i,t} - x_{i,t-12}}{x_{i,t-12}}  -  \frac{x_{i,t-1} - x_{i,t-13}}{x_{i,t-13}}}}
-  
-  \item{trans = 4: monthly difference in year difference
-  
-  \deqn{(x_{i,t} - x_{i,t-12})  -  (x_{i,t-1} - x_{i,t-13})}}
-}}
-
 \item{aggregate}{A \code{boolean} representing if you want aggregate the monthly variables to represent quarterly quantities. If \code{TRUE} the aggregation is made following the approximation of \emph{Mariano and Murasawsa 2003}.}
 
 \item{k_ma}{A \code{numeric} representing the degree of the moving average correction.}

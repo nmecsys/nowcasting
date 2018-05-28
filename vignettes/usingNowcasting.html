@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="date" content="2018-05-02" />
+
+<title>Developing real-time forecasting models with nowcasting package</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Developing real-time forecasting models with nowcasting package</h1>
+<h4 class="date"><em>2018-05-02</em></h4>
+
+
+
+<p>The nowcasting package contains useful tools for developing real-time forecasting models so that researchers can find in this package a simple and practical way to reproduce several of these models. In this version of the package we present three methods, based on seminal articles in this literature: <em>Giannone et al. 2008</em>, <em>Bańbura et al. 2011</em> and <em>Bańbura and Rünstler 2011</em>. The package also provides vintages (information observed at the time of publication) of Brazilian economic data.</p>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<p>Two examples of how the nowcasting package can be used are discussed below. In the first example we use the dataset in the classic paper by <em>Giannone et al. (2008)</em>, which uses a panel of time series for the US economy, and in the second we show how to obtain vintages for the main series for the Brazilian economy.</p>
+<div id="nowcasting-us-gdp" class="section level3">
+<h3>Nowcasting US GDP</h3>
+<p>The dataset used in <em>Giannone et al. (2008)</em> can be added to the environment with the following command.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(nowcasting)
+<span class="kw">data</span>(USGDP)</code></pre></div>
+<p>USDGP is a list with two data frames:</p>
+<ul>
+<li><code>USGDP$base</code>: this is an unbalanced panel with the model variables;</li>
+<li><code>USGDP$legend</code>: this contains the legend with the relevant information for each variable in the <code>USGDP$base</code> dataframe.</li>
+</ul>
+<p>The first step is to define the variables <span class="math inline">\(y_{t}\)</span> (quarterly) and <span class="math inline">\(x_{t}\)</span> (monthly). To identify the variable that represents the GDP in the dataset, view the legend in <code>USGDP$legend</code>. Then the GDP is selected in the dataset and transformed into a quarterly variable by <code>month2qtr</code> function. The explanatory variables are all the other variables in the dataset.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gdp &lt;-<span class="st"> </span><span class="kw">month2qtr</span>(<span class="dt">x =</span> USGDP$base[,<span class="st">&quot;RGDPGR&quot;</span>])</code></pre></div>
+<p>The second step covers the treatment of the explanatory variables, that will be done by <code>Bpanel</code> function. This function creates a balanced panel using an unbalanced panel as input. The missing observations and outliers are substituted using the outlier correction methodology in <em>Giannone et al. (2008)</em> and there are some transformation options that make the variables stationary. The object <code>USGDP$legend</code> contains all the transformations used in <em>Giannone et al. (2008)</em>. The <code>Bpanel</code> function also allows monthly variables to be aggregated to represent quarterly quantities.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gdp_position &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">colnames</span>(USGDP$base) ==<span class="st"> &quot;RGDPGR&quot;</span>)
+base &lt;-<span class="st"> </span><span class="kw">Bpanel</span>(<span class="dt">base =</span> USGDP$base[,-gdp_position], <span class="dt">trans =</span> USGDP$legend$Transformation[-gdp_position], <span class="dt">aggregate =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<p>Once these variables have been treated, the <code>nowcast</code> function can be used to estimate the model parameters according to the estimation method selected, the number <em>r</em> of dynamic factors, the lag order of the factors <em>p</em> and the number <em>q</em> of shocks in the factors. In this example we use the <em>Two-Stage - quarterly factors</em> method. The arguments <em>r</em>, <em>p</em> and <em>q</em> were defined according to <em>Giannone et al. (2008)</em>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nowcastUSGDP &lt;-<span class="st"> </span><span class="kw">nowcast</span>(<span class="dt">y =</span> gdp, <span class="dt">x =</span> base, <span class="dt">r =</span> <span class="dv">2</span>, <span class="dt">p =</span> <span class="dv">2</span>, <span class="dt">q =</span> <span class="dv">2</span>, <span class="dt">method =</span> <span class="st">'2sq'</span>)</code></pre></div>
+<p>To see the results of the forecasts in the object <code>nowcastUSGDP</code>, use <code>$yfcst</code> as shown below.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tail</span>(nowcastUSGDP$yfcst,<span class="dv">8</span>)
+<span class="co">#&gt;                y       in      out</span>
+<span class="co">#&gt; [101,] 0.6009174 2.284566       NA</span>
+<span class="co">#&gt; [102,] 3.8211850 3.626276       NA</span>
+<span class="co">#&gt; [103,] 4.9076300 3.036707       NA</span>
+<span class="co">#&gt; [104,]        NA       NA 1.535304</span>
+<span class="co">#&gt; [105,]        NA       NA 1.939437</span>
+<span class="co">#&gt; [106,]        NA       NA 2.599265</span>
+<span class="co">#&gt; [107,]        NA       NA 3.098508</span>
+<span class="co">#&gt; [108,]        NA       NA 3.310832</span></code></pre></div>
+<p>The regression between <span class="math inline">\(y_{t}\)</span> and its factors can be accessed using <code>$reg</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(nowcastUSGDP$reg)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt; stats::lm(formula = Y ~ .)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residuals:</span>
+<span class="co">#&gt;    Min     1Q Median     3Q    Max </span>
+<span class="co">#&gt; -9.344 -1.083 -0.101  1.213  3.999 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt;             Estimate Std. Error t value Pr(&gt;|t|)    </span>
+<span class="co">#&gt; (Intercept)  3.16733    0.17910  17.684  &lt; 2e-16 ***</span>
+<span class="co">#&gt; Factor1     -0.24727    0.02730  -9.058 1.15e-14 ***</span>
+<span class="co">#&gt; Factor2     -0.10122    0.04066  -2.490   0.0144 *  </span>
+<span class="co">#&gt; ---</span>
+<span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Residual standard error: 1.818 on 100 degrees of freedom</span>
+<span class="co">#&gt; Multiple R-squared:  0.4678, Adjusted R-squared:  0.4571 </span>
+<span class="co">#&gt; F-statistic: 43.95 on 2 and 100 DF,  p-value: 2.015e-14</span></code></pre></div>
+<p>All the results related to the estimation of factors are in <code>$factors</code>, including the parameters of the matrices <span class="math inline">\(\Lambda\)</span> and <span class="math inline">\(A\)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tail</span>(nowcastUSGDP$factors$dynamic_factors) <span class="co"># factors</span>
+<span class="co">#&gt;            Factor1    Factor2</span>
+<span class="co">#&gt; [319,]  1.79833236 -0.7210868</span>
+<span class="co">#&gt; [320,]  1.23338245 -0.9988295</span>
+<span class="co">#&gt; [321,]  0.73142855 -1.1068040</span>
+<span class="co">#&gt; [322,]  0.31256984 -1.0856223</span>
+<span class="co">#&gt; [323,] -0.01403806 -0.9750509</span>
+<span class="co">#&gt; [324,] -0.24843879 -0.8107611</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(nowcastUSGDP$factors$Lambda) <span class="co"># Lambda matrix</span>
+<span class="co">#&gt;             [,1]         [,2] [,3] [,4]</span>
+<span class="co">#&gt; [1,] -0.14233507 -0.020936319    0    0</span>
+<span class="co">#&gt; [2,] -0.13842212 -0.015793661    0    0</span>
+<span class="co">#&gt; [3,] -0.13305379 -0.008361756    0    0</span>
+<span class="co">#&gt; [4,] -0.10157807 -0.078476098    0    0</span>
+<span class="co">#&gt; [5,] -0.08749173 -0.115094225    0    0</span>
+<span class="co">#&gt; [6,] -0.05322142  0.012584014    0    0</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nowcastUSGDP$factors$A <span class="co"># A matrix</span>
+<span class="co">#&gt;            [,1]     [,2]        [,3]        [,4]</span>
+<span class="co">#&gt; [1,]  1.5138170 0.139723 -0.58823506 -0.08558581</span>
+<span class="co">#&gt; [2,] -0.0929076 1.427757  0.03054017 -0.52552766</span>
+<span class="co">#&gt; [3,]  1.0000000 0.000000  0.00000000  0.00000000</span>
+<span class="co">#&gt; [4,]  0.0000000 1.000000  0.00000000  0.00000000</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nowcastUSGDP$factors$BB <span class="co"># BB': u's variance covariance matrix (factor equation)</span>
+<span class="co">#&gt;          [,1]     [,2] [,3] [,4]</span>
+<span class="co">#&gt; [1,] 2.376824 0.609794    0    0</span>
+<span class="co">#&gt; [2,] 0.609794 1.486774    0    0</span>
+<span class="co">#&gt; [3,] 0.000000 0.000000    0    0</span>
+<span class="co">#&gt; [4,] 0.000000 0.000000    0    0</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">diag</span>(nowcastUSGDP$factors$Psi) <span class="co"># Psi: epsilon's variance covariance matrix (x equation)</span>
+<span class="co">#&gt;   [1] 0.1135847 0.1649078 0.2315912 0.4315107 0.4071337 0.8741530 0.2800942</span>
+<span class="co">#&gt;   [8] 0.1930132 0.2106603 0.5118796 0.1116028 0.1907345 0.4658632 0.7111314</span>
+<span class="co">#&gt;  [15] 0.9214302 0.7775944 0.1112917 0.5536911 0.6786327 0.1118641 0.1686930</span>
+<span class="co">#&gt;  [22] 0.1615510 0.1745885 0.2022369 0.5198511 0.6614398 0.9147364 0.6729693</span>
+<span class="co">#&gt;  [29] 0.1855062 0.3673747 0.3908449 0.8852849 0.2884821 0.9546668 0.6030005</span>
+<span class="co">#&gt;  [36] 0.8353589 0.5190143 0.5019118 0.3727603 0.2755581 0.2542745 0.1860872</span>
+<span class="co">#&gt;  [43] 0.7179069 0.5480765 0.2282466 0.2160994 0.5227394 0.4513421 0.3921346</span>
+<span class="co">#&gt;  [50] 0.9761266 0.5909246 0.3268932 0.9353908 0.4213491 0.9811001 0.7416240</span>
+<span class="co">#&gt;  [57] 0.8735751 0.9907360 0.5883989 0.4876322 0.3622018 0.4276851 0.4128513</span>
+<span class="co">#&gt;  [64] 0.2980122 0.3354873 0.6155957 0.6857877 0.5554315 0.9541086 0.8496294</span>
+<span class="co">#&gt;  [71] 0.8294278 0.8801722 0.9017821 0.8771314 0.9277155 0.7440839 0.7387240</span>
+<span class="co">#&gt;  [78] 0.8330914 0.7797745 0.8087174 0.8205937 0.6726198 0.6015099 0.4076363</span>
+<span class="co">#&gt;  [85] 0.4034059 0.3912564 0.8210912 0.7427962 0.7020844 0.7810996 0.4228685</span>
+<span class="co">#&gt;  [92] 0.7353640 0.4062836 0.6341445 0.4718304 0.6042581 0.8263418 0.7190999</span>
+<span class="co">#&gt;  [99] 0.9932572 0.8791409 0.8983621 0.8957653 0.9866457 0.9089848 0.8680749</span>
+<span class="co">#&gt; [106] 0.5686685 0.9769929 0.9849111 0.9925395 0.9763338 0.9994741 0.4222456</span>
+<span class="co">#&gt; [113] 0.4548482 0.3919269 0.4304068 0.5976207 0.6235111 0.6397054 0.6644786</span>
+<span class="co">#&gt; [120] 0.7121378 0.6838890 0.7321933 0.9041541 0.9080900 0.9096887 0.8809949</span>
+<span class="co">#&gt; [127] 0.8979385 0.8632580 0.7665228 0.8261609 0.6992922 0.8943342 0.9266564</span>
+<span class="co">#&gt; [134] 0.9940144 0.9871401 0.7815066 0.9114781 0.7918707 0.7583290 0.8732971</span>
+<span class="co">#&gt; [141] 0.7804387 0.9178214 0.9661203 0.6527424 0.9433930 0.6011167 0.9458068</span>
+<span class="co">#&gt; [148] 0.7994000 0.7264563 0.7859880 0.9075244 0.6059131 0.6647842 0.6949798</span>
+<span class="co">#&gt; [155] 0.7124400 0.6639252 0.9787885 0.7734100 0.9489076 0.9699866 0.8169442</span>
+<span class="co">#&gt; [162] 0.9101309 0.7816267 0.9285399 0.9566519 0.9924783 0.9967147 0.8248663</span>
+<span class="co">#&gt; [169] 0.8792950 0.7181248 0.8807158 0.9108789 0.7374117 0.6230288 0.8521758</span>
+<span class="co">#&gt; [176] 0.6411177 0.7046277 0.5549889 0.6281198 0.6089288 0.9242696 0.6351843</span>
+<span class="co">#&gt; [183] 0.7068291 0.7103346 0.5432538 0.5450166 0.9143520 0.1634248 0.8470186</span></code></pre></div>
+<p>The forecasts of the explanatory variables are in <code>$xfcst</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tail</span>(nowcastUSGDP$xfcst[,<span class="dv">1</span>:<span class="dv">5</span>]) <span class="co"># x forecasts (first 5 variables)</span>
+<span class="co">#&gt;             IPTOT      IPFPS       IPFP       IPCG      IPDCG</span>
+<span class="co">#&gt; [319,] 0.01443309 0.01459863 0.01442854 0.01419748 0.02645144</span>
+<span class="co">#&gt; [320,] 0.01711271 0.01684008 0.01659327 0.01610589 0.03207878</span>
+<span class="co">#&gt; [321,] 0.01940322 0.01877210 0.01848419 0.01753897 0.03597420</span>
+<span class="co">#&gt; [322,] 0.02124216 0.02033659 0.02003610 0.01852434 0.03833926</span>
+<span class="co">#&gt; [323,] 0.02261488 0.02151620 0.02122423 0.01911480 0.03943503</span>
+<span class="co">#&gt; [324,] 0.02354480 0.02232637 0.02205710 0.01937791 0.03954560</span></code></pre></div>
+<p>The graphs available with the <code>nowcast.plot</code> function are shown below. These allow the forecast of the variable of interest and the estimated factors to be easily viewed. The graphs show how much of the variability in the dataset is explained by each factor and the importance of each variable in the first factor. Most of the variables have a negative weight.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nowcast.plot</span>(nowcastUSGDP, <span class="dt">type =</span> <span class="st">&quot;fcst&quot;</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nowcast.plot</span>(nowcastUSGDP, <span class="dt">type =</span> <span class="st">&quot;factors&quot;</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nowcast.plot</span>(nowcastUSGDP, <span class="dt">type =</span> <span class="st">&quot;eigenvalues&quot;</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">nowcast.plot</span>(nowcastUSGDP, <span class="dt">type =</span> <span class="st">&quot;eigenvectors&quot;</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="vintages" class="section level3">
+<h3>Vintages</h3>
+<p>Vintage in this context refers to the dataset observed on a specific date. It is useful to assess the performance of models with information published at different times and so reproduce the real past.</p>
+<p>The <strong>nowcasting</strong> package contains a dataset of very important Brazilian economic time series, which can be accessed with the <code>RTDB</code> function. If no argument is specified, the codes of all the available series are returned. The codes are the same as those used on the Central Bank of Brazil platform to download time series.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">RTDB</span>())
+<span class="co">#&gt;   series_code</span>
+<span class="co">#&gt; 1           1</span>
+<span class="co">#&gt; 2          12</span>
+<span class="co">#&gt; 3         188</span>
+<span class="co">#&gt; 4         189</span>
+<span class="co">#&gt; 5         192</span>
+<span class="co">#&gt; 6         193</span></code></pre></div>
+<p>If the user specifies the code of the series of interest, the dates of the available vintages will be returned. If only the date of the vintage is specified, the available codes will be returned. If both options are specified, the vintage for the chosen series will be returned.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">RTDB</span>(<span class="dt">series_code =</span> <span class="dv">1</span>))  <span class="co"># serie 1: availables vintages</span>
+<span class="co">#&gt;     vintages</span>
+<span class="co">#&gt; 1 2017-04-04</span>
+<span class="co">#&gt; 2 2017-04-06</span>
+<span class="co">#&gt; 3 2017-04-11</span>
+<span class="co">#&gt; 4 2017-05-04</span>
+<span class="co">#&gt; 5 2017-05-15</span>
+<span class="co">#&gt; 6 2017-05-22</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"> <span class="kw">head</span>(<span class="kw">RTDB</span>(<span class="dt">vintage =</span> <span class="st">&quot;2017-04-04&quot;</span>)) <span class="co"># vintage 2017-04-04: availables series</span>
+<span class="co">#&gt;   series_code</span>
+<span class="co">#&gt; 1           1</span>
+<span class="co">#&gt; 2          12</span>
+<span class="co">#&gt; 3         188</span>
+<span class="co">#&gt; 4         189</span>
+<span class="co">#&gt; 5         192</span>
+<span class="co">#&gt; 6         193</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tail</span>(<span class="kw">RTDB</span>(<span class="dt">series_code =</span> <span class="dv">1</span>, <span class="dt">vintage =</span> <span class="st">&quot;2017-04-04&quot;</span>)) <span class="co"># serie 1, vintage 2017-04-04: data</span>
+<span class="co">#&gt; [1] &quot;3.185845&quot;         &quot;3.34203&quot;          &quot;3.35226818181818&quot;</span>
+<span class="co">#&gt; [4] &quot;3.19660909090909&quot; &quot;3.10419444444444&quot; &quot;3.12793043478261&quot;</span></code></pre></div>
+<p>The <code>PRTDB</code> function is intended to simulate the vintages of any dataset. The function only excludes observations from the time series based on lag information provided by the user and simulates what would be observed on the reference date.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tail</span>(BRGDP)
+<span class="co">#&gt;          serie1    serie12 serie1373 serie1453 serie1455 serie4394</span>
+<span class="co">#&gt; [275,] 3.209509 0.04188600    250872   1856132      89.4     66.45</span>
+<span class="co">#&gt; [276,] 3.295367 0.03833400    212328   1877652      88.2     70.81</span>
+<span class="co">#&gt; [277,] 3.206138 0.03781671    225518   1829733      89.9     73.52</span>
+<span class="co">#&gt; [278,] 3.150917 0.03471300    260349   1871347        NA     69.31</span>
+<span class="co">#&gt; [279,] 3.134790 0.03178980        NA        NA        NA     70.10</span>
+<span class="co">#&gt; [280,] 3.157200 0.03105900        NA        NA        NA        NA</span>
+<span class="co">#&gt;        serie21859 serie22099</span>
+<span class="co">#&gt; [275,]       90.1         NA</span>
+<span class="co">#&gt; [276,]       88.4     163.25</span>
+<span class="co">#&gt; [277,]       92.3         NA</span>
+<span class="co">#&gt; [278,]       90.1         NA</span>
+<span class="co">#&gt; [279,]         NA         NA</span>
+<span class="co">#&gt; [280,]         NA         NA</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">tail</span>(<span class="kw">PRTDB</span>(<span class="dt">mts =</span> BRGDP, <span class="dt">delay =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">30</span>,<span class="dv">60</span>,<span class="dv">90</span>,<span class="dv">20</span>,<span class="dv">10</span>,<span class="dv">30</span>,<span class="dv">60</span>), <span class="dt">vintage =</span> <span class="st">&quot;2017-10-01&quot;</span>))
+<span class="co">#&gt;          serie1    serie12 serie1373 serie1453 serie1455 serie4394</span>
+<span class="co">#&gt; [275,] 3.209509 0.04188600    250872   1856132      89.4     66.45</span>
+<span class="co">#&gt; [276,] 3.295367 0.03833400    212328   1877652      88.2     70.81</span>
+<span class="co">#&gt; [277,] 3.206138 0.03781671    225518        NA      89.9     73.52</span>
+<span class="co">#&gt; [278,] 3.150917 0.03471300        NA        NA        NA     69.31</span>
+<span class="co">#&gt; [279,] 3.134790         NA        NA        NA        NA        NA</span>
+<span class="co">#&gt; [280,]       NA         NA        NA        NA        NA        NA</span>
+<span class="co">#&gt;        serie21859 serie22099</span>
+<span class="co">#&gt; [275,]       90.1         NA</span>
+<span class="co">#&gt; [276,]       88.4     163.25</span>
+<span class="co">#&gt; [277,]       92.3         NA</span>
+<span class="co">#&gt; [278,]       90.1         NA</span>
+<span class="co">#&gt; [279,]         NA         NA</span>
+<span class="co">#&gt; [280,]         NA         NA</span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
