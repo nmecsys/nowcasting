@@ -26,11 +26,12 @@
 #'   
 #'   \item{trans = 5: year difference
 #'   
-#'   \deqn{(x_{i,t} - x_{i,t-12})}
+#'   \deqn{(x_{i,t} - x_{i,t-12})}}
 #'   
 #'   \item{trans = 6: year-over-year rate of change
 #'   
-#'   \deqn{\frac{x_{i,t} - x_{i,t-12}}{x_{i,t-12}}} 
+#'   \deqn{\frac{x_{i,t} - x_{i,t-12}}{x_{i,t-12}}}}
+#'  } 
 #' 
 #' @param aggregate A \code{boolean} representing if you want aggregate the monthly variables to represent quarterly quantities. If \code{TRUE} the aggregation is made following the approximation of \emph{Mariano and Murasawsa 2003}.
 #' @param k_ma A \code{numeric} representing the degree of the moving average correction.
