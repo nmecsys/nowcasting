@@ -7,6 +7,8 @@
 #' @param p AR order of factor model.
 #' @param method There are three options: \code{"2sq"}: "Two stages: quarterly factors" as in Giannone et al. 2008; \code{"2sm"}: "Two stages: monthly factors" as in Bańbura and Runstler 2011; \code{"EM"}: Expected Maximization as in Bańbura et al. 2011.
 #' @param blocks a binary matrix Nx3 that characterizes the regressors variables in global (1st column), nominal (2nd column) and real (3rd column). If \code{NULL}, the matrix assume 1 for all cells.
+#' @param oldFactorsParam a list containing estimated factors parameters from nowcast function.
+#' @param oldRegParam a list containing estimated regression parameters from nowcast function.
 #' @return A \code{list} containing two elements:
 #' 
 #' \item{yfcst}{the original \code{y} series and its in-sample and out-of-sample estimations.}
@@ -62,16 +64,19 @@
 #' @seealso \code{\link[nowcasting]{base_extraction}}
 #' @export
 
-nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method='2sq', blocks = NULL){
+nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method='2sq', blocks = NULL, oldFactorsParam = NULL, oldRegParam = NULL){
 
   if(is.null(q) | is.null(r) | is.null(p)){
     warnings('Parameters q, r and p must be specified.')
   }
   
   if(method=='2sq'){
-    factors <- FactorExtraction(x, q = q, r = r, p = p)
+    factors <- FactorExtraction(x, q = q, r = r, p = p, A = oldFactorsParam$A, C = oldFactorsParam$Lambda, 
+                                Q = oldFactorsParam$BB, R = oldFactorsParam$Psi,
+                                initx = oldFactorsParam$initx, initV = oldFactorsParam$initV,
+                                ss = oldFactorsParam$std, MM = oldFactorsParam$mean, a = oldFactorsParam$eigen)
     fatores <- factors$dynamic_factors
-    prev <- bridge(y,fatores)
+    prev <- bridge(y,fatores,oldRegParam)
 
     # voltar da padronização
     fit <- as.matrix(factors$dynamic_factors) %*% t(factors$eigen$vectors[,1:r])
@@ -90,19 +95,27 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method='2sq', blocks = N
       fore_x[is.na(fore_x[,i]),i] <- x1[is.na(fore_x[,i]),i]
     }
  
-    names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV","eigen")
+    names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV","eigen","std","mean")
     res <-list(yfcst = prev$main, reg = prev$reg, factors = factors, xfcst = fore_x)
-    res$reg$call$data <- NULL
+    if(is.null(oldRegParam)){res$reg$call$data <- NULL}
 
   }else if(method=='2sm'){
-    factors <- FactorExtraction(x, q = q, r = r, p = p)
+    factors <- FactorExtraction(x, q = q, r = r, p = p, A = oldFactorsParam$A, C = oldFactorsParam$Lambda, 
+                                Q = oldFactorsParam$BB, R = oldFactorsParam$Psi,
+                                initx = oldFactorsParam$initx, initV = oldFactorsParam$initV,
+                                ss = oldFactorsParam$std, MM = oldFactorsParam$mean, a = oldFactorsParam$eigen)
+    
     fatores <- stats::filter(factors$dynamic_factors, c(1,2,3,2,1), sides = 1)
-    prev <- bridge(y,fatores)
+    prev <- bridge(y,fatores,oldRegParam)
     
     # aux_month<-prev$reg$coefficients*cbind(rep(1,length(zoo::as.Date(factors$dynamic_factors))),factors$dynamic_factors)
     # month_y<-ts(rowSums(aux_month),start=start(factors$dynamic_factors),freq=12)
     aux_fator_month<-cbind(rep(1/9,length(zoo::as.Date(factors$dynamic_factors))),factors$dynamic_factors)
-    month_y<-ts(aux_fator_month%*%prev$reg$coefficients,start=start(factors$dynamic_factors),frequency=12)
+    if(is.null(oldRegParam)){
+      month_y<-stats::ts(aux_fator_month%*%prev$reg$coefficients,start=start(factors$dynamic_factors),frequency=12)
+    }else{
+      month_y<-stats::ts(aux_fator_month%*%oldRegParam$coefficients,start=start(factors$dynamic_factors),frequency=12)
+    }
     
     # voltar da padronização
     fit <- as.matrix(factors$dynamic_factors) %*% t(factors$eigen$vectors[,1:r])
@@ -121,9 +134,9 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method='2sq', blocks = N
       fore_x[is.na(fore_x[,i]),i] <- x1[is.na(fore_x[,i]),i]
     }
     
-    names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV","eigen")
+    names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV","eigen","std","mean")
     res <- list(yfcst = prev$main, reg = prev$reg, factors = factors, xfcst = fore_x, month_y = month_y)
-    res$reg$call$data <- NULL
+    if(is.null(oldRegParam)){res$reg$call$data <- NULL}
     
   }else if(method=='EM'){
     

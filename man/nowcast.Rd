@@ -5,7 +5,7 @@
 \title{Nowcasting of a quarterly time series using a dynamic factor model.}
 \usage{
 nowcast(y, x, q = NULL, r = NULL, p = NULL, method = "2sq",
-  blocks = NULL)
+  blocks = NULL, oldFactorsParam = NULL, oldRegParam = NULL)
 }
 \arguments{
 \item{y}{Stationary quarterly time series.}
@@ -21,6 +21,10 @@ nowcast(y, x, q = NULL, r = NULL, p = NULL, method = "2sq",
 \item{method}{There are three options: \code{"2sq"}: "Two stages: quarterly factors" as in Giannone et al. 2008; \code{"2sm"}: "Two stages: monthly factors" as in Bańbura and Runstler 2011; \code{"EM"}: Expected Maximization as in Bańbura et al. 2011.}
 
 \item{blocks}{a binary matrix Nx3 that characterizes the regressors variables in global (1st column), nominal (2nd column) and real (3rd column). If \code{NULL}, the matrix assume 1 for all cells.}
+
+\item{oldFactorsParam}{a list containing estimated factors parameters from nowcast function.}
+
+\item{oldRegParam}{a list containing estimated regression parameters from nowcast function.}
 }
 \value{
 A \code{list} containing two elements:
