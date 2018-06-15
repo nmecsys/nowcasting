@@ -1,7 +1,7 @@
 #' @importFrom stats cov end fitted lm median na.omit predict quantile sd start ts tsp window as.ts frequency
 #' @import zoo matlab corpcor
 
-bridge <- function(y,x){
+bridge <- function(y,x, oldRegParam){
   
   # y: ts (trimestral)
   # x: fatores (mensais - output da função FactorExtraction)
@@ -14,34 +14,45 @@ bridge <- function(y,x){
   
   
   # estimação do modelo de regressão
-  dados <- cbind(y, fatoresTRI)
+  dados <- cbind(y, window(fatoresTRI, start = start(y), freq = 4))
   colnames(dados) <- c("Y", paste0("Factor",1:ncol(data.frame(fatoresTRI))))
-  reg <- stats::lm(Y ~ ., data = na.omit(data.frame(dados)))
-  fit <- stats::ts(fitted(reg), end = end(na.omit(dados)), frequency = 4)
   
-  Qmax <- max(which(!is.na(dados[,1])))
-  edge<-zoo::as.Date(dados)[Qmax]
-  
-  # previsão
-  # newbase <- data.frame(dados[-(1:(Qmax-1)),-1])
-  newbase <- data.frame(dados[-(1:Qmax),-1])
-  colnames(newbase) <- paste0("Factor",1:ncol(data.frame(fatoresTRI)))
-  
-  ## função auxiliar
-  # tail.ts <- function(data,n) {
-  #   data <- as.ts(data)
-  #   window(data,start=tsp(data)[2]-(n-1)/frequency(data))
-  # }
-  
-  # ano<-as.numeric(substr(edge,1,4))
-  # tri<-as.numeric(substr(quarters(edge),2,2))
-  ano<-as.numeric(substr(edge+months(3),1,4))
-  tri<-as.numeric(substr(quarters(edge+months(3)),2,2))
-  
-  prev <- stats::ts(predict(object = reg, newdata = newbase),
-                    start = c(ano,tri),
-                    frequency = 4) 
-  
+  if(is.null(oldRegParam)){
+    reg <- stats::lm(Y ~ ., data = na.omit(data.frame(dados)))
+    fit <- stats::ts(fitted(reg), end = end(na.omit(dados)), frequency = 4)
+    
+    Qmax <- max(which(!is.na(dados[,1])))
+    edge<-zoo::as.Date(dados)[Qmax]
+    
+    # previsão
+    # newbase <- data.frame(dados[-(1:(Qmax-1)),-1])
+    newbase <- data.frame(dados[-(1:Qmax),-1])
+    colnames(newbase) <- paste0("Factor",1:ncol(data.frame(fatoresTRI)))
+    
+    ## função auxiliar
+    # tail.ts <- function(data,n) {
+    #   data <- as.ts(data)
+    #   window(data,start=tsp(data)[2]-(n-1)/frequency(data))
+    # }
+    
+    # ano<-as.numeric(substr(edge,1,4))
+    # tri<-as.numeric(substr(quarters(edge),2,2))
+    ano<-as.numeric(substr(edge+months(3),1,4))
+    tri<-as.numeric(substr(quarters(edge+months(3)),2,2))
+    
+    prev <- stats::ts(stats::predict(object = reg, newdata = newbase),
+                      start = c(ano,tri),
+                      frequency = 4) 
+  }else{
+    
+    X0 <-  as.matrix(cbind(1,na.omit(dados)[,-1]))
+    X1 <-  as.matrix(cbind(1,dados[is.na(dados[,1]),-1]))
+    
+    fit <- stats::ts(X0 %*% oldRegParam$coefficients, start = start(dados), freq = 4) 
+    prev <- stats::ts(X1 %*% oldRegParam$coefficients, end = end(dados), freq = 4) 
+    
+    reg <- NULL
+  }
   dados_pib<-cbind(y,fit,prev)
   
   colnames(dados_pib) <- c("y", "in","out")
@@ -54,7 +65,7 @@ bridge <- function(y,x){
 FactorExtraction <- function(x = NULL,q = NULL,r = NULL,p = NULL, 
                              A = NULL,C = NULL,Q = NULL,R = NULL,
                              initx = NULL, initV = NULL,
-                             ss = NULL, MM = NULL, n.prevs = NULL){
+                             ss = NULL, MM = NULL, a = NULL, n.prevs = NULL){
   
   # The model
   # x_t = C F_t + \xi_t
@@ -101,16 +112,16 @@ FactorExtraction <- function(x = NULL,q = NULL,r = NULL,p = NULL,
   n.arg <- sum(c(!is.null(x),!is.null(q),!is.null(r),!is.null(p),
                  !is.null(A),!is.null(C),!is.null(Q),!is.null(R),
                  !is.null(initx), !is.null(initV), 
-                 !is.null(ss), !is.null(MM)))
+                 !is.null(ss), !is.null(MM), !is.null(a)))
   
   if(n.arg < 5){ # Estimate parameters if they are not inputed
     
     z <- x[1:(TT - m),]      # ONLY complete information for PCA
-    s <- apply(z, MARGIN = 2, FUN = sd)
-    M <- apply(z, MARGIN = 2, FUN = mean)
+    ss <- apply(z, MARGIN = 2, FUN = sd)
+    MM <- apply(z, MARGIN = 2, FUN = mean)
     
     for(i in 1:N){
-      x[,i] <- (x[,i] - M[i])/s[i]
+      x[,i] <- (x[,i] - MM[i])/ss[i]
     }
     z <- x[1:(TT - m),]
     
@@ -177,7 +188,7 @@ FactorExtraction <- function(x = NULL,q = NULL,r = NULL,p = NULL,
   if(p > 1){
     fatoresTS <- fatoresTS[,1:r]
   }
-  list(dynamic_factors = fatoresTS,A = A,C = C,Q = Q,R =  R,initx =  initx,initV =  initV,eigen = a)
+  list(dynamic_factors = fatoresTS,A = A,C = C,Q = Q,R =  R,initx =  initx,initV =  initV,eigen = a, ss = ss, MM = MM)
 }
 
 
@@ -491,12 +502,12 @@ pcatodfm <- function(x, q, r, p){
   # finalx2 = z
   # x = z
   x <- as.matrix(x)
-  Mx <- colMeans(x)
-  Wx <- apply(x, MARGIN = 2, FUN = sd)
-  
-  for(i in 1:ncol(x)){
-    x[,i] <- (x[,i] - Mx[i])/Wx[i]
-  }
+  # Mx <- colMeans(x)
+  # Wx <- apply(x, MARGIN = 2, FUN = sd)
+  # 
+  # for(i in 1:ncol(x)){
+  #   x[,i] <- (x[,i] - Mx[i])/Wx[i]
+  # }
   
   # tamanho da base
   TT <- nrow(x)
