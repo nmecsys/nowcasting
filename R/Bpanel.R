@@ -52,6 +52,10 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k_ma = 3){
     stop('trans can not to be NULL')
   }
   
+  if(length(trans) != ncol(base)){
+    stop('the number of elements in the vector must be equal to the number of columns of base')
+  }
+  
   # Transformar os dados de acordo com a especificação dada
   base1<-base
   for(j in 1:dim(base)[2]){
