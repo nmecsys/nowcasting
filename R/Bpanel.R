@@ -128,11 +128,16 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k_ma = 3){
   }
   
   # nao substituir nas ultimas 12 linhas (por que as informações recentes são NA pelo timeless)
-  base4<-base3
-  if (sum(SerOk)==1){
-    base4[1:(length(base4)-12)] <- base3[1:(length(base4)-12)] 
-  } else if (sum(SerOk)>1){
-    base4[1:(nrow(base4)-12),] <- base3[1:(nrow(base4)-12),]
+  base4 <- base3
+  n <- nrow(base2)
+  if(sum(SerOk) == 1){
+    na <- which(is.na(base2))
+    base4[na[which( na > n-12)]] <- NA
+  }else if(sum(SerOk)>1){
+    for(i in 1:ncol(base4)){
+      na <- which(is.na(base2[,i]))
+      base4[na[which( na > n-12)],i] <- NA
+    }
   }
   
   
