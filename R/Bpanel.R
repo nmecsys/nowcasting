@@ -83,11 +83,11 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k_ma = 3){
     }
   }
   
- 
+  
   
   # transformação de diferença mensal/variação em trimestral
   if (aggregate==T){
-  base1<-stats::filter(base1, c(1,2,3,2,1), sides = 1)
+    base1<-stats::filter(base1, c(1,2,3,2,1), sides = 1)
   }
   colnames(base1)<-colnames(base)
   # fazer a amostra iniciar sempre no primeiro mês do trimestre (Por que?)
@@ -108,7 +108,7 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k_ma = 3){
   base2 <- base1[, which(SerOk)]
   
   if (sum(!SerOk)>0){
-  warning(paste(sum(!SerOk),'series ruled out due to lack in observations (more than 1/3 is NA).'))
+    warning(paste(sum(!SerOk),'series ruled out due to lack in observations (more than 1/3 is NA).'))
   }
   
   seriesdeletadas<-colnames(base1[, which(!SerOk)])
@@ -122,25 +122,25 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k_ma = 3){
   if (sum(SerOk)==1){
     base3<-outliers_correction(base2,k_ma)
   } else if (sum(SerOk)>1){
-  for(i in 1:dim(base2)[2]){
-    base3[,i] <- outliers_correction(base2[,i],k_ma)
-  }
+    for(i in 1:dim(base2)[2]){
+      base3[,i] <- outliers_correction(base2[,i],k_ma)
+    }
   }
   
   # nao substituir nas ultimas 12 linhas (por que as informações recentes são NA pelo timeless)
-  base4<-base2
+  base4<-base3
   if (sum(SerOk)==1){
-  base4[1:(length(base4)-12)] <- base3[1:(length(base4)-12)] 
+    base4[1:(length(base4)-12)] <- base3[1:(length(base4)-12)] 
   } else if (sum(SerOk)>1){
-  base4[1:(nrow(base4)-12),] <- base3[1:(nrow(base4)-12),]
+    base4[1:(nrow(base4)-12),] <- base3[1:(nrow(base4)-12),]
   }
   
   
   base5<-ts(rbind(base4,matrix(NA, nrow = 12, ncol = dim(base4)[2]))
-     ,start=start(base4)
-     ,frequency = frequency(base4))
+            ,start=start(base4)
+            ,frequency = frequency(base4))
   
   
   return(base5)
-  }
-  
+}
+
