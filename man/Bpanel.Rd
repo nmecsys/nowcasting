@@ -4,7 +4,8 @@
 \alias{Bpanel}
 \title{Balanced panel}
 \usage{
-Bpanel(base = NULL, trans = NULL, aggregate = F, k_ma = 3)
+Bpanel(base = NULL, trans = NULL, aggregate = F, k_ma = 3,
+  na.prop = 1/3)
 }
 \arguments{
 \item{base}{A \code{mts} with the series to be transformed.}
@@ -29,11 +30,11 @@ Bpanel(base = NULL, trans = NULL, aggregate = F, k_ma = 3)
   
   \deqn{(x_{i,t} - x_{i,t-12})  -  (x_{i,t-1} - x_{i,t-13})}}
   
-  \item{trans = 5: year difference
+  \item{trans = 5: yearly difference
   
   \deqn{(x_{i,t} - x_{i,t-12})}}
   
-  \item{trans = 6: year-over-year rate of change
+  \item{trans = 6: yearly rate of change
   
   \deqn{\frac{x_{i,t} - x_{i,t-12}}{x_{i,t-12}}}}
  }}
@@ -41,6 +42,8 @@ Bpanel(base = NULL, trans = NULL, aggregate = F, k_ma = 3)
 \item{aggregate}{A \code{boolean} representing if you want aggregate the monthly variables to represent quarterly quantities. If \code{TRUE} the aggregation is made following the approximation of \emph{Mariano and Murasawsa 2003}.}
 
 \item{k_ma}{A \code{numeric} representing the degree of the moving average correction.}
+
+\item{na.prop}{A \code{numeric} representing the proportion of NA allowed. Default is 1/3.}
 }
 \description{
 This function transforms the original monthly time series to its stationary representation following the user specification. The time series with more than 1/3 missing, i.e. NAs, are deleted and the remaining are modified such that the missings and outliers are replaced by an approximated value.

@@ -24,17 +24,18 @@
 #'   
 #'   \deqn{(x_{i,t} - x_{i,t-12})  -  (x_{i,t-1} - x_{i,t-13})}}
 #'   
-#'   \item{trans = 5: year difference
+#'   \item{trans = 5: yearly difference
 #'   
 #'   \deqn{(x_{i,t} - x_{i,t-12})}}
 #'   
-#'   \item{trans = 6: year-over-year rate of change
+#'   \item{trans = 6: yearly rate of change
 #'   
 #'   \deqn{\frac{x_{i,t} - x_{i,t-12}}{x_{i,t-12}}}}
 #'  } 
 #' 
 #' @param aggregate A \code{boolean} representing if you want aggregate the monthly variables to represent quarterly quantities. If \code{TRUE} the aggregation is made following the approximation of \emph{Mariano and Murasawsa 2003}.
 #' @param k_ma A \code{numeric} representing the degree of the moving average correction.
+#' @param na.prop A \code{numeric} representing the proportion of NA allowed. Default is 1/3.
 #' @references Giannone, D., Reichlin, L., & Small, D. (2008). Nowcasting: The real-time informational content of macroeconomic data. Journal of Monetary Economics, 55(4), 665-676.<doi:10.1016/j.jmoneco.2008.05.010>
 #' 
 #' Mariano, R. S., & Murasawa, Y. (2003). A new coincident index of business cycles based on monthly and quarterly series. Journal of applied Econometrics, 18(4), 427-443.<doi:10.1002/jae.695>
@@ -46,7 +47,7 @@
 #' @export
 
 
-Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k_ma = 3){
+Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k_ma = 3, na.prop = 1/3){
   
   if(is.null(trans)){
     stop('trans can not to be NULL')
@@ -54,6 +55,10 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k_ma = 3){
   
   if(length(trans) != ncol(base)){
     stop('the number of elements in the vector must be equal to the number of columns of base')
+  }
+  
+  if(na.prop <= 0 | na.prop >= 1){
+    stop("na.prop must be between 0 and 1.")
   }
   
   # Transformar os dados de acordo com a especificação dada
@@ -90,25 +95,13 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k_ma = 3){
     base1<-stats::filter(base1, c(1,2,3,2,1), sides = 1)
   }
   colnames(base1)<-colnames(base)
-  # fazer a amostra iniciar sempre no primeiro mês do trimestre (Por que?)
-  # if(time[1,2] %% 3 == 2){ # se a amostra começa no segundo mês do trimestre
-  #   X <- data.frame(X[3:nrow(X),])
-  #   dates <- data.frame(data = as.character(dates[3:nrow(dates),]))
-  #   time <- time[3:nrow(time),]
-  # }else if(time[1,2] %% 3 == 0){ # se a amostra começa no último mês do trimestre
-  #   X <-  data.frame(X[2:nrow(X),])
-  #   dates <- data.frame(data = as.character(dates[2:nrow(dates),]))
-  #   time <- time[2:nrow(time),]
-  # }
-  # colnames(X) <- nomes
-  
   
   # usar apenas as séries com menos de 1/3 de missings
-  SerOk <- colSums(is.na(base1)) < dim(base1)[1]/3
+  SerOk <- colSums(is.na(base1)) < dim(base1)[1] * na.prop
   base2 <- base1[, which(SerOk)]
   
   if (sum(!SerOk)>0){
-    warning(paste(sum(!SerOk),'series ruled out due to lack in observations (more than 1/3 is NA).'))
+    warning(paste(sum(!SerOk),'series ruled out due to lack in observations (more than', round(na.prop*100,2),'is NA).'))
   }
   
   seriesdeletadas<-colnames(base1[, which(!SerOk)])

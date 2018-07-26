@@ -4,10 +4,12 @@
 \alias{month2qtr}
 \title{Monthly to quarterly transformation}
 \usage{
-month2qtr(x)
+month2qtr(x, reference_month = 3)
 }
 \arguments{
 \item{x}{a \code{ts} or \code{mts} in monthly frequency}
+
+\item{reference_month}{an integer to define the reference month that will represent the quarter. Default is 3. The options are 1, 2 or 3.}
 }
 \value{
 The correspondent quarterly transformation.
