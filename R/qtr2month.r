@@ -8,14 +8,19 @@
 #' 
 #' qtr2month(brgdp) 
 #' 
-#' @import zoo
+#' @importFrom zoo as.Date
+#' @importFrom stats lag
 #' @export
 
-qtr2month<-function(x){
-  data<-zoo::as.Date(x)
-  datas<-seq(data[1],data[length(data)],by = 'months')
-  out_x<-ts(rep(NA,length(datas)),start=  as.numeric(c(substr(as.Date(x)[1],1,4),substr(as.Date(x)[1],6,7))),frequency = 12)
-  out_x[datas %in% data] <- x
-  out_x<-stats::lag(out_x,-2)
+qtr2month <- function(x){
+  data_q <- zoo::as.Date(x)
+  data_m <- seq(data_q[1], data_q[length(data_q)], by = 'months')
+  out_x <- ts(rep(NA,length(data_m)),
+              start =  as.numeric(c(substr(data_q[1],1,4), substr(data_q[1],6,7))),
+              frequency = 12)
+  out_x[data_m %in% data_q] <- x
+  out_x <- stats::lag(out_x, -2)
+  
+  # output
   return(out_x)
 }

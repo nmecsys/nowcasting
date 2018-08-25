@@ -9,7 +9,7 @@ month2qtr(x, reference_month = 3)
 \arguments{
 \item{x}{a \code{ts} or \code{mts} in monthly frequency}
 
-\item{reference_month}{an integer to define the reference month that will represent the quarter. Default is 3. The options are 1, 2 or 3.}
+\item{reference_month}{a vector to define the reference month that will represent the quarter. Default is 3. The options are 1, 2, 3 or 'mean'.}
 }
 \value{
 The correspondent quarterly transformation.

@@ -64,13 +64,13 @@
 #' @seealso \code{\link[nowcasting]{base_extraction}}
 #' @export
 
-nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method='2sq', blocks = NULL, oldFactorsParam = NULL, oldRegParam = NULL){
+nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method = '2sq', blocks = NULL, oldFactorsParam = NULL, oldRegParam = NULL){
 
   if(is.null(q) | is.null(r) | is.null(p)){
     warnings('Parameters q, r and p must be specified.')
   }
   
-  if(method=='2sq'){
+  if(method == '2sq'){
     factors <- FactorExtraction(x, q = q, r = r, p = p, A = oldFactorsParam$A, C = oldFactorsParam$Lambda, 
                                 Q = oldFactorsParam$BB, R = oldFactorsParam$Psi,
                                 initx = oldFactorsParam$initx, initV = oldFactorsParam$initV,
@@ -81,25 +81,23 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method='2sq', blocks = N
     # voltar da padronização
     fit <- as.matrix(factors$dynamic_factors) %*% t(factors$eigen$vectors[,1:r])
     colnames(fit) <- colnames(x)
-    s <- apply(x, MARGIN = 2, FUN = sd,na.rm=T)
-    M <- apply(x, MARGIN = 2, FUN = mean,na.rm=T)
-    # x <- x
-    # z <- x
-    # for(i in 1:dim(x)[2]){
-    #   z[,i] <- (x[,i] - M[i])/s[i]
-    # }
-    x1<-fit
-    fore_x<-x[,colnames(x) %in% colnames(fit)]
+    s <- apply(x, MARGIN = 2, FUN = sd, na.rm = T)
+    M <- apply(x, MARGIN = 2, FUN = mean, na.rm = T)
+    
+    x1 <- fit
+    fore_x <- x[,colnames(x) %in% colnames(fit)]
     for(i in colnames(fit)){
-      x1[,i]<-s[i]*fit[,i]+M[i]
-      fore_x[is.na(fore_x[,i]),i] <- x1[is.na(fore_x[,i]),i]
+      x1[,i] <- s[i] * fit[,i] + M[i]
+      fore_x[is.na(fore_x[,i]), i] <- x1[is.na(fore_x[,i]), i]
     }
  
     names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV","eigen","std","mean")
-    res <-list(yfcst = prev$main, reg = prev$reg, factors = factors, xfcst = fore_x)
-    if(is.null(oldRegParam)){res$reg$call$data <- NULL}
-
-  }else if(method=='2sm'){
+    res <- list(yfcst = prev$main, reg = prev$reg, factors = factors, xfcst = fore_x)
+    if(is.null(oldRegParam)){
+      res$reg$call$data <- NULL
+    }
+    
+  }else if(method == '2sm'){
     factors <- FactorExtraction(x, q = q, r = r, p = p, A = oldFactorsParam$A, C = oldFactorsParam$Lambda, 
                                 Q = oldFactorsParam$BB, R = oldFactorsParam$Psi,
                                 initx = oldFactorsParam$initx, initV = oldFactorsParam$initV,
@@ -108,13 +106,15 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method='2sq', blocks = N
     fatores <- stats::filter(factors$dynamic_factors, c(1,2,3,2,1), sides = 1)
     prev <- bridge(y,fatores,oldRegParam)
     
-    # aux_month<-prev$reg$coefficients*cbind(rep(1,length(zoo::as.Date(factors$dynamic_factors))),factors$dynamic_factors)
-    # month_y<-ts(rowSums(aux_month),start=start(factors$dynamic_factors),freq=12)
-    aux_fator_month<-cbind(rep(1/9,length(zoo::as.Date(factors$dynamic_factors))),factors$dynamic_factors)
+    aux_fator_month <- cbind(rep(1/9, length(zoo::as.Date(factors$dynamic_factors))),
+                             factors$dynamic_factors)
+    
     if(is.null(oldRegParam)){
-      month_y<-stats::ts(aux_fator_month%*%prev$reg$coefficients,start=start(factors$dynamic_factors),frequency=12)
+      month_y <- stats::ts(aux_fator_month %*% prev$reg$coefficients, 
+                           start = start(factors$dynamic_factors), frequency = 12)
     }else{
-      month_y<-stats::ts(aux_fator_month%*%oldRegParam$coefficients,start=start(factors$dynamic_factors),frequency=12)
+      month_y <- stats::ts(aux_fator_month %*% oldRegParam$coefficients,
+                           start = start(factors$dynamic_factors), frequency = 12)
     }
     
     # voltar da padronização
@@ -122,83 +122,76 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method='2sq', blocks = N
     colnames(fit) <- colnames(x)
     s <- apply(x, MARGIN = 2, FUN = sd,na.rm=T)
     M <- apply(x, MARGIN = 2, FUN = mean,na.rm=T)
-    # x <- x
-    # z <- x
-    # for(i in 1:dim(x)[2]){
-    #   z[,i] <- (x[,i] - M[i])/s[i]
-    # }
-    x1<-fit
-    fore_x<-x[,colnames(x) %in% colnames(fit)]
+   
+    x1 <- fit
+    fore_x <- x[,colnames(x) %in% colnames(fit)]
     for(i in colnames(fit)){
-      x1[,i]<-s[i]*fit[,i]+M[i]
-      fore_x[is.na(fore_x[,i]),i] <- x1[is.na(fore_x[,i]),i]
+      x1[,i] <- s[i] * fit[,i] + M[i]
+      fore_x[is.na(fore_x[,i]), i] <- x1[is.na(fore_x[,i]), i]
     }
     
     names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV","eigen","std","mean")
     res <- list(yfcst = prev$main, reg = prev$reg, factors = factors, xfcst = fore_x, month_y = month_y)
-    if(is.null(oldRegParam)){res$reg$call$data <- NULL}
+    if(is.null(oldRegParam)){
+      res$reg$call$data <- NULL
+    }
     
-  }else if(method=='EM'){
+  }else if(method == 'EM'){
     
     if(p > 5){
       stop('Parameter p must be less than 5.')
     }
     
-    # y1<-qtr2month(y)
-    # y1[rep(which(!is.na(y1)),each=2)-c(2,1)]<-rep(y1[!is.na(y1)],each=2)
-    # X<-cbind(x,y1)
-    X<-cbind(x,qtr2month(y))
+    X <- cbind(x, qtr2month(y))
     if(is.null(blocks)){
-      blocks<-matrix(rep(1,dim(X)[2]*3),dim(X)[2],3)
+      blocks <- matrix(rep(1,dim(X)[2]*3), dim(X)[2], 3)
     }
-    Par<-list(r=rep(r,3),p=p,max_iter=50,i_idio=c(rep(T,dim(x)[2]),F),
-              Rconstr = matrix(c(
-                c(2,3,2,1),
-                c(-1,0,0,0),
-                c(0,-1,0,0),
-                c(0,0,-1,0),
-                c(0,0,0,-1))
-                ,4,5),
-              q = matrix(rep(0,4),4,1),nQ = 1,
-              blocks = blocks)
-    Res<-EM_DFM_SS_block_idioQARMA_restrMQ(X,Par)
+    Par <- list(r = rep(r,3), p = p, max_iter = 50, i_idio = c(rep(T,dim(x)[2]), F),
+                Rconstr = matrix(c(
+                  c(2,3,2,1),
+                  c(-1,0,0,0),
+                  c(0,-1,0,0),
+                  c(0,0,-1,0),
+                  c(0,0,0,-1))
+                  ,4,5),
+                q = matrix(rep(0,4),4,1), nQ = 1,
+                blocks = blocks)
+    Res <- EM_DFM_SS_block_idioQARMA_restrMQ(X,Par)
     
-    factors<-list(
+    factors <- list(
       dynamic_factors = ts(Res$FF[,c(1:r, (r*5 + 1):(r*5 + r), (2*r*5 + 1):(2*r*5 + r))], start = start(x), frequency = 12),
       T = Res$A,
       Z = Res$C,
-      #xBart = ts(Res$X_sm, start = start(x), freq = 12),
-      #xt = ts(Res$X_sm[,-ncol(Res$X_sm)], start = start(x), freq = 12),
       muBar = Res$Mx,
       mu = Res$Mx[-length(Res$Mx)],
       sigma = Res$Wx,
       Q = Res$Q, R = Res$R, initx = Res$Z_0, initV = Res$V_0)
     
-    colnames(factors$dynamic_factors) <- c(paste0("globalFactor",1:r),paste0("nominalFactor",1:r),paste0("realFactor",1:r))
+    colnames(factors$dynamic_factors) <- c(paste0("globalFactor",1:r),
+                                           paste0("nominalFactor",1:r),
+                                           paste0("realFactor",1:r))
     
     
-    # fore_x<-ts(Res$X_sm[,-dim(Res$X_sm)[2]],start=start(X),frequency = 12)
-    fore_x<-ts(Res$X_sm,start=start(X),frequency = 12)
-    yprev<-month2qtr(ts(Res$X_sm[,dim(Res$X_sm)[2]],start=start(X),frequency = 12))
-    Y<-cbind(y,yprev,yprev)
-    Y[is.na(Y[,1]),2]<-NA
-    Y[!is.na(Y[,1]),3]<-NA
-    colnames(Y)<-c('y','in','out')
+    fore_x <- ts(Res$X_sm, start = start(X), frequency = 12)
+    yprev <- month2qtr(ts(Res$X_sm[,dim(Res$X_sm)[2]], start = start(X), frequency = 12))
+    Y <- cbind(y,yprev,yprev)
+    Y[is.na(Y[,1]),2] <- NA
+    Y[!is.na(Y[,1]),3] <- NA
+    colnames(Y) <- c('y','in','out')
     
-    ind<-c(1:r,1:r+r*5,1:r+r*5*2,dim(Res$C)[2]-4)
-    month_y<-ts(Res$Mx[length(Res$Mx)]/9+Res$FF[,ind]%*%Res$C[nrow(Res$C),ind]*Res$Wx[length(Res$Wx)],start=start(X),frequency = 12)
+    ind <- c(1:r, 1:r+r*5, 1:r+r*5*2, dim(Res$C)[2]-4)
+    month_y <- ts(Res$Mx[length(Res$Mx)]/9 + Res$FF[,ind] %*% Res$C[nrow(Res$C), ind] * Res$Wx[length(Res$Wx)], 
+                  start = start(X), frequency = 12)
     
-    # Essa é uma medida trimestral do PIB acumulado nos últimos três meses
-    # month_y<-ts(Res$X_sm[,dim(Res$X_sm)[2]],start=start(X),frequency = 12)
-    fore_x = fore_x[,-dim(fore_x)[2]]
-    colnames(fore_x)<-colnames(x)
+    # Essa é uma medida trimestral da variável y acumulada nos últimos três meses
+    fore_x <- fore_x[,-dim(fore_x)[2]]
+    colnames(fore_x) <- colnames(x)
     
-    #names(factors) <- c("dynamic_factors", "T", "Z","Q","R","initx","initV")
     res <- list(yfcst = Y, factors = factors, xfcst = fore_x, month_y = month_y)
     
   }
 
-
+  # output
   return(res)
   
 }
