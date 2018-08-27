@@ -18,8 +18,8 @@ qtr2month <- function(x, reference_month = 3, interpolation = NULL){
     stop("The reference_month should be 1,2 or 3")
   }
   
-  if(!as.ts(x)[1] | !as.xts(x)[1]){
-    stop("x should be a ts or xts object")
+  if(!as.ts(x)[1]){
+    stop("x should be a ts object")
   }
   
   data_q <- zoo::as.Date(x)
