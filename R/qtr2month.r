@@ -18,8 +18,12 @@ qtr2month <- function(x, reference_month = 3, interpolation = NULL){
     stop("The reference_month should be 1,2 or 3")
   }
   
-  if(!as.ts(x)[1]){
+  if(!is.ts(x)){
     stop("x should be a ts object")
+  }
+  
+  if(!is.null(dim(x))){
+    stop("x should be a single ts object")
   }
   
   data_q <- zoo::as.Date(x)
@@ -31,7 +35,7 @@ qtr2month <- function(x, reference_month = 3, interpolation = NULL){
   
   if(reference_month %in% c(2,3)){
     out_x <- stats::lag(out_x, -(reference_month-1))
-    data_q <- zoo::as.Date(x)
+    data_q <- zoo::as.Date(out_x)
     data_m <- seq(data_q[1], data_q[length(data_q)], by = 'months')
   }
   
