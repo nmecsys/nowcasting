@@ -12,7 +12,7 @@
 #' @importFrom stats lag approx
 #' @export
 
-qtr2month <- function(x, reference_month = 3, interpolation = NULL){
+qtr2month <- function(x, reference_month = 3, interpolation = FALSE){
   
   if(!reference_month %in% c(1,2,3)){
     stop("The reference_month should be 1,2 or 3")
