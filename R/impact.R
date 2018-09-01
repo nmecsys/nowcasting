@@ -21,16 +21,14 @@ impact <- function(out.old = NULL, out.new = NULL, Y.old = NULL, Y.new = NULL, p
 
   for(i in 1:length(period)){
     if(is.Date(as.Date(as.yearmon(period[i])) != TRUE)){
-      stop("The argument period should indicate in the form 'yyyy-mm'.")
+      stop("The argument period should have elements of the form 'yyyy-mm'.")
     }
   }
   
   if(length(period) == 1){
     begin <- as.Date(as.yearmon(period))
     end <- begin
-  }
-  
-  if(length(period) == 2){
+  }else if(length(period) == 2){
     begin <- as.Date(as.yearmon(period[1]))
     end <- as.Date(as.yearmon(period[2]))
   } else{
