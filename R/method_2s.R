@@ -4,19 +4,26 @@
 
 bridge <- function(y, x, oldRegParam){
   
-  # y: ts (quarterly)
+  # y: ts (quarterly or monthly)
   # x: factors (monthly - output from FactorExtraction)
   
+  if(!frequency(y) %in% c(4,12)){stop("y frequency must be 4 (quarterly) or 12 (monthly).")}
+  
   fatoresTS <- x
-  fatoresTRI <- month2qtr(fatoresTS)
+  
+  if(frequency(y) == 4){
+    fatoresTRI <- month2qtr(fatoresTS)
+  }else{
+    fatoresTRI <- fatoresTS
+  }
   
   # regression estimation
-  dados <- cbind(y, window(fatoresTRI, start = start(y), frequency = 4))
+  dados <- cbind(y, window(fatoresTRI, start = start(y), frequency = frequency(y)))
   colnames(dados) <- c("Y", paste0("Factor",1:ncol(data.frame(fatoresTRI))))
   
   if(is.null(oldRegParam)){
     reg <- stats::lm(Y ~ ., data = na.omit(data.frame(dados)))
-    fit <- stats::ts(fitted(reg), end = end(na.omit(dados)), frequency = 4)
+    fit <- stats::ts(fitted(reg), end = end(na.omit(dados)), frequency = frequency(y))
     
     Qmax <- max(which(!is.na(dados[,1])))
     edge <- zoo::as.Date(dados)[Qmax]
@@ -25,18 +32,23 @@ bridge <- function(y, x, oldRegParam){
     newbase <- data.frame(dados[-(1:Qmax),-1])
     colnames(newbase) <- paste0("Factor",1:ncol(data.frame(fatoresTRI)))
     
-    ano <- lubridate::year(edge + months(3))
-    tri <- lubridate::quarter(edge + months(3))
+    if(frequency(y) == 4){
+      ano <- lubridate::year(edge + months(3))
+      tri <- lubridate::quarter(edge + months(3))
+    }else{
+      ano <- lubridate::year(edge + months(1))
+      tri <- lubridate::month(edge + months(1))
+    }
     
     prev <- stats::ts(stats::predict(object = reg, newdata = newbase),
                       start = c(ano,tri),
-                      frequency = 4) 
+                      frequency = frequency(y)) 
   }else{
     X0 <-  as.matrix(cbind(1,na.omit(dados)[,-1]))
     X1 <-  as.matrix(cbind(1,dados[is.na(dados[,1]),-1]))
     
-    fit <- stats::ts(X0 %*% oldRegParam$coefficients, start = start(dados), freq = 4) 
-    prev <- stats::ts(X1 %*% oldRegParam$coefficients, end = end(dados), freq = 4) 
+    fit <- stats::ts(X0 %*% oldRegParam$coefficients, start = start(dados), frequency = frequency(y)) 
+    prev <- stats::ts(X1 %*% oldRegParam$coefficients, end = end(dados), frequency = frequency(y)) 
     
     reg <- NULL
   }
