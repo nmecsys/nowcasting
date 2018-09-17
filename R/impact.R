@@ -10,6 +10,7 @@
 #' \item{change}{the difference between Y.new and Y.old.}
 #' @references COLOCAR REFERENCIAS
 #' @import lubridate zoo
+#' @export
 
 impact <- function(out.old = NULL, out.new = NULL, Y.old = NULL, Y.new = NULL, period = NULL){
   
