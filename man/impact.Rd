@@ -2,7 +2,7 @@
 % Please edit documentation in R/impact.R
 \name{impact}
 \alias{impact}
-\title{Impact.}
+\title{Impact}
 \usage{
 impact(out.old = NULL, out.new = NULL, Y.old = NULL, Y.new = NULL,
   period = NULL)
@@ -20,12 +20,11 @@ impact(out.old = NULL, out.new = NULL, Y.old = NULL, Y.new = NULL,
 }
 \value{
 A \code{list} containing two elements:
-
 \item{impact}{the impact of each variable in the Y.new - Y.old change.}
-\item{change}{Y.new - Y.old.}
+\item{change}{the difference between Y.new and Y.old.}
 }
 \description{
-Estimate the impact ...
+Estimate the change between a previous forecasting and a new one.
 }
 \references{
 COLOCAR REFERENCIAS
