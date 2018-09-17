@@ -46,7 +46,9 @@ impact <- function(out.old = NULL, out.new = NULL, Y.old = NULL, Y.new = NULL, p
   X_old <- out.old$xfcst
   X_new <- out.new$xfcst
   coefficients_reg <- out.old$reg$coefficients[-1]
-  factor_loading <- out.old$factors$Lambda
+  factor_loading <- tryCatch(out.old$factors$Lambda[,1:ncol(out.old$factors$dynamic_factors)],
+                             error = function(e) out.old$factors$Lambda)
+  
   rownames(factor_loading) <- colnames(X_old)
   
   # consider only common variables from X_new and X_old
@@ -78,8 +80,10 @@ impact <- function(out.old = NULL, out.new = NULL, Y.old = NULL, Y.new = NULL, p
   X_new <- X_new[begin_pos:end_pos,] 
   X_old <- X_old[begin_pos:end_pos,] 
   X_diff <- X_new - X_old
-  colnames(X_diff) <- common_names
-  
+  if(length(period) == 1){
+    X_diff <- matrix(X_diff, nrow = 1)
+  }
+  colnames(X_diff) <- common_names  
   # identify variables that changed
   cd <- which(colSums(X_diff) != 0)
   
