@@ -100,7 +100,7 @@ impact <- function(out.old = NULL, out.new = NULL, Y.old = NULL, Y.new = NULL, p
   impact <- impact * (Y.new - Y.old) / total_impact
   
   # output
-  return(list(impact = data.frame(variable_name = common_names[cd], values = impact), 
+  return(list(impact = data.frame(variable_name = common_names[cd], impact = impact), 
               change = Y.new - Y.old))
   
 }
