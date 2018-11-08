@@ -9,7 +9,6 @@
 #' \item{IC}{A vector of values of the information criterium for all the tested number of factors.}
 #' 
 #' @references Bai, J., Ng, S. (2002). Determining the Number of Factors in Approximate Factor Models. Econometrica, 70(1), 191-221. <doi:10.1111/1468-0262.00273>
-#' @importFrom 
 #' @export
 
 IC_factors <- function(x, rmax = NULL, type = 2){
