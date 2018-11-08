@@ -135,7 +135,7 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k.ma = 3, na.prop =
   }
   
   # add h lines to base
-  base4 <- ts(rbind(base3, matrix(NA, nrow = 12, ncol = ncol(base3))),
+  base4 <- ts(rbind(base3, matrix(NA, nrow = h, ncol = ncol(base3))),
             start = start(base3), frequency = 12)
   
   # output

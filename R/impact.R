@@ -1,16 +1,16 @@
-#' @title Impact.
-#' @description Estimate the impact ...
+#' @title Impact
+#' @description Estimate the change between a previous forecasting and a new one.
 #' @param out.old an output from nowcast function (old).
 #' @param out.new another output from nowcast function (newer). 
 #' @param Y.old an \code{numeric} forecasting of y variable using informations in \code{out.old}.
 #' @param Y.new another \code{numeric} forecasting of y variable (newer) using informations in \code{out.new}.
 #' @param period a \code{character} vector reporting the period to evaluate the impact. The vector must have one or two positions to indicate the period range: "yyyy-mm" or c("yyyy-mm","yyyy-mm"). 
 #' @return A \code{list} containing two elements:
-#' 
 #' \item{impact}{the impact of each variable in the Y.new - Y.old change.}
-#' \item{change}{Y.new - Y.old.}
+#' \item{change}{the difference between Y.new and Y.old.}
 #' @references COLOCAR REFERENCIAS
 #' @import lubridate zoo
+#' @export
 
 impact <- function(out.old = NULL, out.new = NULL, Y.old = NULL, Y.new = NULL, period = NULL){
   
@@ -46,7 +46,9 @@ impact <- function(out.old = NULL, out.new = NULL, Y.old = NULL, Y.new = NULL, p
   X_old <- out.old$xfcst
   X_new <- out.new$xfcst
   coefficients_reg <- out.old$reg$coefficients[-1]
-  factor_loading <- out.old$factors$Lambda
+  factor_loading <- tryCatch(out.old$factors$Lambda[,1:ncol(out.old$factors$dynamic_factors)],
+                             error = function(e) out.old$factors$Lambda)
+  
   rownames(factor_loading) <- colnames(X_old)
   
   # consider only common variables from X_new and X_old
@@ -78,8 +80,10 @@ impact <- function(out.old = NULL, out.new = NULL, Y.old = NULL, Y.new = NULL, p
   X_new <- X_new[begin_pos:end_pos,] 
   X_old <- X_old[begin_pos:end_pos,] 
   X_diff <- X_new - X_old
-  colnames(X_diff) <- common_names
-  
+  if(length(period) == 1){
+    X_diff <- matrix(X_diff, nrow = 1)
+  }
+  colnames(X_diff) <- common_names  
   # identify variables that changed
   cd <- which(colSums(X_diff) != 0)
   
@@ -96,7 +100,7 @@ impact <- function(out.old = NULL, out.new = NULL, Y.old = NULL, Y.new = NULL, p
   impact <- impact * (Y.new - Y.old) / total_impact
   
   # output
-  return(list(impact = data.frame(variable_name = common_names[cd], values = impact), 
+  return(list(impact = data.frame(variable_name = common_names[cd], impact = impact), 
               change = Y.new - Y.old))
   
 }

@@ -4,10 +4,14 @@
 \alias{qtr2month}
 \title{Quarterly to monthly transformation}
 \usage{
-qtr2month(x)
+qtr2month(x, reference_month = 3, interpolation = FALSE)
 }
 \arguments{
 \item{x}{a \code{ts} or \code{mts} in quarterly frequency}
+
+\item{reference_month}{a integer to define the position of a quarter value in a quarter. Default is 3. The options are 1, 2 or 3.}
+
+\item{interpolation}{logical. The NA values can be estimated by linear interpolation (approx function from stats package). Default is FALSE.}
 }
 \value{
 The correpondent monthly transformation.

@@ -40,8 +40,9 @@ nowcast.plot <- function(out, type = "fcst"){
     graphics::par(mar=c(5.1, 4.1, 4.1, 5), xpd = F)
     graphics::plot(data[,"y"], xaxt = "n", main = "",  bty = "l",
          col = "#FFFFFF", ylab = "y unit", xlab = "Time")
-    graphics::grid(col = "#D9D9D9")
-    graphics::axis(1, at = seq(1,nrow(data),4), labels = substr(data[seq(1,nrow(data),4),"date"],1,7), las=1, cex = 0.7)
+    graphics::axis(1, at = seq(1,nrow(data),frequency(out$yfcst)), labels = substr(data[seq(1,nrow(data),frequency(out$yfcst)),"date"],1,7), las=1, cex = 0.7)
+    graphics::abline(v = seq(1,nrow(data),frequency(out$yfcst)), lty = 3, col = "#D9D9D9")
+    graphics::grid(col = "#D9D9D9", nx = NA, ny = NULL)
     graphics::lines(data[,"y"], type = "l", lty = 1, col = 1)
     graphics::lines(data[,"in."], type = "l", lty = 1, lwd = 2, col = "dodgerblue")
     graphics::lines(data[,"out"], type = "l", lty = 4, lwd = 2, col = "orangered")
