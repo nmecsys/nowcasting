@@ -11,6 +11,9 @@
 #' @export
 
 PRTDB<-function(mts, delay, vintage = Sys.Date()){
+  
+  if(!(is.mts(mts) || is.ts(mts))){stop("The input should be a ts or mts object")}
+  
   mts_new <- mts
   
   # define the last day of the month
@@ -20,11 +23,15 @@ PRTDB<-function(mts, delay, vintage = Sys.Date()){
   release<-lapply(1:length(delay),function(x) month_end+days(delay)[x])
   
   # Eliminate information not available until the day
-      for (i in 1:length(delay)){
-      mts_new[release[[i]]>vintage,i] <- NA
-      }
-  
-  mts_new <- ts(mts_new[!as.Date(mts_new)>vintage,],start=start(mts_new),frequency = frequency(mts_new))
+  if(is.mts(mts)){
+    for (i in 1:length(delay)){mts_new[release[[i]] > vintage, i] <- NA}
+    mts_new <- ts(mts_new[!as.Date(mts_new) > vintage, ], start = start(mts_new), 
+                  frequency = frequency(mts_new))
+  }else{
+    mts_new[release[[1]] > vintage] <- NA
+    mts_new <- ts(mts_new[!as.Date(mts_new) > vintage], start = start(mts_new), 
+                  frequency = frequency(mts_new))
+  }
   
   return(mts_new)
 }
