@@ -1,15 +1,16 @@
-#' @title Impact
-#' @description Estimate the change between a previous forecasting and a new one.
-#' @param out.old an output from nowcast function (old).
-#' @param out.new another output from nowcast function (newer). 
-#' @param Y.old an \code{numeric} forecasting of y variable using informations in \code{out.old}.
-#' @param Y.new another \code{numeric} forecasting of y variable (newer) using informations in \code{out.new}.
-#' @param period a \code{character} vector reporting the period to evaluate the impact. The vector must have one or two positions to indicate the period range: "yyyy-mm" or c("yyyy-mm","yyyy-mm"). 
-#' @return A \code{list} containing two elements:
-#' \item{impact}{the impact of each variable in the Y.new - Y.old change.}
-#' \item{change}{the difference between Y.new and Y.old.}
-#' @references COLOCAR REFERENCIAS
-#' @import lubridate zoo
+# #' @title Impact
+# #' @description Estimate the change between a previous forecasting and a new one.
+# #' @param out.old an output from nowcast function (old).
+# #' @param out.new another output from nowcast function (newer).
+# #' @param Y.old an \code{numeric} forecasting of y variable using informations in \code{out.old}.
+# #' @param Y.new another \code{numeric} forecasting of y variable (newer) using informations in \code{out.new}.
+# #' @param period a \code{character} vector reporting the period to evaluate the impact. The vector must have one or two positions to indicate the period range: "yyyy-mm" or c("yyyy-mm","yyyy-mm").
+# #' @return A \code{list} containing two elements:
+# #' \item{impact}{the impact of each variable in the Y.new - Y.old change.}
+# #' \item{change}{the difference between Y.new and Y.old.}
+# #' @references COLOCAR REFERENCIAS
+# #' @import lubridate zoo
+# #' @export
 
 impact <- function(out.old = NULL, out.new = NULL, Y.old = NULL, Y.new = NULL, period = NULL){
   
