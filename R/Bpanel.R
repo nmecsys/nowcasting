@@ -112,7 +112,7 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k.ma = 3, na.prop =
   }
   
   if(sum(!SerOk) > 0){
-    warning(paste(sum(!SerOk),'series ruled out due to lack in observations (more than', round(na.prop*100,2),'is NA).'))
+    warning(paste(sum(!SerOk),'series ruled out due to lack in observations (more than', round(na.prop*100,2),'% NA).'))
   }
   
   seriesdeletadas <- colnames(base1[, which(!SerOk)])

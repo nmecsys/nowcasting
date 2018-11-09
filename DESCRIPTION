@@ -16,7 +16,7 @@ BugReports: https://github.com/nmecsys/nowcasting/issues
 URL: https://github.com/nmecsys/nowcasting
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 NeedsCompilation: no
 Suggests: knitr,
     rmarkdown
