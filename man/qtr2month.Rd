@@ -21,8 +21,6 @@ It transforms a quarterly  time series in a monthly one. The values of the quart
 }
 \examples{
 # Selecting the quarterly GDP variable in BRGDP
-brgdp <- month2qtr(BRGDP[,ncol(BRGDP)])
-
-qtr2month(brgdp) 
+qtr2month(BRGDP$GDP) 
 
 }

@@ -42,7 +42,8 @@
 #' Mariano, R. S., & Murasawa, Y. (2003). A new coincident index of business cycles based on monthly and quarterly series. Journal of applied Econometrics, 18(4), 427-443.<doi:10.1002/jae.695>
 #' @examples 
 #' # Example from database BRGDP:
-#' Bpanel(BRGDP,rep(3,ncol(BRGDP)))
+#' data(BRGDP)
+#' Bpanel(BRGDP$base, rep(3,ncol(BRGDP$base)))
 #' @import zoo
 #' @importFrom stats filter lag
 #' @export

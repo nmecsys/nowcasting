@@ -30,7 +30,7 @@
 #' 
 #' @references Central Bank of Brazil
 #' 
-#' @export
+# #' @export
 
 
 base_extraction<-function(series_code){

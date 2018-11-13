@@ -6,9 +6,7 @@
 #' @return The correpondent monthly transformation.
 #' @examples 
 #' # Selecting the quarterly GDP variable in BRGDP
-#' brgdp <- month2qtr(BRGDP[,ncol(BRGDP)])
-#' 
-#' qtr2month(brgdp) 
+#' qtr2month(BRGDP$GDP) 
 #' 
 #' @importFrom zoo as.Date yearmon
 #' @importFrom stats lag approx is.ts

@@ -6,8 +6,9 @@
 #' @return A \code{mts} with the series transformed.
 #' @examples 
 #' # Pseudo Real Time Data Base from data base BRGDP
-#' PRTDB(mts = BRGDP, delay = c(1,30,60,90,20,10,30,60), vintage = "2017-10-01")
+#' PRTDB(mts = BRGDP$base, delay = BRGDP$delay, vintage = "2017-10-01")
 #' @import zoo lubridate
+#' @importFrom stats is.mts
 #' @export
 
 PRTDB<-function(mts, delay, vintage = Sys.Date()){

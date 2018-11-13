@@ -54,7 +54,8 @@ The missings and outliers are “corrected” following the same method availabl
 }
 \examples{
 # Example from database BRGDP:
-Bpanel(BRGDP,rep(3,ncol(BRGDP)))
+data(BRGDP)
+Bpanel(BRGDP$base, rep(3,ncol(BRGDP$base)))
 }
 \references{
 Giannone, D., Reichlin, L., & Small, D. (2008). Nowcasting: The real-time informational content of macroeconomic data. Journal of Monetary Economics, 55(4), 665-676.<doi:10.1016/j.jmoneco.2008.05.010>

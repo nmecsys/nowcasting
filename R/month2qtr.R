@@ -4,12 +4,11 @@
 #' @param reference_month a vector to define the reference month that will represent the quarter. Default is 3. The options are 1, 2, 3 or 'mean'.
 #' @return The correspondent quarterly transformation.
 #' @examples 
-#' # Selecting only last month of matrix time series BRGDP:
-#' month2qtr(BRGDP)
+#' # Selecting only the last month of time series IPCA:
+#' month2qtr(BRGDP$base[,"IPCA"])
 #' 
-#' # Vehicle production in the quarter from vehicle production in the month
-#' month2qtr(stats::filter(BRGDP[,3],c(1,1,1),sides=1))
-#' 
+#' # Selecting only the first month of time series IPCA:
+#' month2qtr(BRGDP$base[,"IPCA"], reference_month = 1)
 #' @import zoo
 #' @importFrom lubridate year quarter
 #' @importFrom xts xts apply.quarterly

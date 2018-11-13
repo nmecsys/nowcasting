@@ -21,5 +21,5 @@ Create a pseudo real time data base based on data and delays of disclosure stipu
 }
 \examples{
 # Pseudo Real Time Data Base from data base BRGDP
-PRTDB(mts = BRGDP, delay = c(1,30,60,90,20,10,30,60), vintage = "2017-10-01")
+PRTDB(mts = BRGDP$base, delay = BRGDP$delay, vintage = "2017-10-01")
 }
