@@ -17,8 +17,8 @@
 
 month2qtr <-  function (x, reference_month = 3){
   
-  if(!reference_month %in% c(1,2,3)){
-    stop("The reference_month should be 1,2 or 3")
+  if(!reference_month %in% c(1,2,3,"mean")){
+    stop("The reference_month should be either 1,2 or 3 or \"mean\"")
   }
   
   data <- zoo::as.Date(x)
