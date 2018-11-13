@@ -14,7 +14,7 @@
 #' @importFrom vars VARselect VAR
 #' @export
 
-IC_shocks<- function(x, delta = 0.1, m = 1, r = NULL, p = NULL){
+ICshocks<- function(x, delta = 0.1, m = 1, r = NULL, p = NULL){
   
   # Checking if the database does not have missing values
   x <- na.omit(x)

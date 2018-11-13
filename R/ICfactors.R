@@ -1,4 +1,4 @@
-#' @title Information criteria for number of factors in a factors model
+#' @title Information criteria for determining the number of factors in a factors model
 #' @description Minimizes the selected information criterion to determine the number of factors to be used in an approximate factor model.
 #' @param x a dataset;
 #' @param rmax a positive integer corresponding to the maximum number of factors for which the information criterion should be tested;
@@ -11,7 +11,7 @@
 #' @references Bai, J., Ng, S. (2002). Determining the Number of Factors in Approximate Factor Models. Econometrica, 70(1), 191-221. <doi:10.1111/1468-0262.00273>
 #' @export
 
-IC_factors <- function(x, rmax = NULL, type = 2){
+ICfactors <- function(x, rmax = NULL, type = 2){
   
   # The database does not have missing values
   x <- na.omit(x)
