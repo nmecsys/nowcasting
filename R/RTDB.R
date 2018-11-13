@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # #' @title Create Real Time Data Base
 # #' @description Create a time series matrix \code{mts} replicating the information available in a given date.
 # #' @param series_code vector with the series encoding following the Bacen (Banco Central do Brasil) standards.
@@ -17,6 +18,27 @@
 # #' }
 # #' @references Central Bank of Brazil
 # #' @export
+=======
+# @title Create Real Time Data Base
+# @description Create a time series matrix \code{mts} replicating the information available in a given date.
+# @param series_code vector with the series encoding following the Bacen (Banco Central do Brasil) standards.
+# @param vintage the vintage encoded by the day of the extraction
+# @import DBI RMySQL xts zoo
+# @importFrom stats ts
+# @examples
+# \dontrun{
+# # Show series available:
+# RTDB()
+# 
+# # Show vintages available for the series 1:
+# RTDB(series_code = 1)
+# 
+# # Show series 1 data at vintage 2017-04-04:
+# RTDB(series_code = 1, vintage = "2017-04-04")
+# }
+# @references Central Bank of Brazil
+# @export
+>>>>>>> 9a4dd10ce08de40411dbe3382053a487cd5c8451
 
 
 RTDB <- function(series_code = NULL, vintage = NULL){

@@ -3,16 +3,20 @@
 \docType{data}
 \name{BRGDP}
 \alias{BRGDP}
-\title{Real Time Data Base Extracted in 03/10/2017}
+\title{Real Time Database of 100 economic variables from 12/11/2018}
 \format{The format is:
-Time-Series [1:278, 1:7] from 1994 to 2018: 0.933 0.899 0.865 0.846 0.842 ...
-- attr(*, "dimnames")=List of 2
-..$ : NULL
-..$ : chr [1:7] "serie1" "serie12" "serie1373" "serie1453" ...}
+List of 4
+$ base : Time-Series [1:227, 1:100] from 2000 to 2019: NA NA NA NA NA NA NA NA NA NA ...
+..- attr(*, "dimnames")=List of 2
+.. ..$ : NULL
+.. ..$ : chr [1:100] "DIVIDA_6" "IBC_BR" "PMC_TOTAL" "PIM_BCONSND" ...
+$ trans: num [1:100] 5 3 3 3 3 3 3 3 3 3 ...
+$ delay: num [1:100] 14 42 42 42 42 42 35 35 35 35 ...
+$ GDP  : Time-Series [1:75] from 2000 to 2018: 106 110 114 114 110 ...}
 \usage{
 BRGDP
 }
 \description{
-This is a panel containing a piece of the information set of a specific date for Brazilian economic activity. The panel is formated as a matrix time series \code{mts} containing: Exchange rate - Free - United States dollar (1); Interest rate - CDI (12); Vehicles production (1373); Credit Sales Index (1453); Retail sales (1455); Current economic conditions index (4394); Industrial production, general index (21859); Quarterly GDP - observed data - GDP at market prices (22099).
+a list containing the database, a vector of transformation for the function Bpanel, a vector of delays for the function PRTDB, and the GDP time series.
 }
 \keyword{datasets}

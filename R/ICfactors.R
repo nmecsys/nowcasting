@@ -1,20 +1,20 @@
-#' @title Information criterium for number of factors
-#' @description Minimizes the selected information criterium to determine the number of factors to be used in an approximate factor model.
+#' @title Information criteria for determining the number of factors in a factors model
+#' @description Minimizes the selected information criterion to determine the number of factors to be used in an approximate factor model.
 #' @param x a dataset;
-#' @param rmax a positive integer corresponding to the maximum number of factors for which the information criterium should be tested;
-#' @param type a positive integer corresponding to the chosen information criterium (1,2,3). The default is 2.
+#' @param rmax a positive integer corresponding to the maximum number of factors for which the information criterion should be tested;
+#' @param type a positive integer corresponding to the chosen information criterion (1,2,3). The default is 2.
 #' @return A \code{list} containing two elements:
 #' 
-#' \item{r_star}{The number of factors minimizing the information criterium;}
-#' \item{IC}{A vector of values of the information criterium for all the tested number of factors.}
+#' \item{r_star}{The number of factors minimizing the information criterion;}
+#' \item{IC}{A vector of values of the information criterion for the number of factors within the selected range.}
 #' 
 #' @references Bai, J., Ng, S. (2002). Determining the Number of Factors in Approximate Factor Models. Econometrica, 70(1), 191-221. <doi:10.1111/1468-0262.00273>
 #' @export
 
-IC_factors <- function(x, rmax = NULL, type = 2){
+ICfactors <- function(x, rmax = NULL, type = 2){
   
-  # Checking if the database does not have missing values
-  if(sum(is.na(x))!=0){x <- na.omit(x)}
+  # The database does not have missing values
+  x <- na.omit(x)
   
   # checking if rmax is a positive integer
   if(is.null(rmax)){rmax = min(dim(x)[2],20)}
@@ -58,7 +58,7 @@ IC_factors <- function(x, rmax = NULL, type = 2){
     }
     
     # plot
-    plot(result, main = "ICP1", xlab = "Number of fators", ylab = "Index")
+    plot(result, main = "ICR1", xlab = "Number of fators", ylab = "Index")
     points(which.min(result), result[which.min(result)], pch = 19, col ="red")
     
     # output  
@@ -85,7 +85,7 @@ IC_factors <- function(x, rmax = NULL, type = 2){
     }
     
     #plot
-    plot(result, main = "ICP2", xlab = "Number of fators", ylab = "Index")
+    plot(result, main = "ICR2", xlab = "Number of fators", ylab = "Index")
     points(which.min(result), result[which.min(result)], pch = 19, col ="red")
     
     # output  
@@ -112,7 +112,7 @@ IC_factors <- function(x, rmax = NULL, type = 2){
     }
     
     #plot
-    plot(result, main = "ICP3", xlab = "Number of fators", ylab = "Index")
+    plot(result, main = "ICR3", xlab = "Number of fators", ylab = "Index")
     points(which.min(result), result[which.min(result)], pch = 19, col ="red")
     
     # output  
