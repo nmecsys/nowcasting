@@ -7,7 +7,7 @@
 # nowcasting
 An R Package for Forecasting Models with Real-Time Data.
 
-The **nowcasting** package contains useful tools for developing real-time forecasting models so that researchers can find in this package a simple and practical way to reproduce several of these models. In this version of the package we present three methods, based on seminal articles in this literature: *Giannone et al. 2008* and *Bańbura et al. 2011*. The package also provides vintages (information observed at the time of publication) of Brazilian economic data.
+The **nowcasting** package contains useful tools for using dynamic factor models. In this version of the package we present three methods, based on the articles of *Giannone et al. 2008* and *Bańbura et al. 2011*. Furthermore, the package offers auxiliary functions to treat variables, constuct vintages, visualize results, etc.
 
 
 **The package is in development. Reviews, comments and pull requests are welcome.**
@@ -26,7 +26,7 @@ install.packages('nowcasting')
 
 ## How to use nowcasting package
 
-Two examples of how the nowcasting package can be used are discussed below. In the first example we use the dataset in the classic paper by *Giannone et al. (2008)*, which uses a panel of time series for the US economy, and in the second we show how to obtain vintages for the main series for the Brazilian economy.
+Two examples of how the nowcasting package can be used are discussed below. In the first example we use the dataset from *Giannone et al. (2008)*, which uses a time series panel for the US economy. In the second example we show how to make forecasts based on pseudo real time vintages using Brazilian data and how to use information criteria for determining the number of factors and shocks to use in the model.
 
 ### nowcasting US GDP
 
@@ -39,28 +39,33 @@ data(USGDP)
 
 USDGP is a list with two data frames:
 
-* `USGDP$base`: this is an unbalanced panel with the model variables;
+* `USGDP$base`: this is an unbalanced panel with the model´s variables;
 * `USGDP$legend`: this contains the legend with the relevant information for each variable in the `USGDP$base` dataframe.
 
-The first step is to define the variables $y_{t}$ (quarterly) and $x_{t}$ (monthly). To identify the variable that represents the GDP in the dataset, view the legend in `USGDP$legend`. Then the GDP is selected in the dataset and transformed into a quarterly variable by `month2qtr` function. The explanatory variables are all the other variables in the dataset.
+In order to find the GDP time series in the dataset one can use the legend in `USGDP$legend`. We transform GDP into a quarterly variable by using the `month2qtr` function. The explanatory variables are all the remaining variables from the dataset.
 
 ```{r warning=FALSE}
-gdp <- month2qtr(x = USGDP$base[,"RGDPGR"])
+gdp <- month2qtr(x = USGDP$base[,"RGDPGR"], reference_month = 3)
 ```
 
-The second step covers the treatment of the explanatory variables, that will be done by `Bpanel` function. This function creates a balanced panel using an unbalanced panel as input. The missing observations and outliers are substituted using the outlier correction methodology in *Giannone et al. (2008)* and there are some transformation options that make the variables stationary. The object `USGDP$legend` contains all the transformations used in *Giannone et al. (2008)*. The `Bpanel` function also allows monthly variables to be aggregated to represent quarterly quantities.
+The second step consists in treating the explanatory variables. This can be done by using the `Bpanel` function. This function creates a balanced panel using an unbalanced panel as input. The missing observations and outliers are substituted using the outlier correction methodology from *Giannone et al. (2008)*. The function includes most usual transformations to obtain stationary variables. The object `USGDP$legend` contains all the transformations used in *Giannone et al. (2008)*. The `Bpanel` function also allows monthly variables to be aggregated to represent quarterly quantities.
 
 ```{r warning=FALSE}
 gdp_position <- which(colnames(USGDP$base) == "RGDPGR")
 base <- Bpanel(base = USGDP$base[,-gdp_position], 
                trans = USGDP$legend$Transformation[-gdp_position], aggregate = TRUE)
 ```
-Once these variables have been treated, the `nowcast` function can be used to estimate the model parameters according to the estimation method selected, the number *r* of dynamic factors, the lag order of the factors *p* and the number *q* of shocks in the factors. In this example we use the *Two-Stage - quarterly factors* method. The arguments *r*, *p* and *q* were defined according to *Giannone et al. (2008)*.
+Once these variables have been treated, the `nowcast` function can be used to estimate the model parameters according to the estimation method selected, the number *r* of dynamic factors, the lag order of the factors *p* and the number *q* of shocks to the factors. For this example we use the *Two-Stage - quarterly factors* method. The arguments *r*, *p* and *q* were defined according to *Giannone et al. (2008)*.
 
 ```{r warning=FALSE}
 nowcastUSGDP <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2sq')
 ```
+The in sample evaluation from *Giannone et al. (2008)* could be reproduced by looking at the ACF of the residuals of the model specified above.
 
+```{r warning=FALSE}
+res <- ts(nowcastUSGDP$reg$residuals, start = start(x), frequency = 4)
+acf(window(res, start = c(1985,1), end = c(2004,4)))
+```
 To see the **results** of the forecasts in the object `nowcastUSGDP`, use the following command.
 
 ```{r warning=FALSE}
@@ -97,33 +102,48 @@ nowcast.plot(nowcastUSGDP, type = "eigenvalues")
 nowcast.plot(nowcastUSGDP, type = "eigenvectors") 
 ```
 
-### vintages
+### Nowcasting Brazilian GDP using vintages
 
-Vintage in this context refers to the dataset observed on a specific date. It is useful to assess the performance of models with information published at different times and so reproduce the real past.
-
-The **nowcasting** package contains a dataset of very important Brazilian economic time series, which can be accessed with the `RTDB` function. If no argument is specified, the codes of all the available series are returned. The codes are the same as those used on the Central Bank of Brazil platform to download time series.
+A vintage is a dataset observed on a specific date. The latter is useful to evaluate the out of sample performance of our model. The **nowcasting** package contains a dataset of Brazilian economic time series.
 
 ```{r warning=FALSE}
-# the available series
-head(RTDB())
-
-# serie 1: availables vintages
-head(RTDB(series_code = 1)) 
-
-# vintage 2017-04-04: availables series
- head(RTDB(vintage = "2017-04-04")) 
-
-# serie 1, vintage 2017-04-04: data
-tail(RTDB(series_code = 1, vintage = "2017-04-04")) 
+library(nowcasting)
+data(BRGDP)
 ```
 
-The `PRTDB` function is intended to simulate the vintages of any dataset. The function only excludes observations from the time series based on lag information provided by the user and simulates what would be observed on the reference date.
+The `PRTDB` function is intended to construct pseudo real time vintages of any dataset. The function excludes observations from time series based on the lag information provided by the user and simulates what would be observed on the reference date. In this case we have construct a 10 year database ending in 2015-06-01.
 
 ```{r warning=FALSE}
-# BRGDP data (last six observations)
-tail(BRGDP)
-
-# BRGDP data observed on the reference date (2017-10-01)
-tail(PRTDB(mts = BRGDP, delay = c(1,30,60,90,20,10,30,60), vintage = "2017-10-01"))
+vintage <- PRTDB(mts = BRGDP$base, delay = BRGDP$delay, vintage = "2015-06-01")
+base <- window(vintage, start = c(2005,06), frequency = 12)
+x <- Bpanel(base = base, trans = BRGDP$trans)
 ```
+
+The variable to be forecasted is then made stationary. In this case we also have a quaterly variable that is cast as a monthly variable. The `month2qtr` function allows the user to cast the variable in the correct frequency.
+
+```{r warning=FALSE}
+GDP <- base[,which(colnames(base) == "PIB")]
+GDP_qtr <- month2qtr(x = GDP,reference_month = 3)
+y <- diff(diff(GDP_qtr), 4)
+```
+Information criteria can be used in order to help determine the number of factors *r* and shocks to the factors *q* that the model should have. 
+
+```{r warning=FALSE}
+ICR1 <- ICfactors(x = x, type = 1)
+ICR2 <- ICfactors(x = x, type = 2)
+ICQ1 <- ICshocks(x = x, r = 2, p = 2)
+```
+The user is now ready to forecast the variable of interest. The summary of the regression can be accessed as illustrated below.
+
+```{r warning=FALSE}
+now <- nowcast(y = y, x = x, r = 2, q = 2 , p = 2)
+summary(now$reg)
+```
+Finally the in- and out of sample forecasts for this particular vintage can be visualized using the `nowcast.plot` function.
+
+```{r warning=FALSE}
+nowcast.plot(now, type = "fcst")
+```
+
+
 
