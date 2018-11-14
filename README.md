@@ -24,7 +24,7 @@ CRAN
 install.packages('nowcasting')
 ```
 
-## How to use nowcasting package
+## How to use the nowcasting package
 
 Two examples of how the nowcasting package can be used are discussed below. In the first example we use the dataset from *Giannone et al. (2008)*, which uses a time series panel for the US economy. In the second example we show how to make forecasts based on pseudo real time vintages using Brazilian data and how to use information criteria for determining the number of factors and shocks to use in the model.
 
@@ -86,7 +86,7 @@ diag(nowcastUSGDP$factors$Psi) # Psi: epsilon's variance covariance matrix (x eq
 tail(nowcastUSGDP$xfcst[,1:5]) # x forecasts (first 5 variables)
 ```
 
-The **graphs** available with the `nowcast.plot` function allow the forecast of the variable of interest and the estimated factors to be easily viewed.
+The **graphs** available with the `nowcast.plot` function allow the to visualize some results of interest.
 
 ```{r warning=FALSE}
  # y fcst
@@ -119,7 +119,7 @@ base <- window(vintage, start = c(2005,06), frequency = 12)
 x <- Bpanel(base = base, trans = BRGDP$trans)
 ```
 
-The variable to be forecasted is then made stationary. In this case we also have a quaterly variable that is cast as a monthly variable. The `month2qtr` function allows the user to cast the variable in the correct frequency.
+The variable to be forecasted is then made stationary. We also use the `month2qtr` function to cast GDP as a quaterly variable.
 
 ```{r warning=FALSE}
 GDP <- base[,which(colnames(base) == "PIB")]
