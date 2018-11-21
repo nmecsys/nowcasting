@@ -17,7 +17,7 @@
 
 ICshocks<- function(x, delta = 0.1, m = 1, r = NULL, p = NULL){
   
-  # Checking if the database does not have missing values
+  # discarting rows with missing values
   x <- na.omit(x)
   
   # Normalization of the database
@@ -32,14 +32,13 @@ ICshocks<- function(x, delta = 0.1, m = 1, r = NULL, p = NULL){
   TT <- nrow(x)
   N <- ncol(x)
   
-  # we use the specification from the 2007 paper for an unspecified delta
+  # Checking parameters delta and m (if not specified by the user we have used the values 
+  # from the Bai and Ng 2007 paper)
   if(delta <= 0 || delta >= 1/2){stop("Delta needs to be within the (0,1/2) interval")}
-  
-  # idem. m = 1 when using the covariance matrix
   if(m <= 0 || is.infinite(m) ){stop("m needs to be be within the (0, Inf) interval")}
   
   # if not specified we will use the ICP2 criterium from Bai and Ng (2002) as
-  # done in their 2007 paper to estimate the number of factors
+  # done in Bai and Ng 2007 to estimate the number of factors
   if(is.null(r)){
     
     eigen <- eigen(cov(x))
@@ -63,7 +62,7 @@ ICshocks<- function(x, delta = 0.1, m = 1, r = NULL, p = NULL){
   # number of lags for the VAR
   if(is.null(p)){
     select <- vars::VARselect(y = Factor, lag.max = 12)
-    p <- as.numeric(names(sort(table(select$selection),decreasing=TRUE)[1]))
+    p <- as.numeric(names(sort(table(select$selection), decreasing = TRUE)[1]))
   }
   
   # residuals from the VAR in F
@@ -77,7 +76,7 @@ ICshocks<- function(x, delta = 0.1, m = 1, r = NULL, p = NULL){
   # eigenvalues of uu
   eigen_uu <- eigen(uu)
   
-  # calculating the sum of square eigenvalues
+  # calculating the sum of the squared eigenvalues
   sum = 0
   for(i in 1:ncol(uu)){
     sum = sum + eigen_uu$values[i]^2

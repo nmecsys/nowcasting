@@ -56,7 +56,7 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k.ma = 3, na.prop =
   }
   
   if(sum(is.na(trans)) != 0){
-    stop('trans can not support missings values')
+    stop('trans does not support missings values')
   }
   
   if(length(trans) != ncol(base)){
@@ -98,13 +98,13 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k.ma = 3, na.prop =
     }
   }
   
-  # quartly quantity transformation
+  # transformation of monthly series based on Mariano and Murasawa (2003)
   if(aggregate == T){
     base1 <- stats::filter(base1, c(1,2,3,2,1), sides = 1)
   }
   colnames(base1) <- colnames(base)
   
-  # remove series whith more than na.prop missings values
+  # remove series with more than the indicated ratio of missing values (na.prop)
   SerOk <- colSums(is.na(base1)) < (nrow(base1) * na.prop)
   base2 <- base1[, which(SerOk)]
   
@@ -120,11 +120,11 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k.ma = 3, na.prop =
   print(seriesdeletadas)
   
   
-  # replacing missings and outliers 
+  # replacing both missing values and outliers 
   base3 <- base2 * NA
   
   for(i in 1:ncol(base2)){
-    # ignoring the last missings values
+    # ignoring the last missing values
     na <- is.na(base2[,i])
     na2 <- NULL
     for(j in 1:length(na)){
@@ -135,7 +135,7 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k.ma = 3, na.prop =
     base3[,i] <- c(outliers_correction(base2[1:na_position,i], k.ma), rep(NA, nrow(base2) - na_position))
   }
   
-  # add h lines to base
+  # add h lines to the database
   base4 <- ts(rbind(base3, matrix(NA, nrow = h, ncol = ncol(base3))),
             start = start(base3), frequency = 12)
   

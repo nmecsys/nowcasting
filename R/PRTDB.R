@@ -18,12 +18,12 @@ PRTDB<-function(mts, delay, vintage = Sys.Date()){
   mts_new <- mts
   
   # define the last day of the month
-  month_end<-as.Date(mts)+months(1)-days(1)
+  month_end <- as.Date(mts)+months(1)-days(1)
   
-  # create list with release date
-  release<-lapply(1:length(delay),function(x) month_end+days(delay)[x])
+  # create a list with the release date of each variable
+  release <- lapply(1:length(delay),function(x) month_end+days(delay)[x])
   
-  # Eliminate information not available until the day
+  # Eliminate information not available at the specified vintage day
   if(is.mts(mts)){
     for (i in 1:length(delay)){mts_new[release[[i]] > vintage, i] <- NA}
     mts_new <- ts(mts_new[!as.Date(mts_new) > vintage, ], start = start(mts_new), 
