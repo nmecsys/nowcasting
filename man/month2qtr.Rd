@@ -18,9 +18,11 @@ The correspondent quarterly transformation.
 It transforms a monthly time series in a quarterly one, selecting the last month of the quarter to represent the value of the quarter.
 }
 \examples{
+ \dontrun{
 # Selecting only the last month of time series IPCA:
-month2qtr(BRGDP$base[,"IPCA"])
+month2qtr(BRGDP$base[,"IPCA"], reference_month = 3)
 
 # Selecting only the first month of time series IPCA:
 month2qtr(BRGDP$base[,"IPCA"], reference_month = 1)
+}
 }

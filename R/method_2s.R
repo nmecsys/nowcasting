@@ -1,5 +1,6 @@
 #' @importFrom stats cov end fitted lm median na.omit predict quantile sd start ts tsp window as.ts frequency
-#' @import zoo matlab corpcor
+#' @import zoo corpcor 
+#' @rawNamespace import(matlab, except = reshape)
 #' @importFrom lubridate quarter year month
 
 bridge <- function(y, x, oldRegParam){
@@ -562,7 +563,7 @@ pcatodfm <- function(x, q, r, p){
     }
     
     initx <- t(Z[1,]) 
-    initV <- matlab::reshape(corpcor::pseudoinverse(eye(size(kronecker(A,A),1))- kronecker(A,A)) %*% matrix(Q, ncol = 1), r*p, r*p)
+    initV <- matrix(corpcor::pseudoinverse(eye(size(kronecker(A,A),1))- kronecker(A,A)) %*% matrix(Q, ncol = 1), r*p, r*p)
     
   }else{
     

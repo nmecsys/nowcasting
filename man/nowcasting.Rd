@@ -6,9 +6,9 @@
 \alias{nowcasting-package}
 \title{Nowcast Analysis and Create Real-Time Data Basis}
 \description{
-This package is an initiative of the Center for Statistical and Computational Methods (NMEC) belonging to the Brazilian Institute of Economics (IBRE) of the Getulio Vargas Foundation (FGV). Our goal is to develop a real-time predictive measure of Brazilian GDP that helps IBRE researchers in their analysis about the Brazilian economy.
+This package is an initiative of the Center for Statistical and Computational Methods (NMEC) belonging to the Brazilian Institute of Economics (IBRE) of the Getulio Vargas Foundation (FGV).
 
-The purpose of this package is to disseminate to the community of \code{R} users the statistical tools and techniques of 'nowcast' already known in the academic literature. One can find in this package a simple and practical way to reproduce several of these techniques for their studies.
+The purpose of this package is to allow \code{R} users to implement dynamic factor models that have gained prominence in the nowcasting literature.
 
 In this version of the package we present three methods, based on seminal articles in this literature:
 \emph{Giannone et al. 2008}, \emph{Bańbura et al. 2011} and \emph{Bańbura and Rünstler 2011}.
@@ -29,5 +29,6 @@ Bańbura M., Giannone, D. & Reichlin, L. (2011). Nowcasting, in Michael P. Cleme
 \author{
 Daiane Marcolino de Mattos \email{daimmattos@gmail.com},
         Guilherme Branco Gomes \email{guilbran@gmail.com},
-        Pedro G. Costa Ferreira \email{pedro.guilherme@fgv.br}
+        Pedro G. Costa Ferreira \email{pedro.guilherme@fgv.br},
+        Serge de Valk \email{s.t.j.devalk@gmail.com}
 }
