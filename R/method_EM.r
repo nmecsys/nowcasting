@@ -217,7 +217,7 @@ InitCond<-function(xNaN,r,p,blocks,optNaN,R_mat,q,nQ,i_idio){
     e = z  - Z%*%A_temp         # VAR residuals
     Q_i[1:r_i,1:r_i] = cov(e);  # VAR covariance matrix
     
-    initV_i = reshape(solve(eye((r_i*ppC)^2)-kronecker(A_i,A_i))%*%c(Q_i),r_i*ppC,r_i*ppC);
+    initV_i = matlab::reshape(solve(eye((r_i*ppC)^2)-kronecker(A_i,A_i))%*%c(Q_i),r_i*ppC,r_i*ppC);
     
     if(is.null(A)){
       A<-A_i
@@ -295,7 +295,7 @@ InitCond<-function(xNaN,r,p,blocks,optNaN,R_mat,q,nQ,i_idio){
     SQ = kronecker((1-rho0^2)*sig_e,temp)
   }
   
-  initViQ = reshape(solve(eye((5*nQ)^2)-kronecker(BQ,BQ))%*%c(SQ),5*nQ,5*nQ)
+  initViQ = matlab::reshape(solve(eye((5*nQ)^2)-kronecker(BQ,BQ))%*%c(SQ),5*nQ,5*nQ)
   
   # BQ = kronecker(eye(nQ),rbind(zeros(1,5),cbind(eye(4),zeros(4,1))))
   # temp = zeros(5)
@@ -620,7 +620,7 @@ EMstep <- function(y = NULL, A = NULL, C = NULL, Q = NULL, R = NULL, Z_0 = NULL,
     }
     
     vec_C <- solve(denom) %*% c(nom)
-    C_new[idx_iM,bl_idxM[i,]][,1:nn] <- reshape(vec_C,n_i,rs)
+    C_new[idx_iM,bl_idxM[i,]][,1:nn] <- matlab::reshape(vec_C,n_i,rs)
     
     # QUARTERLY
     idx_iQ <- idx_i[idx_i>c(nM)]
