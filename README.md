@@ -63,10 +63,10 @@ nowcastUSGDP <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2sq')
 The in sample evaluation from *Giannone et al. (2008)* could be reproduced by looking at the ACF of the residuals of the model specified above.
 
 ```{r warning=FALSE}
-res <- ts(nowcastUSGDP$reg$residuals, start = start(x), frequency = 4)
+res <- ts(nowcastUSGDP$reg$residuals, start = start(gdp), frequency = 4)
 acf(window(res, start = c(1985,1), end = c(2004,4)))
 ```
-To see the **results** of the forecasts in the object `nowcastUSGDP`, use the following command.
+The **results** can be accessed from the object `nowcastUSGDP`.
 
 ```{r warning=FALSE}
 # y forecasts
@@ -119,7 +119,7 @@ base <- window(vintage, start = c(2005,06), frequency = 12)
 x <- Bpanel(base = base, trans = BRGDP$trans)
 ```
 
-The variable to be forecasted is then made stationary. We also use the `month2qtr` function to cast GDP as a quaterly variable.
+The variable to be forecast is then made stationary. We also use the `month2qtr` function to cast GDP as a quaterly variable.
 
 ```{r warning=FALSE}
 GDP <- base[,which(colnames(base) == "PIB")]

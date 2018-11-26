@@ -98,9 +98,18 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k.ma = 3, na.prop =
     }
   }
   
-  # transformation of monthly series based on Mariano and Murasawa (2003)
+  # transformation of monthly series into quarterly quantities
   if(aggregate == T){
-    base1 <- stats::filter(base1, c(1,2,3,2,1), sides = 1)
+    for(j in 1:ncol(base)){
+      if(trans[j] %in% c(1,2,3,4)){
+        # transformation of monthly differences/rates based on Mariano and Murasawa (2003)
+        base1[,j] <- stats::filter(base1[,j], c(1,2,3,2,1), sides = 1)
+      }
+      else if(trans[j] %in% c(5,6)){
+        # transformation of yearly difference/rate
+        base1[,j] <- stats::filter(base1[,j], c(1,1,1), sides = 1)
+      }
+    }
   }
   colnames(base1) <- colnames(base)
   
