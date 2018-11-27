@@ -1,6 +1,6 @@
 Package: nowcasting
 Type: Package
-Title: Predicting economic variables using dynamic factor models
+Title: Predicting Economic Variables using Dynamic Factor Models
 Version: 1.0.0
 Depends: R (>= 3.4.0)
 Date: 2018-11-27
