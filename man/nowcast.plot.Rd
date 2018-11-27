@@ -2,17 +2,17 @@
 % Please edit documentation in R/nowcast.plot.R
 \name{nowcast.plot}
 \alias{nowcast.plot}
-\title{Plot for nowcast output function}
+\title{Plot for the nowcast output function}
 \usage{
 nowcast.plot(out, type = "fcst")
 }
 \arguments{
-\item{out}{output of nowcast function.}
+\item{out}{output of the nowcast function.}
 
-\item{type}{'fcst', 'factors', 'eigenvalues','eigenvectors' or 'month_y'. This last one is only available for EM method. 'eigenvalues' and 'eigenvectors' only available to two stages methods.}
+\item{type}{'fcst', 'factors', 'eigenvalues','eigenvectors' or 'month_y'. The latter is only available for the EM method, while 'eigenvalues' and 'eigenvectors' are only available for the two stages methods.}
 }
 \description{
-Make plots to visualize the output of nowcast function
+Make plots to visualize the output of the nowcast function
 }
 \examples{
 \dontrun{

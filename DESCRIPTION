@@ -1,16 +1,16 @@
 Package: nowcasting
 Type: Package
-Title: Nowcast Analysis and Create Real-Time Data Basis
+Title: predicting economic variables using dynamic factor models
 Version: 1.0.0
 Depends: R (>= 3.4.0)
-Date: 2018-11-09
-Authors@R: c( person("Daiane", "Mattos", email = "daiane.mattos@fgv.br",role=c("aut","cre")),
+Date: 2018-11-27
+Authors@R: c( person("Daiane", "Marcolino de Mattos", email = "daiane.mattos@fgv.br",role=c("aut","cre")),
               person("Pedro","Costa Ferreira",email = "pedro.guilherme@fgv.br",role=c("aut")),
               person("Serge","de Valk",email = "serge.valk@fgv.br",role=c("aut")),
               person("Guilherme","Branco Gomes",email = "guilherme.branco.gomes@gmail.com",role=c("aut"))
               )
 Maintainer: Daiane Marcolino de Mattos <daiane.mattos@fgv.br>
-Description: This package contains the tools to implement dynamic factor models (DFM) to forecast economic variables. The user will be able to construct pseudo real time vintages, use information criteria for determining the number of factors and shocks, estimate the model, and visualize results among other things.
+Description: It contains the tools to implement dynamic factor models (DFM) to forecast economic variables. The user will be able to construct pseudo real time vintages, use information criteria for determining the number of factors and shocks, estimate the model, and visualize results among other things.
 License: GPL-3
 BugReports: https://github.com/nmecsys/nowcasting/issues
 URL: https://github.com/nmecsys/nowcasting
