@@ -1,6 +1,6 @@
 Package: nowcasting
 Type: Package
-Title: predicting economic variables using dynamic factor models
+Title: Predicting economic variables using dynamic factor models
 Version: 1.0.0
 Depends: R (>= 3.4.0)
 Date: 2018-11-27
@@ -10,7 +10,7 @@ Authors@R: c( person("Daiane", "Marcolino de Mattos", email = "daiane.mattos@fgv
               person("Guilherme","Branco Gomes",email = "guilherme.branco.gomes@gmail.com",role=c("aut"))
               )
 Maintainer: Daiane Marcolino de Mattos <daiane.mattos@fgv.br>
-Description: It contains the tools to implement dynamic factor models (DFM) to forecast economic variables. The user will be able to construct pseudo real time vintages, use information criteria for determining the number of factors and shocks, estimate the model, and visualize results among other things.
+Description: It contains the tools to implement dynamic factor models to forecast economic variables. The user will be able to construct pseudo real time vintages, use information criteria for determining the number of factors and shocks, estimate the model, and visualize results among other things.
 License: GPL-3
 BugReports: https://github.com/nmecsys/nowcasting/issues
 URL: https://github.com/nmecsys/nowcasting
