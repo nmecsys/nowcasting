@@ -21,4 +21,3 @@ NeedsCompilation: no
 Suggests: knitr,
     rmarkdown
 Imports: corpcor, httr, lubridate, matlab, RCurl, xts, zoo, DBI, magic, RMySQL, Matrix, vars, stats
-VignetteBuilder: knitr
