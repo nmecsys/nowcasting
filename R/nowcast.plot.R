@@ -1,7 +1,7 @@
-#' @title Plot for nowcast output function
-#' @description Make plots to visualize the output of nowcast function
-#' @param out output of nowcast function.
-#' @param type 'fcst', 'factors', 'eigenvalues','eigenvectors' or 'month_y'. This last one is only available for EM method. 'eigenvalues' and 'eigenvectors' only available to two stages methods.
+#' @title Plot for the nowcast output function
+#' @description Make plots to visualize the output of the nowcast function
+#' @param out output of the nowcast function.
+#' @param type 'fcst', 'factors', 'eigenvalues','eigenvectors' or 'month_y'. The latter is only available for the EM method, while 'eigenvalues' and 'eigenvectors' are only available for the two stages methods.
 #' @examples
 #' \dontrun{
 #' gdp <- month2qtr(x = USGDP$base[,"RGDPGR"])

@@ -10,7 +10,7 @@ Authors@R: c( person("Daiane", "Mattos", email = "daiane.mattos@fgv.br",role=c("
               person("Guilherme","Branco Gomes",email = "guilherme.branco.gomes@gmail.com",role=c("aut"))
               )
 Maintainer: Daiane Marcolino de Mattos <daiane.mattos@fgv.br>
-Description: Methods and tools to estimate 'forecasts' of Brazilian macroeconomic variables in the near future or the recent past, i.e. 'nowcast'. It allows: extract information in real time, creating a real time data base; estimate relationship between macroeconomic variables via dynamic factors; forecast time series in previous periods of reference; forecast time series in the current period of reference (nowcasting); recreate a data base simulating the information available in the past for evaluating forecasting models accuracy (pseudo real-time data base); access information available in a specific date in the past (real-time data base), for some variables.
+Description: This package contains the tools to implement dynamic factor models (DFM) to forecast economic variables. The user will be able to construct pseudo real time vintages, use information criteria for determining the number of factors and shocks, estimate the model, and visualize results among other things.
 License: GPL-3
 BugReports: https://github.com/nmecsys/nowcasting/issues
 URL: https://github.com/nmecsys/nowcasting
