@@ -91,7 +91,7 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k.ma = 3, na.prop =
       temp <- diff(base[,j],12)
       base1[-c(1:12),j] <- temp  
     }else if(trans[j] == 6){ # yearly rate of change
-      temp <- base[,j] / stats::lag(base[,j],-12)
+      temp <- diff(base[,j], 12) / stats::lag(base[,j],-12)
       base1[-c(1:12),j] <- temp  
     }else if(trans[j] == 0){ # no transformation
       base1[,j] <- base[,j]
