@@ -46,13 +46,13 @@ gdp_position <- which(colnames(USGDP$base) == "RGDPGR")
 base <- Bpanel(base = USGDP$base[,-gdp_position],
                trans = USGDP$legend$Transformation[-gdp_position],
                aggregate = TRUE)
-now2sq <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2s')
+now2s <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2s')
 
 ### Method 2s_agg (two stages: monthly factors)
 base <- Bpanel(base = USGDP$base[,-gdp_position],
                trans = USGDP$legend$Transformation[-gdp_position],
                aggregate = FALSE)
-now2sm <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2s_agg')
+now2s_agg <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2s_agg')
 
 ### Method EM
 # selecting and transforming y  
