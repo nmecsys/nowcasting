@@ -21,7 +21,7 @@ gdp_position <- which(colnames(USGDP$base) == "RGDPGR")
 base <- Bpanel(base = USGDP$base[,-gdp_position],
                trans = USGDP$legend$Transformation[-gdp_position],
                aggregate = TRUE)
-now2sq <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2sq')
+now2sq <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2s')
 
 nowcast.plot(now2sq, type = "fcst")
 nowcast.plot(now2sq, type = "factors")
@@ -31,7 +31,7 @@ nowcast.plot(now2sq, type = "eigenvectors")
 base <- Bpanel(base = USGDP$base[,-gdp_position],
                trans = USGDP$legend$Transformation[-gdp_position],
                aggregate = FALSE)
-now2sm <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2sm')
+now2sm <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2s_agg')
 
 nowcast.plot(now2sm, type = "fcst")
 nowcast.plot(now2sm, type = "factors")

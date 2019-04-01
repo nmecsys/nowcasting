@@ -4,7 +4,7 @@
 \alias{nowcast}
 \title{Nowcasting of a quarterly time series using a dynamic factor model.}
 \usage{
-nowcast(y, x, q = NULL, r = NULL, p = NULL, method = "2sq",
+nowcast(y, x, q = NULL, r = NULL, p = NULL, method = "2s",
   blocks = NULL, oldFactorsParam = NULL, oldRegParam = NULL)
 }
 \arguments{
@@ -18,7 +18,7 @@ nowcast(y, x, q = NULL, r = NULL, p = NULL, method = "2sq",
 
 \item{p}{AR order of factor model.}
 
-\item{method}{There are three options: \code{"2sq"}: "Two stages: quarterly factors" as in Giannone et al. 2008; \code{"2sm"}: "Two stages: monthly factors" as in Bańbura and Runstler 2011; \code{"EM"}: Expected Maximization as in Bańbura et al. 2011.}
+\item{method}{There are three options: \code{"2s"}: "Two stages: quarterly factors" as in Giannone et al. 2008; \code{"2s_agg"}: "Two stages: monthly factors" as in Bańbura and Runstler 2011; \code{"EM"}: Expected Maximization as in Bańbura et al. 2011.}
 
 \item{blocks}{a binary matrix Nx3 that characterizes the regressors variables in global (1st column), nominal (2nd column) and real (3rd column). If \code{NULL}, the matrix assume 1 for all cells.}
 
@@ -40,19 +40,19 @@ Estimate nowcasting and forecasting for a quarterly series. For more details rea
 }
 \examples{
 \dontrun{
-### Method 2sq (two stages: quarterly factors)
+### Method 2s (two stages: quarterly factors)
 gdp <- month2qtr(x = USGDP$base[,"RGDPGR"])
 gdp_position <- which(colnames(USGDP$base) == "RGDPGR")
 base <- Bpanel(base = USGDP$base[,-gdp_position],
                trans = USGDP$legend$Transformation[-gdp_position],
                aggregate = TRUE)
-now2sq <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2sq')
+now2sq <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2s')
 
-### Method 2sm (two stages: monthly factors)
+### Method 2s_agg (two stages: monthly factors)
 base <- Bpanel(base = USGDP$base[,-gdp_position],
                trans = USGDP$legend$Transformation[-gdp_position],
-               aggregate = F)
-now2sm <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2sm')
+               aggregate = FALSE)
+now2sm <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2s_agg')
 
 ### Method EM
 # selecting and transforming y  
