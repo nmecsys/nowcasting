@@ -141,16 +141,8 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method = '2s', blocks = 
     if(p > 5){
       stop('Parameter p must be less than 5.')
     }
-    
-    if(frequency(y) == 12){
-      X <- cbind(x,y)
-    }else{
-      X <- cbind(x, qtr2month(y))
-    }
-    
-    if(is.null(blocks)){
-      blocks <- matrix(rep(1,dim(X)[2]*3), dim(X)[2], 3)
-    }
+
+    X <- cbind(x, qtr2month(y))
     Par <- list(r = rep(r,3), p = p, max_iter = 50, i_idio = c(rep(T,dim(x)[2]), F),
                 Rconstr = matrix(c(
                   c(2,3,2,1),
@@ -161,6 +153,13 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method = '2s', blocks = 
                   ,4,5),
                 q = matrix(rep(0,4),4,1), nQ = 1,
                 blocks = blocks)
+    
+    
+    if(is.null(blocks)){
+      blocks <- matrix(rep(1,dim(X)[2]*3), dim(X)[2], 3)
+    }
+
+    
     Res <- EM_DFM_SS_block_idioQARMA_restrMQ(X,Par)
     
     factors <- list(

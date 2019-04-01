@@ -181,18 +181,21 @@ InitCond<-function(xNaN,r,p,blocks,optNaN,R_mat,q,nQ,i_idio){
     q_i = kronecker(q,zeros(r_i,1));
     ff = FF[,1:(r_i*pC)]
     
-    for(j in idx_iQ){     # Coeficiente "loadings" de Variáveis trimestrais
-      xx_j = resNaN[pC:dim(resNaN)[1],j]
-      if(sum(!is.na(xx_j)) < size(ff,2)+2){
-        xx_j = res[pC:dim(res)[1],j]
+    # if(Par$nQ != 0){
+      
+      for(j in idx_iQ){     # Coeficiente "loadings" de Variáveis trimestrais
+        xx_j = resNaN[pC:dim(resNaN)[1],j]
+        if(sum(!is.na(xx_j)) < size(ff,2)+2){
+          xx_j = res[pC:dim(res)[1],j]
+        }
+        ff_j = ff[!is.na(xx_j),]
+        xx_j = xx_j[!is.na(xx_j)]
+        iff_j = solve(t(ff_j)%*%ff_j)
+        Cc = iff_j%*%t(ff_j)%*%xx_j
+        Cc = Cc - iff_j%*%t(Rcon_i)%*%solve(Rcon_i%*%iff_j%*%t(Rcon_i))%*%(Rcon_i%*%Cc-q_i);
+        C_i[j,1:(pC*r_i)] <- t(Cc)
       }
-      ff_j = ff[!is.na(xx_j),]
-      xx_j = xx_j[!is.na(xx_j)]
-      iff_j = solve(t(ff_j)%*%ff_j)
-      Cc = iff_j%*%t(ff_j)%*%xx_j
-      Cc = Cc - iff_j%*%t(Rcon_i)%*%solve(Rcon_i%*%iff_j%*%t(Rcon_i))%*%(Rcon_i%*%Cc-q_i);
-      C_i[j,1:(pC*r_i)] <- t(Cc)
-    }
+    # }
     
     ff = rbind(zeros(pC-1,pC*r_i),ff)
     res = res - ff%*%t(C_i)
@@ -278,8 +281,10 @@ InitCond<-function(xNaN,r,p,blocks,optNaN,R_mat,q,nQ,i_idio){
   
   initViM = diag(1/diag(eye(size(BM,1))-BM^2))%*%SM;
   
+  #if(nQ != 0){
+    C<-cbind(C,rbind(zeros(NM,5*nQ),t(kronecker(eye(nQ),c(1,2,3,2,1)))))
+  #}
   
-  C<-cbind(C,rbind(zeros(NM,5*nQ),t(kronecker(eye(nQ),c(1,2,3,2,1)))))
   Rdiag<-diag(R)
   sig_e <- Rdiag[(NM+1):N]/19
   Rdiag[(NM+1):N] <- 1e-04
@@ -287,7 +292,12 @@ InitCond<-function(xNaN,r,p,blocks,optNaN,R_mat,q,nQ,i_idio){
   
   rho0<-0.1
   
-  BQ <- kronecker(eye(nQ),rbind(cbind(rho0,zeros(1,4)),cbind(eye(4),zeros(4,1))))
+  #if(nQ != 0){
+    BQ <- kronecker(eye(nQ),rbind(cbind(rho0,zeros(1,4)),cbind(eye(4),zeros(4,1))))
+  #}else{
+  #  BQ <- NULL
+  #}
+  
   temp = zeros(5)
   temp[1,1] = 1
   if(is.matrix(sig_e)){
@@ -296,7 +306,12 @@ InitCond<-function(xNaN,r,p,blocks,optNaN,R_mat,q,nQ,i_idio){
     SQ = kronecker((1-rho0^2)*sig_e,temp)
   }
   
-  initViQ = matrix(solve(eye((5*nQ)^2)-kronecker(BQ,BQ))%*%c(SQ),5*nQ,5*nQ)
+  #if(nQ != 0){
+    initViQ = matrix(solve(eye((5*nQ)^2)-kronecker(BQ,BQ))%*%c(SQ),5*nQ,5*nQ)
+  #}else{
+  #  initViQ = NULL  
+  #}
+  
   
   # BQ = kronecker(eye(nQ),rbind(zeros(1,5),cbind(eye(4),zeros(4,1))))
   # temp = zeros(5)
