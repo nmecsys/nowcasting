@@ -58,7 +58,7 @@ base <- Bpanel(base = USGDP$base[,-gdp_position],
 Once these variables have been treated, the `nowcast` function can be used to estimate the model parameters according to the estimation method selected, the number *r* of dynamic factors, the lag order of the factors *p* and the number *q* of shocks to the factors. For this example we use the *Two-Stage - quarterly factors* method. The arguments *r*, *p* and *q* were defined according to *Giannone et al. (2008)*.
 
 ```{r warning=FALSE}
-nowcastUSGDP <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2sq')
+nowcastUSGDP <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2s')
 ```
 The in sample evaluation from *Giannone et al. (2008)* could be reproduced by looking at the ACF of the residuals of the model specified above.
 
