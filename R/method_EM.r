@@ -112,7 +112,7 @@ remNaNs_spline <-function(X,options){
 }
 
 InitCond<-function(xNaN,r,p,blocks,optNaN,R_mat,q,nQ,i_idio){
-
+  
   x<-xNaN
   Rcon<-R_mat
   
@@ -181,21 +181,18 @@ InitCond<-function(xNaN,r,p,blocks,optNaN,R_mat,q,nQ,i_idio){
     q_i = kronecker(q,zeros(r_i,1));
     ff = FF[,1:(r_i*pC)]
     
-    # if(Par$nQ != 0){
-      
-      for(j in idx_iQ){     # Coeficiente "loadings" de Variáveis trimestrais
-        xx_j = resNaN[pC:dim(resNaN)[1],j]
-        if(sum(!is.na(xx_j)) < size(ff,2)+2){
-          xx_j = res[pC:dim(res)[1],j]
-        }
-        ff_j = ff[!is.na(xx_j),]
-        xx_j = xx_j[!is.na(xx_j)]
-        iff_j = solve(t(ff_j)%*%ff_j)
-        Cc = iff_j%*%t(ff_j)%*%xx_j
-        Cc = Cc - iff_j%*%t(Rcon_i)%*%solve(Rcon_i%*%iff_j%*%t(Rcon_i))%*%(Rcon_i%*%Cc-q_i);
-        C_i[j,1:(pC*r_i)] <- t(Cc)
+    for(j in idx_iQ){     # Coeficiente "loadings" de Variáveis trimestrais
+      xx_j = resNaN[pC:dim(resNaN)[1],j]
+      if(sum(!is.na(xx_j)) < size(ff,2)+2){
+        xx_j = res[pC:dim(res)[1],j]
       }
-    # }
+      ff_j = ff[!is.na(xx_j),]
+      xx_j = xx_j[!is.na(xx_j)]
+      iff_j = solve(t(ff_j)%*%ff_j)
+      Cc = iff_j%*%t(ff_j)%*%xx_j
+      Cc = Cc - iff_j%*%t(Rcon_i)%*%solve(Rcon_i%*%iff_j%*%t(Rcon_i))%*%(Rcon_i%*%Cc-q_i);
+      C_i[j,1:(pC*r_i)] <- t(Cc)
+    }
     
     ff = rbind(zeros(pC-1,pC*r_i),ff)
     res = res - ff%*%t(C_i)
@@ -281,53 +278,47 @@ InitCond<-function(xNaN,r,p,blocks,optNaN,R_mat,q,nQ,i_idio){
   
   initViM = diag(1/diag(eye(size(BM,1))-BM^2))%*%SM;
   
-  #if(nQ != 0){
+  if(!nQ==0){
     C<-cbind(C,rbind(zeros(NM,5*nQ),t(kronecker(eye(nQ),c(1,2,3,2,1)))))
-  #}
-  
-  Rdiag<-diag(R)
-  sig_e <- Rdiag[(NM+1):N]/19
-  Rdiag[(NM+1):N] <- 1e-04
-  R = diag(Rdiag)
-  
-  rho0<-0.1
-  
-  #if(nQ != 0){
+    Rdiag<-diag(R)
+    sig_e <- Rdiag[(NM+1):N]/19
+    Rdiag[(NM+1):N] <- 1e-04
+    R = diag(Rdiag)
+    
+    rho0<-0.1
+    
     BQ <- kronecker(eye(nQ),rbind(cbind(rho0,zeros(1,4)),cbind(eye(4),zeros(4,1))))
-  #}else{
-  #  BQ <- NULL
-  #}
-  
-  temp = zeros(5)
-  temp[1,1] = 1
-  if(is.matrix(sig_e)){
-    SQ = kronecker(diag((1-rho0^2)*sig_e),temp)
-  }else{
-    SQ = kronecker((1-rho0^2)*sig_e,temp)
-  }
-  
-  #if(nQ != 0){
+    temp = zeros(5)
+    temp[1,1] = 1
+    if(is.matrix(sig_e)){
+      SQ = kronecker(diag((1-rho0^2)*sig_e),temp)
+    }else{
+      SQ = kronecker((1-rho0^2)*sig_e,temp)
+    }
+    
     initViQ = matrix(solve(eye((5*nQ)^2)-kronecker(BQ,BQ))%*%c(SQ),5*nQ,5*nQ)
-  #}else{
-  #  initViQ = NULL  
-  #}
-  
-  
-  # BQ = kronecker(eye(nQ),rbind(zeros(1,5),cbind(eye(4),zeros(4,1))))
-  # temp = zeros(5)
-  # temp[1,1] = 1
-  # if(is.matrix(sig_e)){
-  #   SQ = kronecker(diag(sig_e),temp)
-  # }else{
-  #   SQ = kronecker(diag(as.matrix(sig_e)),temp)  
-  # }
-  # temp = matrix(c(19, 16, 10, 4, 1, 16, 19, 16, 10, 4, 10, 16, 19, 16, 10, 4, 10, 16, 19, 16, 1, 4, 10, 16, 19),
-  #               5,5)
-  # if(is.matrix(sig_e)){
-  #   initViQ = kronecker(diag(sig_e),temp);
-  # }else{
-  #   initViQ = kronecker(sig_e,temp);
-  # }
+    
+    # BQ = kronecker(eye(nQ),rbind(zeros(1,5),cbind(eye(4),zeros(4,1))))
+    # temp = zeros(5)
+    # temp[1,1] = 1
+    # if(is.matrix(sig_e)){
+    #   SQ = kronecker(diag(sig_e),temp)
+    # }else{
+    #   SQ = kronecker(diag(as.matrix(sig_e)),temp)  
+    # }
+    # temp = matrix(c(19, 16, 10, 4, 1, 16, 19, 16, 10, 4, 10, 16, 19, 16, 10, 4, 10, 16, 19, 16, 1, 4, 10, 16, 19),
+    #               5,5)
+    # if(is.matrix(sig_e)){
+    #   initViQ = kronecker(diag(sig_e),temp);
+    # }else{
+    #   initViQ = kronecker(sig_e,temp);
+    # }
+    
+  }else{
+    BQ <- NULL
+    SQ <- NULL
+    initViQ <- NULL
+  }  
   
   A1<-magic::adiag(A,BM,BQ)
   Q1<-magic::adiag(Q, SM, SQ)
@@ -409,10 +400,12 @@ EM_DFM_SS_block_idioQARMA_restrMQ<-function(X,Par){
   y_est<-t(y_est$X)
   
   
+  num_iter = 0
+  loglik_aux = -Inf
+  
   while ((num_iter < max_iter) & !converged){
     
-    # message(num_iter)
-
+    
     res_EMstep = EMstep(y_est, A, C, Q, R, Z_0, V_0, r,p,R_mat,q,nQ,i_idio,blocks)
     # res_EMstep <- list(C_new, R_new, A_new, Q_new, Z_0, V_0, loglik)
     
@@ -423,6 +416,10 @@ EM_DFM_SS_block_idioQARMA_restrMQ<-function(X,Par){
     Z_0<-res_EMstep$Z_0
     V_0<-res_EMstep$V_0
     loglik<-res_EMstep$loglik
+    
+    # updating the user on what is going on
+    if((num_iter%% 5)==0){message(num_iter,"th iteration: \nThe loglikelihood went from ",round(loglik_aux,4)," to ",round(loglik,4))}
+    loglik_aux <- loglik
     
     # Checking convergence
     if (num_iter>2){
@@ -447,6 +444,7 @@ EM_DFM_SS_block_idioQARMA_restrMQ<-function(X,Par){
   Res<-list()
   
   # Res$X_sm <- repmat(Wx,TT,1)*x_sm+repmat(Mx,TT,1)
+  Res$x_sm <- x_sm
   Res$X_sm <- kronecker(t(Wx),rep(1,TT))*x_sm + kronecker(t(Mx),rep(1,TT))
   Res$FF <- Zsmooth[2:dim(Zsmooth)[1],]
   
@@ -516,25 +514,25 @@ EMstep <- function(y = NULL, A = NULL, C = NULL, Q = NULL, R = NULL, Z_0 = NULL,
     Q_i <- Q[(rp1+1):(rp1+r_i*ppC), (rp1+1):(rp1+r_i*ppC)]
     
     if(rp==1){
-    EZZ <- t(Zsmooth[(rp1+1):(rp1+rp),2:ncol(Zsmooth)]) %*% Zsmooth[(rp1+1):(rp1+rp),2:ncol(Zsmooth)] +
-      sum(Vsmooth[(rp1+1):(rp1+rp),(rp1+1):(rp1+rp),2:dim(Vsmooth)[3]])  # E(Z'Z)
-    EZZ_BB <- t(Zsmooth[(rp1+1):(rp1+rp),1:(ncol(Zsmooth)-1)]) %*% Zsmooth[(rp1+1):(rp1+rp),1:(ncol(Zsmooth)-1)] + 
-      sum(Vsmooth[(rp1+1):(rp1+rp),(rp1+1):(rp1+rp),1:(dim(Vsmooth)[3]-1)]) #E(Z(-1)'Z_(-1))
-    EZZ_FB <- t(Zsmooth[(rp1+1):(rp1+rp),2:ncol(Zsmooth)]) %*% Zsmooth[(rp1+1):(rp1+rp),1:(ncol(Zsmooth)-1)] + 
-      sum(VVsmooth[(rp1+1):(rp1+rp),(rp1+1):(rp1+rp),]) #E(Z'Z_(-1))
-  
+      EZZ <- t(Zsmooth[(rp1+1):(rp1+rp),2:ncol(Zsmooth)]) %*% Zsmooth[(rp1+1):(rp1+rp),2:ncol(Zsmooth)] +
+        sum(Vsmooth[(rp1+1):(rp1+rp),(rp1+1):(rp1+rp),2:dim(Vsmooth)[3]])  # E(Z'Z)
+      EZZ_BB <- t(Zsmooth[(rp1+1):(rp1+rp),1:(ncol(Zsmooth)-1)]) %*% Zsmooth[(rp1+1):(rp1+rp),1:(ncol(Zsmooth)-1)] + 
+        sum(Vsmooth[(rp1+1):(rp1+rp),(rp1+1):(rp1+rp),1:(dim(Vsmooth)[3]-1)]) #E(Z(-1)'Z_(-1))
+      EZZ_FB <- t(Zsmooth[(rp1+1):(rp1+rp),2:ncol(Zsmooth)]) %*% Zsmooth[(rp1+1):(rp1+rp),1:(ncol(Zsmooth)-1)] + 
+        sum(VVsmooth[(rp1+1):(rp1+rp),(rp1+1):(rp1+rp),]) #E(Z'Z_(-1))
+      
     }else{
-    EZZ <- (Zsmooth[(rp1+1):(rp1+rp),2:ncol(Zsmooth)]) %*% t(Zsmooth[(rp1+1):(rp1+rp),2:ncol(Zsmooth)]) +
-      apply(Vsmooth[(rp1+1):(rp1+rp),(rp1+1):(rp1+rp),2:dim(Vsmooth)[3]],c(1,2),sum)  # E(Z'Z)
-    EZZ_BB <- (Zsmooth[(rp1+1):(rp1+rp),1:(ncol(Zsmooth)-1)]) %*% t(Zsmooth[(rp1+1):(rp1+rp),1:(ncol(Zsmooth)-1)]) + 
-      apply(Vsmooth[(rp1+1):(rp1+rp),(rp1+1):(rp1+rp),1:(dim(Vsmooth)[3]-1)],c(1,2),sum) #E(Z(-1)'Z_(-1))
-    EZZ_FB <- (Zsmooth[(rp1+1):(rp1+rp),2:ncol(Zsmooth)]) %*% t(Zsmooth[(rp1+1):(rp1+rp),1:(ncol(Zsmooth)-1)]) + 
-      apply(VVsmooth[(rp1+1):(rp1+rp),(rp1+1):(rp1+rp),],c(1,2),sum) #E(Z'Z_(-1))
+      EZZ <- (Zsmooth[(rp1+1):(rp1+rp),2:ncol(Zsmooth)]) %*% t(Zsmooth[(rp1+1):(rp1+rp),2:ncol(Zsmooth)]) +
+        apply(Vsmooth[(rp1+1):(rp1+rp),(rp1+1):(rp1+rp),2:dim(Vsmooth)[3]],c(1,2),sum)  # E(Z'Z)
+      EZZ_BB <- (Zsmooth[(rp1+1):(rp1+rp),1:(ncol(Zsmooth)-1)]) %*% t(Zsmooth[(rp1+1):(rp1+rp),1:(ncol(Zsmooth)-1)]) + 
+        apply(Vsmooth[(rp1+1):(rp1+rp),(rp1+1):(rp1+rp),1:(dim(Vsmooth)[3]-1)],c(1,2),sum) #E(Z(-1)'Z_(-1))
+      EZZ_FB <- (Zsmooth[(rp1+1):(rp1+rp),2:ncol(Zsmooth)]) %*% t(Zsmooth[(rp1+1):(rp1+rp),1:(ncol(Zsmooth)-1)]) + 
+        apply(VVsmooth[(rp1+1):(rp1+rp),(rp1+1):(rp1+rp),],c(1,2),sum) #E(Z'Z_(-1))
     }
     # message('após EZZ-.')
     
     
-
+    
     A_i[1:r_i,1:rp] <- EZZ_FB[1:r_i,1:rp] %*% solve(EZZ_BB[1:rp,1:rp])
     Q_i[1:r_i,1:r_i] <- (EZZ[1:r_i,1:r_i] - A_i[1:r_i,1:rp] %*% t(matrix(EZZ_FB[1:r_i,1:rp],r_i,rp))) / TT
     
@@ -550,7 +548,7 @@ EMstep <- function(y = NULL, A = NULL, C = NULL, Q = NULL, R = NULL, Z_0 = NULL,
   
   # message('EMstep depois loop 1:nb')
   
-  rp1 <- sum(r)*ppC
+  rp1 <- sum(sum(r))*ppC
   niM <- sum(i_idio[1:nM])
   
   # idiosyncratic
@@ -613,7 +611,7 @@ EMstep <- function(y = NULL, A = NULL, C = NULL, Q = NULL, R = NULL, Z_0 = NULL,
     
     idx_i <- NULL
     for(k in 1:nrow(blocks)){
-      idx_i[k] <- sum(blocks[k,] == bl_i) == 3
+      idx_i[k] <- sum(blocks[k,] == bl_i) == size(blocks,2)
     }
     idx_i <- find(idx_i)
     
@@ -621,22 +619,30 @@ EMstep <- function(y = NULL, A = NULL, C = NULL, Q = NULL, R = NULL, Z_0 = NULL,
     idx_iM <- idx_i[idx_i < (c(nM) + 1)]
     n_i <- length(idx_iM)
     
-    denom <- zeros(n_i*rs,n_i*rs)
-    nom <- zeros(n_i,rs)
-    
-    i_idio_i <- i_idio_M[idx_iM] == 1
-    i_idio_ii <- c_i_idio[idx_iM]
-    i_idio_ii <- i_idio_ii[i_idio_i]
-    
-    for(t in 1:TT){
-      nanYt <- diag(!nanY[idx_iM,t])
-      nn <- sum(bl_idxM[i,])
-      denom <- denom + kronecker(Zsmooth[bl_idxM[i,],t+1][1:nn] %*% t(Zsmooth[bl_idxM[i,],t+1][1:nn]) + Vsmooth[bl_idxM[i,],bl_idxM[i,],t+1][1:nn,1:nn], nanYt)
-      nom <- nom + y[idx_iM,t] %*% t(Zsmooth[bl_idxM[i,],t+1][1:nn]) - nanYt[,i_idio_i] %*% (Zsmooth[rp1+i_idio_ii,t+1] %*% t(Zsmooth[bl_idxM[i,],t+1][1:nn]) + Vsmooth[rp1+i_idio_ii,bl_idxM[i,],t+1][,1:nn])
+    if(n_i==0){
+      denom <- NULL
+      nom <- NULL
+    } else {
+      denom <- zeros(n_i*rs,n_i*rs)
+      nom <- zeros(n_i,rs)
+      
+      
+      i_idio_i <- i_idio_M[idx_iM] == 1
+      i_idio_ii <- c_i_idio[idx_iM]
+      i_idio_ii <- i_idio_ii[i_idio_i]
+      
+      for(t in 1:TT){
+        
+        nanYt <- diag(!nanY[idx_iM,t])
+        nn <- sum(bl_idxM[i,])
+        denom <- denom + kronecker(Zsmooth[bl_idxM[i,],t+1][1:nn] %*% t(Zsmooth[bl_idxM[i,],t+1][1:nn]) + Vsmooth[bl_idxM[i,],bl_idxM[i,],t+1][1:nn,1:nn], nanYt)
+        nom <- nom + y[idx_iM,t] %*% t(Zsmooth[bl_idxM[i,],t+1][1:nn]) - nanYt[,i_idio_i] %*% (Zsmooth[rp1+i_idio_ii,t+1] %*% t(Zsmooth[bl_idxM[i,],t+1][1:nn]) + Vsmooth[rp1+i_idio_ii,bl_idxM[i,],t+1][,1:nn])
+      }
+      
+      vec_C <- solve(denom) %*% c(nom)
+      C_new[idx_iM,bl_idxM[i,]][,1:nn] <- matrix(vec_C,n_i,rs)
+      
     }
-    
-    vec_C <- solve(denom) %*% c(nom)
-    C_new[idx_iM,bl_idxM[i,]][,1:nn] <- matrix(vec_C,n_i,rs)
     
     # QUARTERLY
     idx_iQ <- idx_i[idx_i>c(nM)]
@@ -685,7 +691,9 @@ EMstep <- function(y = NULL, A = NULL, C = NULL, Q = NULL, R = NULL, Z_0 = NULL,
   R_new <- R_new/TT
   RR <- diag(R_new) #RR(RR<1e-2) = 1e-2;
   RR[i_idio_M] <- 1e-04
-  RR[(nM+1):length(RR)] <- 1e-04
+  if(nM<length(RR)){
+    RR[(nM+1):length(RR)] <- 1e-04
+  }
   R_new <- diag(RR)
   
   if(!is.matrix(Z_0)){
@@ -940,7 +948,7 @@ em_converged <- function(loglik = NULL, previous_loglik = NULL, threshold = NULL
   
   if(!is.null(check_increased)){
     if(loglik - previous_loglik < -1e-3){ # allow for a little imprecision
-      print(paste(1, '******likelihood decreased from %6.4f to %6.4f!\n', previous_loglik, loglik))
+      message(paste("******likelihood decreased from",round(previous_loglik,4),"to",round(loglik,4)))
       decrease <- 1
     }
   }
@@ -956,4 +964,3 @@ em_converged <- function(loglik = NULL, previous_loglik = NULL, threshold = NULL
   list(converged = converged, decrease = decrease)
   
 }
-
