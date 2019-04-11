@@ -64,8 +64,8 @@
 #' @seealso \code{\link[nowcasting]{base_extraction}}
 #' @export
 
-nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method = '2s', blocks = NULL, oldFactorsParam = NULL, oldRegParam = NULL){
-
+nowcast <- function(y = NULL, x, q = NULL, r = NULL, p = NULL, method = '2s', blocks = NULL, frequency = NULL, oldFactorsParam = NULL, oldRegParam = NULL){
+  
   if(is.null(q) | is.null(r) | is.null(p)){
     warnings('Parameters q, r and p must be specified.')
   }
@@ -77,8 +77,8 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method = '2s', blocks = 
                                 ss = oldFactorsParam$std, MM = oldFactorsParam$mean, a = oldFactorsParam$eigen)
     fatores <- factors$dynamic_factors
     prev <- bridge(y,fatores,oldRegParam)
-
-    # voltar da padronização
+    
+    # undo normalization 
     fit <- as.matrix(factors$dynamic_factors) %*% t(factors$eigen$vectors[,1:r])
     colnames(fit) <- colnames(x)
     s <- apply(x, MARGIN = 2, FUN = sd, na.rm = T)
@@ -90,7 +90,7 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method = '2s', blocks = 
       x1[,i] <- s[i] * fit[,i] + M[i]
       fore_x[is.na(fore_x[,i]), i] <- x1[is.na(fore_x[,i]), i]
     }
- 
+    
     names(factors) <- c("dynamic_factors", "A", "Lambda","BB","Psi","initx","initV","eigen","std","mean")
     res <- list(yfcst = prev$main, reg = prev$reg, factors = factors, xfcst = fore_x)
     if(is.null(oldRegParam)){
@@ -117,12 +117,12 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method = '2s', blocks = 
                            start = start(factors$dynamic_factors), frequency = 12)
     }
     
-    # voltar da padronização
+    # undo normalization 
     fit <- as.matrix(factors$dynamic_factors) %*% t(factors$eigen$vectors[,1:r])
     colnames(fit) <- colnames(x)
     s <- apply(x, MARGIN = 2, FUN = sd,na.rm=T)
     M <- apply(x, MARGIN = 2, FUN = mean,na.rm=T)
-   
+    
     x1 <- fit
     fore_x <- x[,colnames(x) %in% colnames(fit)]
     for(i in colnames(fit)){
@@ -138,63 +138,116 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method = '2s', blocks = 
     
   }else if(method == 'EM'){
     
-    if(p > 5){
-      stop('Parameter p must be less than 5.')
-    }
-
-    X <- cbind(x, qtr2month(y))
-    Par <- list(r = rep(r,3), p = p, max_iter = 50, i_idio = c(rep(T,dim(x)[2]), F),
+    # checking validity of inputs
+    if(p > 5){stop('Parameter p must be less or equal to 5.')}
+    if(is.null(frequency)){stop("The frequencies of the variables should be specified as either 12 (monthly) or 4 (quarterly).")}
+    if(sum(!frequency%in% c(12,4))!=0){stop("The frequencies should be a vector of numerics taking values 4 (quarterly) or 12 (monthly)")}
+    if(is.null(blocks)){stop("The block structure of how variables load into the factors should be specified.")}
+    if(!is.null(q)){message("Obs: for this estimation method the number of common shocks is assumed to be equal to the number of factors, i.e. q = r.")}
+    if(!is.null(y)){stop("Only one input matrix x is needed. The last column of the input matrix should be the dependent variable y")}
+    
+    # determine the number of blocks
+    n_blocks <- dim(blocks)[2]
+    
+    # determine the number of quarterly series
+    nQ <- sum(frequency==4)
+    
+    # preparing X
+    
+      # 1) all quarterly series should be positioned at the last columns
+      
+        # reshuffle vector
+        idx <- cumsum(rep(1,dim(x)[2]))
+        V_Q <- which(frequency==4)
+        idx_M <- idx[-V_Q]
+        idx_new <- c(idx_M,V_Q)
+        
+        # adapting data base
+        x <- x[,idx_new]
+        
+        # adapting blocks
+        blocks <- blocks[idx_new,]
+        
+      # 2) keeping track of the target variable
+      y_pos <- which(idx_new==length(idx_new))
+    
+    #   
+    Par <- list(r = rep(r,n_blocks), # Number of common factors
+                p = p, # Number of lags in autoregressive of factor (same for all factors)
+                max_iter = 500, # max number of itereations for the EM loop
+                i_idio = c(rep(T,dim(x)[2]-nQ), rep(F,nQ)),
                 Rconstr = matrix(c(
                   c(2,3,2,1),
                   c(-1,0,0,0),
                   c(0,-1,0,0),
                   c(0,0,-1,0),
                   c(0,0,0,-1))
-                  ,4,5),
-                q = matrix(rep(0,4),4,1), nQ = 1,
-                blocks = blocks)
+                  ,4,5), 
+                q = matrix(rep(0,4),4,1), 
+                nQ = nQ, # Number of quarterly series
+                blocks = blocks # Block loadings
+    )
     
+    Res <- EM_DFM_SS_block_idioQARMA_restrMQ(x,Par)
     
-    if(is.null(blocks)){
-      blocks <- matrix(rep(1,dim(X)[2]*3), dim(X)[2], 3)
+    # recovering the factors
+    idx_factor <- c(1:r)
+    if(dim(blocks)[2]>1){
+      idx_factor_aux <- lapply(X = seq(1,dim(blocks)[2]-1), FUN = function(x){(x*r*5 + 1):(x*r*5 + r)})
+      for(j in 1:length(idx_factor_aux)){idx_factor <- append(idx_factor, idx_factor_aux[[j]])}
     }
-
     
-    Res <- EM_DFM_SS_block_idioQARMA_restrMQ(X,Par)
-    
+    # Factors and estimated parameters
     factors <- list(
-      dynamic_factors = ts(Res$FF[,c(1:r, (r*5 + 1):(r*5 + r), (2*r*5 + 1):(2*r*5 + r))], start = start(x), frequency = 12),
+      dynamic_factors = ts(Res$FF[,idx_factor], start = start(x), frequency = 12),
       T = Res$A,
       Z = Res$C,
       muBar = Res$Mx,
-      mu = Res$Mx[-length(Res$Mx)],
+      mu = Res$Mx[-y_pos],
       sigma = Res$Wx,
       Q = Res$Q, R = Res$R, initx = Res$Z_0, initV = Res$V_0)
     
-    colnames(factors$dynamic_factors) <- c(paste0("globalFactor",1:r),
-                                           paste0("nominalFactor",1:r),
-                                           paste0("realFactor",1:r))
+    colnames(factors$dynamic_factors) <- as.vector(sapply(X = 1:dim(blocks)[2],FUN = function(X){paste0("Block",X,"_factor",1:r)}))
     
+    fore_x <- ts(Res$X_sm, start = start(x), frequency = 12)
+    colnames(fore_x) <- colnames(x)
     
-    fore_x <- ts(Res$X_sm, start = start(X), frequency = 12)
-    yprev <- month2qtr(ts(Res$X_sm[,dim(Res$X_sm)[2]], start = start(X), frequency = 12))
+    # y monthly
+    if(frequency[length(frequency)]==12){
+      yprev <- ts(Res$X_sm[,y_pos], start = start(x), frequency = 12)
+      y <- x[,y_pos]
+    }
+    
+    # y quarterly
+    if(frequency[length(frequency)]==4){
+      yprev <- month2qtr(ts(Res$X_sm[,y_pos], start = start(x), frequency = 12))
+      y <- month2qtr(x[,y_pos])
+    }
+    
     Y <- cbind(y,yprev,yprev)
     Y[is.na(Y[,1]),2] <- NA
     Y[!is.na(Y[,1]),3] <- NA
     colnames(Y) <- c('y','in','out')
     
-    ind <- c(1:r, 1:r+r*5, 1:r+r*5*2, dim(Res$C)[2]-4)
-    month_y <- ts(Res$Mx[length(Res$Mx)]/9 + Res$FF[,ind] %*% Res$C[nrow(Res$C), ind] * Res$Wx[length(Res$Wx)], 
-                  start = start(X), frequency = 12)
     
-    # Essa é uma medida trimestral da variável y acumulada nos últimos três meses
-    fore_x <- fore_x[,-dim(fore_x)[2]]
-    colnames(fore_x) <- colnames(x)
+    # # check this part ---->
+    # 
+    # ind <- c(1:r, 1:r+r*5, 1:r+r*5*2, dim(Res$C)[2]-4)
+    # month_y <- ts(Res$Mx[length(Res$Mx)]/9 + Res$FF[,ind] %*% Res$C[nrow(Res$C), ind] * Res$Wx[length(Res$Wx)], 
+    #               start = start(X), frequency = 12)
     
-    res <- list(yfcst = Y, factors = factors, xfcst = fore_x, month_y = month_y)
+    #
+    fore_x <- fore_x[,-y_pos]
+    colnames(fore_x) <- colnames(x)[-y_pos]
+    
+    res <- list(yfcst = Y, 
+                factors = factors, 
+                xfcst = fore_x
+                #,month_y = month_y
+    )
     
   }
-
+  
   # output
   return(res)
   

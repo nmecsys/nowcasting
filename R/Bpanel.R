@@ -49,7 +49,7 @@
 #' @export
 
 
-Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k.ma = 3, na.prop = 1/3, h = 12){
+Bpanel <- function(base = NULL, trans = NULL, NA.replace = T, aggregate = F, k.ma = 3, na.prop = 1/3, h = 12){
   
   if(is.null(trans)){
     stop('trans can not to be NULL')
@@ -67,7 +67,7 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k.ma = 3, na.prop =
     stop('the only available transformations are 0, 1, 2, 3, 4, 5 and 6.')
   }
   
-  if(na.prop <= 0 | na.prop >= 1){
+  if(na.prop < 0 | na.prop > 1){
     stop("na.prop must be between 0 and 1.")
   }
   
@@ -98,17 +98,10 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k.ma = 3, na.prop =
     }
   }
   
-  # transformation of monthly series into quarterly quantities
+  # transformation of monthly series based on Mariano and Murasawa (2003)
   if(aggregate == T){
     for(j in 1:ncol(base)){
-      if(trans[j] %in% c(1,2,3,4)){
-        # transformation of monthly differences/rates based on Mariano and Murasawa (2003)
         base1[,j] <- stats::filter(base1[,j], c(1,2,3,2,1), sides = 1)
-      }
-      else if(trans[j] %in% c(5,6)){
-        # transformation of yearly difference/rate
-        base1[,j] <- stats::filter(base1[,j], c(1,1,1), sides = 1)
-      }
     }
   }
   colnames(base1) <- colnames(base)
@@ -141,7 +134,7 @@ Bpanel <- function(base = NULL, trans = NULL, aggregate = F, k.ma = 3, na.prop =
     }
     na_position <- min(which(na2 == 1)) - 1
     if(length(which(na2 == 1)) == 0){ na_position <- nrow(base2)} 
-    base3[,i] <- c(outliers_correction(base2[1:na_position,i], k.ma), rep(NA, nrow(base2) - na_position))
+    base3[,i] <- c(outliers_correction(base2[1:na_position,i], k.ma, NA.replace), rep(NA, nrow(base2) - na_position))
   }
   
   # add h lines to the database

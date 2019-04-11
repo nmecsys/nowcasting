@@ -438,15 +438,17 @@ kalman_update_diag <- function(A, C, Q, R, y, x, V, varagin){
   
 }
 
-outliers_correction <- function(x, k.ma = 3){
-  # x: ts
-  
+outliers_correction <- function(x, k.ma = 3, NA.replace){
+
   # encontrar missings
-  missing <- is.na(x)
+  if(NA.replace == T){missing <- is.na(x)}else{missing <- rep(FALSE, length(x))}
   
   # outlier is an observation greater than 4 times interquartile range
-  outlier <- abs(x - median(x, na.rm = T)) > (4 * stats::IQR(x, na.rm = T)) & !missing
-  
+  if(NA.replace == T){
+    outlier <- abs(x - median(x, na.rm = T)) > (4 * stats::IQR(x, na.rm = T)) & !missing
+  }else{
+    outlier <- abs(x - median(x, na.rm = T)) > (4 * stats::IQR(x, na.rm = T)) & missing 
+    }
   Z <- x
   
   # replacing outliers and missings by median
