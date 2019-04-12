@@ -33,6 +33,7 @@
 #'   \deqn{\frac{x_{i,t} - x_{i,t-12}}{x_{i,t-12}}}}
 #'  } 
 #' 
+#' @param NA.replace A \code{boolean} indicating whether missing values, not part of the jagged edges, should be replaced.
 #' @param aggregate A \code{boolean} representing if you want aggregate the monthly variables to represent quarterly quantities. If \code{TRUE} the aggregation is made following the approximation of \emph{Mariano and Murasawsa 2003}.
 #' @param k.ma A \code{numeric} representing the degree of the moving average correction.
 #' @param na.prop A \code{numeric} representing the proportion of NA allowed. Default is 1/3.
