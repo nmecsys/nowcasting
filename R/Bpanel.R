@@ -133,7 +133,7 @@ Bpanel <- function(base = NULL, trans = NULL, NA.replace = T, aggregate = F, k.m
     for(j in 1:length(na)){
       na2[j] <- ifelse(sum(na[j:length(na)]) == length(j:length(na)), 1, 0)
     }
-    na_position <- min(which(na2 == 1)) - 1
+    suppressWarnings({ na_position <- min(which(na2 == 1)) - 1 })
     if(length(which(na2 == 1)) == 0){ na_position <- nrow(base2)} 
     base3[,i] <- c(outliers_correction(base2[1:na_position,i], k.ma, NA.replace), rep(NA, nrow(base2) - na_position))
   }
