@@ -40,26 +40,18 @@
 #' now2s_agg <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2s_agg')
 #'
 #' ### Method EM
-#' # selecting and transforming y  
-#' gdp <- month2qtr(x = USGDPshort$base[,"GDPUS"])
-#' gdp <- ts(c(gdp,NA,NA,NA,NA), start = start(gdp), frequency = 4)
-#' gdp_stationary <- gdp/lag(gdp, k = -1) -1
-#' gdp_position <- which(colnames(USGDPshort$base) == "GDPUS")
+#' # Replication of the NY FED nowcast
+#' data(NYFED)
 #' 
-#' # selecting and transforming x 
-#' base <- USGDPshort$base[,-gdp_position]
-#' trans <- USGDPshort$legend[-gdp_position,"transformation"]
-#' stationaryBase <- cbind(base[,trans == 1]/lag(base[,trans == 1], k = -1) - 1,
-#'                         diff(base[,trans == 2]))
-#' colnames(stationaryBase) <- colnames(base)[c(which(trans == 1),which(trans == 2)) ]
-#' stationaryBase <- stationaryBase[,colnames(base)]
+#' base <- NYFED$base
+#' blocks <- NYFED$blocks$blocks
+#' trans <- NYFED$legend$Transformation
+#' frequency <- NYFED$legend$Frequency
 #' 
-#' # DFM estimation via EM
-#' blocks <- matrix(c(1,0,1,1,0,1,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,0,1,1,
-#'                    0,1,1,0,1,1,0,1,0,1,1,1,0,1,1,0,1,0,1,1,1,0,1,1,0,1,
-#'                    1,0,1,0,1,1,0,1,1,0,1,1,0,1,1,1,0,1,0,1,1,0,1,1,1,0), byrow = T, ncol = 3)
-#' nowEM <- nowcast(y = gdp_stationary, x = stationaryBase, r = 1, p = 1, q = 1,
-#'                  method = 'EM', blocks = blocks)
+#' x <- Bpanel(base = base, trans = trans, NA.replace = F, na.prop = 1)
+#' 
+#' nowEM <- nowcast(x = x, r = 1, p = 1, method = "EM", blocks = blocks, frequency = frequency)
+#' 
 #' }
 #' @seealso \code{\link[nowcasting]{base_extraction}}
 #' @export
