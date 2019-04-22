@@ -117,7 +117,13 @@ blocks <- NYFED$blocks$blocks
 trans <- NYFED$legend$Transformation
 frequency <- NYFED$legend$Frequency
 ```
-The same setting as the NY FED is used. We therefore limit the number of factors, r, per block to one and define the factor process as a VAR(1). The algorithm displays the convergence of the loglikelihood function every 5 iterations.
+The data-set *x* can be prepared by using the function `Bpanel`. For the EM algorithm, we do not want to replace the missing values that are not part of the jagged edges as was the case with the Two-Stage method. This can be done by telling the function not to replace those particular missing values, i.e. `NA.replace = F`. We also do not want to discard series with many missing values and therefore use `na.prop = 1`.
+
+```{r warning=FALSE}
+x <- Bpanel(base = base, trans = trans, NA.replace = F, na.prop = 1)
+```
+
+The same setting as the NY FED is used. We therefore limit the number of factors, r, per block to one and define the factor process as a VAR(1). The algorithm displays the convergence of the loglikelihood function every 5 iterations. As opposed, to the Two-Stage method, the *x* represents the entire data-set and *y* represents the name of the variable that is being forecast.
 
 ```{r warning=FALSE}
 nowEM <- nowcast(y = "GDPC1", x = x, r = 1, p = 1, method = "EM", blocks = blocks, frequency = frequency)
