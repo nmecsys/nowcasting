@@ -6,7 +6,7 @@
 \alias{nowcasting-package}
 \title{Nowcast Analysis and Create Real-Time Data Basis}
 \description{
-This package is an initiative of the Center for Statistical and Computational Methods (NMEC) belonging to the Brazilian Institute of Economics (IBRE) of the Getulio Vargas Foundation (FGV).
+This package is an initiative of the Center for Statistical and Computational Methods (NMEC) that is part of the Brazilian Institute of Economics (IBRE) from the Getulio Vargas Foundation (FGV).
 
 The purpose of this package is to allow \code{R} users to implement dynamic factor models that have gained prominence in the nowcasting literature.
 

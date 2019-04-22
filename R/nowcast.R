@@ -50,13 +50,13 @@
 #' 
 #' x <- Bpanel(base = base, trans = trans, NA.replace = F, na.prop = 1)
 #' 
-#' nowEM <- nowcast(x = x, r = 1, p = 1, method = "EM", blocks = blocks, frequency = frequency)
+#' nowEM <- nowcast(y = "GDPC1", x = x, r = 1, p = 1, method = "EM", blocks = blocks, frequency = frequency)
 #' 
 #' }
 #' @seealso \code{\link[nowcasting]{base_extraction}}
 #' @export
 
-nowcast <- function(y = NULL, x, q = NULL, r = NULL, p = NULL, method = '2s', blocks = NULL, frequency = NULL, oldFactorsParam = NULL, oldRegParam = NULL){
+nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method = '2s', blocks = NULL, frequency = NULL, oldFactorsParam = NULL, oldRegParam = NULL){
   
   if(is.null(q) | is.null(r) | is.null(p)){
     warnings('Parameters q, r and p must be specified.')
@@ -136,7 +136,7 @@ nowcast <- function(y = NULL, x, q = NULL, r = NULL, p = NULL, method = '2s', bl
     if(sum(!frequency%in% c(12,4))!=0){stop("The frequencies should be a vector of numerics taking values 4 (quarterly) or 12 (monthly)")}
     if(is.null(blocks)){stop("The block structure of how variables load into the factors should be specified.")}
     if(!is.null(q)){message("Obs: for this estimation method the number of common shocks is assumed to be equal to the number of factors, i.e. q = r.")}
-    if(!is.null(y)){stop("Only one input matrix x is needed. The last column of the input matrix should be the dependent variable y")}
+    if(!is.character(y)){stop("y should indicate the name of the variable to be forecast")}
     
     # determine the number of blocks
     n_blocks <- dim(blocks)[2]
@@ -160,8 +160,8 @@ nowcast <- function(y = NULL, x, q = NULL, r = NULL, p = NULL, method = '2s', bl
         # adapting blocks
         blocks <- blocks[idx_new,]
         
-      # 2) keeping track of the target variable
-      y_pos <- which(idx_new==length(idx_new))
+      # 2) position of the target variable
+      y_pos <- which(colnames(x)==y)
     
     #   
     Par <- list(r = rep(r,n_blocks), # Number of common factors
@@ -190,28 +190,20 @@ nowcast <- function(y = NULL, x, q = NULL, r = NULL, p = NULL, method = '2s', bl
     }
     
     # Factors and estimated parameters
-    factors <- list(
-      dynamic_factors = ts(Res$FF[,idx_factor], start = start(x), frequency = 12),
-      T = Res$A,
-      Z = Res$C,
-      muBar = Res$Mx,
-      mu = Res$Mx[-y_pos],
-      sigma = Res$Wx,
-      Q = Res$Q, R = Res$R, initx = Res$Z_0, initV = Res$V_0)
-    
-    colnames(factors$dynamic_factors) <- as.vector(sapply(X = 1:dim(blocks)[2],FUN = function(X){paste0("Block",X,"_factor",1:r)}))
+    factors <- ts(Res$FF[,idx_factor], start = start(x), frequency = 12)
+    colnames(factors) <- as.vector(sapply(X = 1:dim(blocks)[2],FUN = function(X){paste0("Block",X,"_factor",1:r)}))
     
     fore_x <- ts(Res$X_sm, start = start(x), frequency = 12)
     colnames(fore_x) <- colnames(x)
     
     # y monthly
-    if(frequency[length(frequency)]==12){
+    if(frequency[idx_new[y_pos]]==12){
       yprev <- ts(Res$X_sm[,y_pos], start = start(x), frequency = 12)
       y <- x[,y_pos]
     }
     
     # y quarterly
-    if(frequency[length(frequency)]==4){
+    if(frequency[idx_new[y_pos]]==4){
       yprev <- month2qtr(ts(Res$X_sm[,y_pos], start = start(x), frequency = 12))
       y <- month2qtr(x[,y_pos])
     }
@@ -234,7 +226,8 @@ nowcast <- function(y = NULL, x, q = NULL, r = NULL, p = NULL, method = '2s', bl
     
     res <- list(yfcst = Y, 
                 factors = factors, 
-                xfcst = fore_x
+                xfcst = fore_x,
+                Res = Res
                 #,month_y = month_y
     )
     

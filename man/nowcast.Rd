@@ -67,7 +67,7 @@ frequency <- NYFED$legend$Frequency
 
 x <- Bpanel(base = base, trans = trans, NA.replace = F, na.prop = 1)
  
-nowEM <- nowcast(x = x, r = 1, p = 1, method = "EM", blocks = blocks, frequency = frequency)
+nowEM <- nowcast(y = "GDPC1", x = x, r = 1, p = 1, method = "EM", blocks = blocks, frequency = frequency)
 
 }
 }
