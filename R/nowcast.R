@@ -7,10 +7,11 @@
 #' @param p AR order of factor model.
 #' @param method There are three options: \code{"2s"} (two stages without factors aggregation as in Giannone et al. 2008); \code{"2s_agg"} (two stages with factors aggregation); \code{"EM"} (Expected Maximization as in Bańbura et al. 2011).
 #' @param blocks a binary matrix Nx3 that characterizes the regressors variables in global (1st column), nominal (2nd column) and real (3rd column). If \code{NULL}, the matrix assume 1 for all cells.
+#' @param frequency A vector of integers indicating the frequency of the variables: 4 for quarterly, 12 for monthly.
 #' @param oldFactorsParam a list containing estimated factors parameters from nowcast function.
 #' @param oldRegParam a list containing estimated regression parameters from nowcast function.
 #' @return A \code{list} containing two elements:
-#' 
+
 #' \item{yfcst}{the original \code{y} series and its in-sample and out-of-sample estimations.}
 #' \item{reg}{regression model between \code{y} and the estimated factors. Not available for EM method.}
 #' \item{factors}{the estimated factors and DFM model coefficients.}
@@ -50,7 +51,8 @@
 #' 
 #' x <- Bpanel(base = base, trans = trans, NA.replace = F, na.prop = 1)
 #' 
-#' nowEM <- nowcast(y = "GDPC1", x = x, r = 1, p = 1, method = "EM", blocks = blocks, frequency = frequency)
+#' nowEM <- nowcast(y = "GDPC1", x = x, r = 1, p = 1, method = "EM",
+#'  blocks = blocks, frequency = frequency)
 #' 
 #' }
 #' @seealso \code{\link[nowcasting]{base_extraction}}
