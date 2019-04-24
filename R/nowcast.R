@@ -190,8 +190,8 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method = '2s', blocks = 
     }
     
     # Factors and estimated parameters
-    factors <- ts(Res$FF[,idx_factor], start = start(x), frequency = 12)
-    colnames(factors) <- as.vector(sapply(X = 1:dim(blocks)[2],FUN = function(X){paste0("Block",X,"_factor",1:r)}))
+    factors <- list(dynamic_factors = ts(Res$FF[,idx_factor], start = start(x), frequency = 12))
+    colnames(factors$dynamic_factors) <- as.vector(sapply(X = 1:dim(blocks)[2],FUN = function(X){paste0("Block",X,"_factor",1:r)}))
     
     fore_x <- ts(Res$X_sm, start = start(x), frequency = 12)
     colnames(fore_x) <- colnames(x)
