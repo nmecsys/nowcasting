@@ -4,8 +4,9 @@
 \alias{nowcast}
 \title{Nowcasting of a quarterly time series using a dynamic factor model.}
 \usage{
-nowcast(y = NULL, x, q = NULL, r = NULL, p = NULL, method = "2s",
-  blocks = NULL, frequency = NULL, oldFactorsParam = NULL, oldRegParam = NULL)
+nowcast(y, x, q = NULL, r = NULL, p = NULL, method = "2s",
+  blocks = NULL, frequency = NULL, oldFactorsParam = NULL,
+  oldRegParam = NULL)
 }
 \arguments{
 \item{y}{Stationary quarterly time series.}
@@ -30,7 +31,6 @@ nowcast(y = NULL, x, q = NULL, r = NULL, p = NULL, method = "2s",
 }
 \value{
 A \code{list} containing two elements:
-
 \item{yfcst}{the original \code{y} series and its in-sample and out-of-sample estimations.}
 \item{reg}{regression model between \code{y} and the estimated factors. Not available for EM method.}
 \item{factors}{the estimated factors and DFM model coefficients.}
@@ -66,8 +66,9 @@ trans <- NYFED$legend$Transformation
 frequency <- NYFED$legend$Frequency
 
 x <- Bpanel(base = base, trans = trans, NA.replace = F, na.prop = 1)
- 
-nowEM <- nowcast(y = "GDPC1", x = x, r = 1, p = 1, method = "EM", blocks = blocks, frequency = frequency)
+
+nowEM <- nowcast(y = "GDPC1", x = x, r = 1, p = 1, method = "EM",
+ blocks = blocks, frequency = frequency)
 
 }
 }
