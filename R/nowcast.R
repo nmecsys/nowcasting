@@ -151,8 +151,8 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method = '2s', blocks = 
         # reshuffle vector
         idx <- cumsum(rep(1,dim(x)[2]))
         V_Q <- which(frequency==4)
-        idx_M <- idx[-V_Q]
-        idx_new <- c(idx_M,V_Q)
+        if(is.integer(V_Q) && length(V_Q) == 0){idx_new <- idx}else{idx_M <- idx[-V_Q]
+        idx_new <- c(idx_M,V_Q)}
         
         # adapting data base
         x <- x[,idx_new]
