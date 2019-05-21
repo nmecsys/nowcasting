@@ -162,7 +162,7 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method = '2s', blocks = 
         x <- x[,idx_new]
         
         # adapting blocks
-        blocks <- blocks[idx_new,]
+        blocks <- as.matrix(blocks[idx_new,])
         
       # 2) position of the target variable
       y_pos <- which(colnames(x)==y)
