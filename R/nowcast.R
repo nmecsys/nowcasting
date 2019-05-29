@@ -136,9 +136,12 @@ nowcast <- function(y, x, q = NULL, r = NULL, p = NULL, method = '2s', blocks = 
     if(p > 5){stop('Parameter p must be less or equal to 5.')}
     if(is.null(frequency)){stop("The frequencies of the variables should be specified as either 12 (monthly) or 4 (quarterly).")}
     if(sum(!frequency%in% c(12,4))!=0){stop("The frequencies should be a vector of numerics taking values 4 (quarterly) or 12 (monthly)")}
-    if(is.null(blocks)){stop("The block structure of how variables load into the factors should be specified.")}
+    if(is.null(blocks)){stop("The block structure determining which variables load into which factors should be specified.")}
     if(!is.null(q)){message("Obs: for this estimation method the number of common shocks is assumed to be equal to the number of factors, i.e. q = r.")}
     if(!is.character(y)){stop("y should indicate the name of the variable to be forecast")}
+    
+    # rewrite blocks as matrix
+    if(!is.matrix(blocks)){blocks <- as.matrix(blocks)}
     
     # determine the number of blocks
     n_blocks <- dim(blocks)[2]
