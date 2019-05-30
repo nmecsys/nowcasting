@@ -1,23 +1,39 @@
 #' @title Information criterion for determining the number of shocks in a factor model
 #' @description The function gives the number of shocks that minimizes the information criterion.
 #' @param x a dataset;
-#' @param delta a real number within the range (0,1/2) for the sensitivity of the tolerance level to the size of the dataset;
-#' @param m a finite positive real number defining the tolerance level;
 #' @param r a positive integer corresponding to the number of factors;
 #' @param p a positive integer corresponding to the number of lags to be considered within the model.
+#' @param delta a real number within the range (0,1/2) for the sensitivity of the tolerance level to the size of the dataset;
+#' @param m a finite positive real number defining the tolerance level;
 #' @return A \code{list} containing two elements:
-#' 
 #' \item{q_star}{The number of shocks minimizing the information criterion;}
 #' \item{p}{The number of lags used.}
-#' 
 #' @references Bai, J., Ng, S. (2007). Determining the Number of Primitive Shocks in Factor Models. Journal of Business & Economic Statistics, 25(1), 52-60. <https://doi.org/10.1198/073500106000000413> 
 #' @importFrom vars VARselect VAR
 #' @import stats
 #' @export
 
-ICshocks<- function(x, delta = 0.1, m = 1, r = NULL, p = NULL){
+ICshocks<- function(x, r = NULL, p = NULL, delta = 0.1, m = 1){
+  
+  # Checking parameters delta and m (if not specified by the user we have used the values 
+  # from the Bai and Ng 2007 paper)
+  
+  if(delta <= 0 || delta >= 1/2){
+    stop("Delta needs to be within the (0,1/2) interval")
+  }
+  
+  if(m <= 0 || is.infinite(m) ){
+    stop("m needs to be be within the (0, Inf) interval")
+  }
+  
+  if(r == 1){
+    stop("The number of factors r should be > 1")
+  }
   
   # discarting rows with missing values
+  deleted <- sum(rowSums(is.na(x))!=0)
+  message <- paste0(deleted, " rows out of ",nrow(x)," were deleted.")
+  message(message)
   x <- na.omit(x)
   
   # Normalization of the database
@@ -31,11 +47,6 @@ ICshocks<- function(x, delta = 0.1, m = 1, r = NULL, p = NULL){
   # Other parameters: size of the database
   TT <- nrow(x)
   N <- ncol(x)
-  
-  # Checking parameters delta and m (if not specified by the user we have used the values 
-  # from the Bai and Ng 2007 paper)
-  if(delta <= 0 || delta >= 1/2){stop("Delta needs to be within the (0,1/2) interval")}
-  if(m <= 0 || is.infinite(m) ){stop("m needs to be be within the (0, Inf) interval")}
   
   # if not specified we will use the ICP2 criterium from Bai and Ng (2002) as
   # done in Bai and Ng 2007 to estimate the number of factors
