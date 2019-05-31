@@ -42,28 +42,26 @@ USDGP is a list with two data frames:
 * `USGDP$base`: this is an unbalanced panel with the model´s variables;
 * `USGDP$legend`: this contains the legend with the relevant information for each variable in the `USGDP$base` dataframe.
 
-In order to find the GDP time series in the dataset one can use the legend in `USGDP$legend`. We transform GDP into a quarterly variable by using the `month2qtr` function. The explanatory variables are all the remaining variables from the dataset.
+In order to use the `nowcast` function we require stationary variables. This can be done by using `Bpanel`. This function creates a balanced panel using an unbalanced panel as input. The default option is to substitute missing observations and outliers using the outlier correction methodology from *Giannone et al. (2008)*. The function includes most usual transformations to obtain stationary variables. For this particular example, the object `USGDP$legend` contains all the transformations used in *Giannone et al. (2008)*. All the explanatory variables are monthly while the GDP observation is quarterly as captured by the frequency vector. Note however, that the *data* object is a monthly mts. It is usual to include quarterly variables as monthly time series where the two first months of each quarter appear as NA. In this example the quarterly value is repeated.
 
 ```{r warning=FALSE}
-gdp <- month2qtr(x = USGDP$base[,"RGDPGR"], reference_month = 3)
+data <- Bpanel(base = USGDP$base,
+              trans = USGDP$legend$Transformation,
+              aggregate = FALSE)
+              
+frequency <- c(rep(12, ncol(data) -1), 4)
+
 ```
-
-The second step consists in treating the explanatory variables. This can be done by using the `Bpanel` function. This function creates a balanced panel using an unbalanced panel as input. The missing observations and outliers are substituted using the outlier correction methodology from *Giannone et al. (2008)*. The function includes most usual transformations to obtain stationary variables. The object `USGDP$legend` contains all the transformations used in *Giannone et al. (2008)*. The `Bpanel` function also allows monthly variables to be aggregated to represent quarterly quantities.
-
-```{r warning=FALSE}
-gdp_position <- which(colnames(USGDP$base) == "RGDPGR")
-base <- Bpanel(base = USGDP$base[,-gdp_position], 
-               trans = USGDP$legend$Transformation[-gdp_position], aggregate = TRUE)
-```
-Once these variables have been treated, the `nowcast` function can be used to estimate the model parameters according to the estimation method selected, the number *r* of dynamic factors, the lag order of the factors *p* and the number *q* of shocks to the factors. For this example we use the *Two-Stage - quarterly factors* method. The arguments *r*, *p* and *q* were defined according to *Giannone et al. (2008)*.
+Once these variables have been treated, the `nowcast` function can be used to estimate the model´s parameters according to the selected estimation method, the number *r* of dynamic factors, the lag order of the factors *p* and the number *q* of shocks to the factors. For this example we use the *Two-Stage - With aggregation* method that will aggregate monthly factors as in *Mariano and Murasawa (2003)*. The arguments *r*, *p* and *q* were defined according to *Giannone et al. (2008)*.
 
 ```{r warning=FALSE}
-nowcastUSGDP <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2s')
+nowcastUSGDP <- nowcast(formula = RGDPGR ~ ., data = data, r = 2, p = 2, q = 2, 
+                    method = '2s_agg', frequency = frequency)
 ```
 The in sample evaluation from *Giannone et al. (2008)* could be reproduced by looking at the ACF of the residuals of the model specified above.
 
 ```{r warning=FALSE}
-res <- ts(nowcastUSGDP$reg$residuals, start = start(gdp), frequency = 4)
+res <- ts(nowcastUSGDP$reg$residuals, start = start(data), frequency = 4)
 acf(window(res, start = c(1985,1), end = c(2004,4)))
 ```
 The **results** can be accessed from the object `nowcastUSGDP`.
@@ -126,7 +124,8 @@ x <- Bpanel(base = base, trans = trans, NA.replace = F, na.prop = 1)
 The same setting as the NY FED is used. We therefore limit the number of factors, r, per block to one and define the factor process as a VAR(1). The algorithm displays the convergence of the loglikelihood function every 5 iterations. As opposed, to the Two-Stage method, the *x* represents the entire data-set and *y* represents the name of the variable that is being forecast.
 
 ```{r warning=FALSE}
-nowEM <- nowcast(y = "GDPC1", x = x, r = 1, p = 1, method = "EM", blocks = blocks, frequency = frequency)
+nowEM <- nowcast(formula = GDPC1 ~ ., data = data, r = 1, p = 1, 
+                  method = "EM", blocks = blocks, frequency = frequency)
 ```
 The forecasts can be visualized using the function `nowcast.plot` as illustrated below.
 
@@ -155,8 +154,7 @@ The variable to be forecast is then made stationary. We also use the `month2qtr`
 
 ```{r warning=FALSE}
 GDP <- base[,which(colnames(base) == "PIB")]
-GDP_qtr <- month2qtr(x = GDP,reference_month = 3)
-y <- diff(diff(GDP_qtr), 4)
+y <- diff(diff(GDP,3),12)
 ```
 Information criteria can be used in order to help determine the number of factors *r* and shocks to the factors *q* that the model should have. 
 
@@ -168,7 +166,10 @@ ICQ1 <- ICshocks(x = x, r = 2, p = 2)
 The user is now ready to forecast the variable of interest. The summary of the regression can be accessed as illustrated below.
 
 ```{r warning=FALSE}
-now <- nowcast(y = y, x = x, r = 2, q = 2 , p = 2)
+data <- cbind(y,x)
+colnames(data) <- c("y",colnames(x))
+frequency <- c(4,rep(12,ncol(x)))
+now <- nowcast(formula = y~., data = data, r = 2, q = 2 , p = 2, frequency = frequency)
 summary(now$reg)
 ```
 Finally the in- and out of sample forecasts for this particular vintage can be visualized using the `nowcast.plot` function.

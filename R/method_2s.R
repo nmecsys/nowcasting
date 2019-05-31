@@ -3,16 +3,16 @@
 #' @rawNamespace import(matlab, except = reshape)
 #' @importFrom lubridate quarter year month
 
-bridge <- function(y, x, oldRegParam){
+bridge <- function(y, x, freq_y){
   
   # y: ts (quarterly or monthly)
   # x: factors (monthly - output from FactorExtraction)
   
-  if(!frequency(y) %in% c(4,12)){stop("y frequency must be 4 (quarterly) or 12 (monthly).")}
+  if(!(freq_y %in% c(4,12))){stop("y frequency must be 4 (quarterly) or 12 (monthly).")}
   
   fatoresTS <- x
   
-  if(frequency(y) == 4){
+  if(freq_y == 4){
     fatoresTRI <- month2qtr(fatoresTS)
   }else{
     fatoresTRI <- fatoresTS
@@ -22,49 +22,40 @@ bridge <- function(y, x, oldRegParam){
   dados <- cbind(y, window(fatoresTRI, start = start(y), frequency = frequency(y)))
   colnames(dados) <- c("Y", paste0("Factor",1:ncol(data.frame(fatoresTRI))))
   
-  if(is.null(oldRegParam)){
-    reg <- stats::lm(Y ~ ., data = na.omit(data.frame(dados)))
-    fit <- stats::ts(fitted(reg), end = end(na.omit(dados)), frequency = frequency(y))
-    
-    Qmax <- max(which(!is.na(dados[,1])))
-    edge <- zoo::as.Date(dados)[Qmax]
-    
-    # forecast
-    newbase <- data.frame(dados[-(1:Qmax),-1])
-    colnames(newbase) <- paste0("Factor",1:ncol(data.frame(fatoresTRI)))
-    
-    if(frequency(y) == 4){
-      ano <- lubridate::year(edge + months(3))
-      tri <- lubridate::quarter(edge + months(3))
-    }else{
-      ano <- lubridate::year(edge + months(1))
-      tri <- lubridate::month(edge + months(1))
-    }
-    
-    prev <- stats::ts(stats::predict(object = reg, newdata = newbase),
-                      start = c(ano,tri),
-                      frequency = frequency(y)) 
+  reg <- stats::lm(Y ~ ., data = na.omit(data.frame(dados)))
+  fit <- stats::ts(fitted(reg), end = end(na.omit(dados)), frequency = frequency(y))
+  
+  Qmax <- max(which(!is.na(dados[,1])))
+  edge <- zoo::as.Date(dados)[Qmax]
+  
+  # forecast
+  newbase <- data.frame(dados[-(1:Qmax),-1])
+  colnames(newbase) <- paste0("Factor",1:ncol(data.frame(fatoresTRI)))
+  
+  if(freq_y == 4){
+    ano <- lubridate::year(edge + months(3))
+    tri <- lubridate::quarter(edge + months(3))
   }else{
-    X0 <-  as.matrix(cbind(1,na.omit(dados)[,-1]))
-    X1 <-  as.matrix(cbind(1,dados[is.na(dados[,1]),-1]))
-    
-    fit <- stats::ts(X0 %*% oldRegParam$coefficients, start = start(dados), frequency = frequency(y)) 
-    prev <- stats::ts(X1 %*% oldRegParam$coefficients, end = end(dados), frequency = frequency(y)) 
-    
-    reg <- NULL
+    ano <- lubridate::year(edge + months(1))
+    tri <- lubridate::month(edge + months(1))
   }
   
-  dados_pib <- cbind(y, fit, prev)
-  colnames(dados_pib) <- c("y", "in","out")
+  prev <- stats::ts(stats::predict(object = reg, newdata = newbase),
+                    start = c(ano,tri),
+                    frequency = freq_y) 
+  
+  
+  dados_y <- cbind(y, fit, prev)
+  colnames(dados_y) <- c("y", "in","out")
   
   # output
-  return(list(main = dados_pib, reg = reg))
+  return(list(main = dados_y, reg = reg))
 }
 
 FactorExtraction <- function(x = NULL,q = NULL,r = NULL,p = NULL, 
                              A = NULL,C = NULL,Q = NULL,R = NULL,
                              initx = NULL, initV = NULL,
-                             ss = NULL, MM = NULL, a = NULL, n.prevs = NULL){
+                             ss = NULL, MM = NULL, a = NULL){
   
   # The model
   # x_t = C F_t + \xi_t
