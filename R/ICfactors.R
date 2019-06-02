@@ -11,14 +11,13 @@
 #' @references Bai, J., Ng, S. (2002). Determining the Number of Factors in Approximate Factor Models. Econometrica, 70(1), 191-221. <doi:10.1111/1468-0262.00273>
 #' @export
 
-ICfactors <- function(x, rmax = NULL, type = 2){
+ICfactors <- function(x, rmax = 20, type = 2){
   
   # discarting rows with missing values
   x <- na.omit(x)
   
   # defining rmax and checking if it is a positive integer
-  if(is.null(rmax)){rmax = min(dim(x)[2],20)}
-  else if(rmax < 1 || rmax != as.integer(rmax)){stop("rmax needs to be a positive integer")}
+  if(rmax < 1 || rmax != as.integer(rmax)){stop("rmax needs to be a positive integer")}
   else if(rmax > dim(x)[2]){rmax = dim(x)[2]}
   
   # checking if the type is correctly specified

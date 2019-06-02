@@ -4,7 +4,7 @@
 \alias{ICfactors}
 \title{Information criteria for determining the number of factors in a factors model}
 \usage{
-ICfactors(x, rmax = NULL, type = 2)
+ICfactors(x, rmax = 20, type = 2)
 }
 \arguments{
 \item{x}{a dataset;}

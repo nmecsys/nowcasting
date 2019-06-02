@@ -1,13 +1,13 @@
 #' @title Nowcasting of a quarterly time series using a dynamic factor model.
-#' @description Estimate nowcasting and forecasting for a quarterly series. For more details read the Vignettes.
+#' @description Estimate nowcasting and forecasting models for quarterly or monthly time series. For more details read the Vignettes.
 #' @param formula An object of class "formula": a symbolic description of the model to be fitted.
-#' @param data A monthly time series matrix (\code{mts}) representing all considered variables. 
+#' @param data A monthly time series matrix (\code{mts}) of stationary variables. 
 #' @param r number of commom factors.
 #' @param q Dynamic rank. Number of error terms.
 #' @param p AR order of factor model.
 #' @param method There are three options: \code{"2s"} (two stages without factors aggregation as in Giannone et al. 2008); \code{"2s_agg"} (two stages with factors aggregation); \code{"EM"} (Expected Maximization as in Bańbura et al. 2011).
-#' @param blocks a binary matrix Nx3 that characterizes the regressors variables in global (1st column), nominal (2nd column) and real (3rd column). If \code{NULL}, the matrix assume 1 for all cells.
-#' @param frequency A vector of integers indicating the frequency of the variables in data: 4 for quarterly, 12 for monthly.
+#' @param blocks a matrix that defines the variables loaded into the factors.
+#' @param frequency A vector of integers indicating the frequency of the variables: 4 for quarterly, 12 for monthly.
 #' @return A \code{list} containing two elements:
 
 #' \item{yfcst}{the original \code{y} series and its in-sample and out-of-sample estimations.}

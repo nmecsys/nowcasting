@@ -35,7 +35,7 @@
 #' 
 #' @param NA.replace A \code{boolean} indicating whether missing values, not part of the jagged edges, should be replaced.
 #' @param aggregate A \code{boolean} representing if you want aggregate the monthly variables to represent quarterly quantities. If \code{TRUE} the aggregation is made following the approximation of \emph{Mariano and Murasawsa 2003}.
-#' @param k.ma A \code{numeric} representing the degree of the moving average correction.
+#' @param k.ma A \code{numeric} representing the degree of the moving average correction if \code{NA.replace = TRUE}.
 #' @param na.prop A \code{numeric} representing the proportion of NA allowed. Default is 1/3.
 #' @param h A \code{numeric} representing the number of steps ahead to forecasting. Default is 12.
 #' @references Giannone, D., Reichlin, L., & Small, D. (2008). Nowcasting: The real-time informational content of macroeconomic data. Journal of Monetary Economics, 55(4), 665-676.<doi:10.1016/j.jmoneco.2008.05.010>
@@ -50,7 +50,7 @@
 #' @export
 
 
-Bpanel <- function(base = NULL, trans = NULL, NA.replace = T, aggregate = F, k.ma = 3, na.prop = 1/3, h = 12){
+Bpanel <- function(base, trans, NA.replace = T, aggregate = F, k.ma = 3, na.prop = 1/3, h = 12){
   
   if(is.null(trans)){
     stop('trans can not to be NULL')
