@@ -14,6 +14,9 @@
 ICfactors <- function(x, rmax = 20, type = 2){
   
   # discarting rows with missing values
+  deleted <- sum(rowSums(is.na(x))!=0)
+  message <- paste0(deleted, " rows out of ",nrow(x)," were deleted due to NA observations.")
+  message(message)
   x <- na.omit(x)
   
   # defining rmax and checking if it is a positive integer

@@ -32,7 +32,7 @@ ICshocks<- function(x, r = NULL, p = NULL, delta = 0.1, m = 1){
   
   # discarting rows with missing values
   deleted <- sum(rowSums(is.na(x))!=0)
-  message <- paste0(deleted, " rows out of ",nrow(x)," were deleted.")
+  message <- paste0(deleted, " rows out of ",nrow(x)," were deleted due to NA observations.")
   message(message)
   x <- na.omit(x)
   

@@ -77,4 +77,4 @@ Bańbura, M., & Rünstler, G. (2011). A look into the factor model black box: pu
 
 Bańbura M., Giannone, D. & Reichlin, L. (2011). Nowcasting, in Michael P. Clements and David F. Hendry, editors, Oxford Handbook on Economic Forecasting, pages 193-224, January 2011. <doi:10.1093/oxfordhb/9780195398649.001.0001>
 }
-}
+
