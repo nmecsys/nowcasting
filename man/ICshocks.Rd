@@ -11,16 +11,14 @@ ICshocks(x, r = NULL, p = NULL, delta = 0.1, m = 1)
 
 \item{r}{a positive integer corresponding to the number of factors;}
 
-\item{p}{a positive integer corresponding to the number of lags to be considered within the model;}
+\item{p}{a positive integer corresponding to the number of lags to be considered within the model.}
 
 \item{delta}{a real number within the range (0,1/2) for the sensitivity of the tolerance level to the size of the dataset;}
 
-\item{m}{a finite positive real number defining the tolerance level.}
-
+\item{m}{a finite positive real number defining the tolerance level;}
 }
 \value{
 A \code{list} containing two elements:
-
 \item{q_star}{The number of shocks minimizing the information criterion;}
 \item{p}{The number of lags used.}
 }

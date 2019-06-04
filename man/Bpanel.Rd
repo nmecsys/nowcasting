@@ -4,8 +4,8 @@
 \alias{Bpanel}
 \title{Balanced panel}
 \usage{
-Bpanel(base, trans, NA.replace = TRUE, aggregate = FALSE,
-  k.ma = 3, na.prop = 1/3, h = 12)
+Bpanel(base, trans, NA.replace = T, aggregate = F, k.ma = 3,
+  na.prop = 1/3, h = 12)
 }
 \arguments{
 \item{base}{A \code{mts} with the series to be transformed.}

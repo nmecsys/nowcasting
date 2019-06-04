@@ -2,9 +2,10 @@
 % Please edit documentation in R/nowcast.R
 \name{nowcast}
 \alias{nowcast}
-\title{Nowcasting of a quarterly or monthly time series using a dynamic factor model.}
+\title{Nowcasting of a quarterly time series using a dynamic factor model.}
 \usage{
-nowcast <- function(formula, data, r = NULL, q = NULL, p = NULL, method = 'EM', blocks = NULL, frequency = NULL)
+nowcast(formula, data, r = NULL, q = NULL, p = NULL, method = "EM",
+  blocks = NULL, frequency = NULL)
 }
 \arguments{
 \item{formula}{An object of class "formula": a symbolic description of the model to be fitted.}
@@ -23,9 +24,8 @@ nowcast <- function(formula, data, r = NULL, q = NULL, p = NULL, method = 'EM', 
 
 \item{frequency}{A vector of integers indicating the frequency of the variables: 4 for quarterly, 12 for monthly.}
 }
-
 \value{
-A \code{list} containing:
+A \code{list} containing two elements:
 \item{yfcst}{the original \code{y} series and its in-sample and out-of-sample estimations.}
 \item{reg}{regression model between \code{y} and the estimated factors. Not available for EM method.}
 \item{factors}{the estimated factors and DFM model coefficients.}
@@ -37,25 +37,26 @@ Estimate nowcasting and forecasting models for quarterly or monthly time series.
 \examples{
 \dontrun{
 ### Method 2s (Using the Mariano and Murasawa aggregation method on the variables)
-# Replication of Giannone et al., 2008
 data(USGDP)
 gdp_position <- which(colnames(USGDP$base) == "RGDPGR")
 base <- Bpanel(base = USGDP$base[,-gdp_position],
-              trans = USGDP$legend$Transformation[-gdp_position],
-              aggregate = TRUE)
+               trans = USGDP$legend$Transformation[-gdp_position],
+               aggregate = TRUE)
 data <- cbind(USGDP$base[,"RGDPGR"], base)
 colnames(data) <- c("RGDPGR", colnames(base))
 frequency <- c(4, rep(12, ncol(data) -1))
 now2s <- nowcast(formula = RGDPGR ~ ., data = data, r = 2, p = 2, q = 2,
-                method = '2s', frequency = frequency)
+                 method = '2s', frequency = frequency)
+
 
 ### Method 2s_agg (Using the Mariano and Murasawa aggregation method on the factors)
 data <- Bpanel(base = USGDP$base,
-              trans = USGDP$legend$Transformation,
-              aggregate = FALSE)
+               trans = USGDP$legend$Transformation,
+               aggregate = FALSE)
 frequency <- c(rep(12, ncol(data) -1), 4)
 now2s_agg <- nowcast(formula = RGDPGR ~ ., data = data, r = 2, p = 2, q = 2, 
-                    method = '2s_agg', frequency = frequency)
+                     method = '2s_agg', frequency = frequency)
+
 
 ### Method EM
 # Replication of the NY FED nowcast
@@ -66,7 +67,7 @@ trans <- NYFED$legend$Transformation
 frequency <- NYFED$legend$Frequency
 data <- Bpanel(base = base, trans = trans, NA.replace = F, na.prop = 1)
 nowEM <- nowcast(formula = GDPC1 ~ ., data = data, r = 1, p = 1, 
-                method = "EM", blocks = blocks, frequency = frequency)
+                 method = "EM", blocks = blocks, frequency = frequency)
 
 }
 }
@@ -77,4 +78,6 @@ Bańbura, M., & Rünstler, G. (2011). A look into the factor model black box: pu
 
 Bańbura M., Giannone, D. & Reichlin, L. (2011). Nowcasting, in Michael P. Clements and David F. Hendry, editors, Oxford Handbook on Economic Forecasting, pages 193-224, January 2011. <doi:10.1093/oxfordhb/9780195398649.001.0001>
 }
-
+\seealso{
+\code{\link[nowcasting]{base_extraction}}
+}

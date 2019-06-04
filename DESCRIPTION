@@ -1,9 +1,9 @@
 Package: nowcasting
 Type: Package
 Title: Predicting Economic Variables using Dynamic Factor Models
-Version: 1.1.1
+Version: 1.1.2
 Depends: R (>= 3.4.0)
-Date: 2019-05-02
+Date: 2019-06-04
 Authors@R: c( person("Daiane", "Marcolino de Mattos", email = "daiane.mattos@fgv.br",role=c("aut","cre")),
               person("Pedro","Costa Ferreira",email = "pedro.guilherme@fgv.br",role=c("aut")),
               person("Serge","de Valk",email = "serge.valk@fgv.br",role=c("aut")),

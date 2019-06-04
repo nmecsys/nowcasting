@@ -4,27 +4,17 @@
 #' @param type 'fcst', 'factors', 'eigenvalues' or 'eigenvectors'. The 'eigenvalues' and 'eigenvectors' options are only available for the two stages methods.
 #' @examples
 #' \dontrun{
-#' gdp <- month2qtr(x = USGDP$base[,"RGDPGR"])
-#' gdp_position <- which(colnames(USGDP$base) == "RGDPGR")
-#' base <- Bpanel(base = USGDP$base[,-gdp_position],
-#'                trans = USGDP$legend$Transformation[-gdp_position],
-#'                aggregate = TRUE)
-#' now2sq <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2s')
-#' 
-#' nowcast.plot(now2sq, type = "fcst")
-#' nowcast.plot(now2sq, type = "factors")
-#' nowcast.plot(now2sq, type = "eigenvalues")
-#' nowcast.plot(now2sq, type = "eigenvectors")
-#' 
-#' base <- Bpanel(base = USGDP$base[,-gdp_position],
-#'                trans = USGDP$legend$Transformation[-gdp_position],
+#' data <- Bpanel(base = USGDP$base,
+#'                trans = USGDP$legend$Transformation,
 #'                aggregate = FALSE)
-#' now2sm <- nowcast(y = gdp, x = base, r = 2, p = 2, q = 2, method = '2s_agg')
+#' frequency <- c(rep(12, ncol(data) -1), 4)
+#' now2s_agg <- nowcast(formula = RGDPGR ~ ., data = data, r = 2, p = 2, q = 2, 
+#'                      method = '2s_agg', frequency = frequency)
 #' 
-#' nowcast.plot(now2sm, type = "fcst")
-#' nowcast.plot(now2sm, type = "factors")
-#' nowcast.plot(now2sm, type = "eigenvalues")
-#' nowcast.plot(now2sm, type = "eigenvectors")
+#' nowcast.plot(now2s_agg, type = "fcst")
+#' nowcast.plot(now2s_agg, type = "factors")
+#' nowcast.plot(now2s_agg, type = "eigenvalues")
+#' nowcast.plot(now2s_agg, type = "eigenvectors")
 #' }
 #' @export
 

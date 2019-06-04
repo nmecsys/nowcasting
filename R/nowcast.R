@@ -86,15 +86,15 @@ nowcast <- function(formula, data, r = NULL, q = NULL, p = NULL, method = 'EM', 
   
   # preparing the data
   k <- model.frame(formula, data, na.action = NULL)
-  x <- ts(k[,-1], start = start(data), freq = 12)
+  x <- ts(k[,-1], start = start(data), frequency = 12)
   
   y_position <- which(colnames(data) == colnames(k)[1])
   freq_y <- frequency[y_position]
   
   if(freq_y == 4){
-    y <- month2qtr(ts(k[,1], start = start(data), freq = 12))
+    y <- month2qtr(ts(k[,1], start = start(data), frequency = 12))
   }else{
-    y <- ts(k[,1], start = start(data), freq = 12)
+    y <- ts(k[,1], start = start(data), frequency = 12)
   }  
   
   
