@@ -100,7 +100,7 @@ Bpanel <- function(base, trans, NA.replace = T, aggregate = F, k.ma = 3, na.prop
       base1[-c(1:12),j] <- temp  
     }else if(trans[j] == 7){ # quarterly rate of change
       temp <- diff(base[,j],3) / stats::lag(base[,j],-3)
-      base1[-c(1:12),j] <- temp
+      base1[-c(1:3),j] <- temp
     }else if(trans[j] == 0){ # no transformation
       base1[,j] <- base[,j]
     }

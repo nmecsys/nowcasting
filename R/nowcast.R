@@ -236,13 +236,47 @@ nowcast <- function(formula, data, r = NULL, q = NULL, p = NULL, method = 'EM', 
     
     # y monthly
     if(new_frequency[idx_new[y_pos]]==12){
-      yprev <- ts(Res$X_sm[,y_pos], start = start(x), frequency = 12)
+      
+      # restricted vector of loadings (takes into account the aggregation from Mariano and Murasawa 2003)
+      restricted_loadings <- Res$C[y_pos,1:(5*n_blocks)]
+      
+      # forecast of normalized series
+      y_hat <- Res$FF[,1:(5*n_blocks)]%*%restricted_loadings
+      
+      # denormalize 
+      y_hat <- y_hat*Res$Wx[y_pos]
+      y_hat <- Res$Mx[y_pos]+y_hat
+      
+      # in-sample and out-of-sample
+      y_hat[is.na(x[,y_pos])] <- 0
+      y_hat_out <- Res$X_sm[,y_pos]
+      y_hat_out[!is.na(x[,y_pos])] <- 0
+      
+      # combine both
+      yprev <- ts(y_hat+y_hat_out, start = start(x), frequency = 12)
       y <- x[,y_pos]
     }
     
     # y quarterly
     if(new_frequency[idx_new[y_pos]]==4){
-      yprev <- month2qtr(ts(Res$X_sm[,y_pos], start = start(x), frequency = 12))
+      
+      # restricted vector of loadings (takes into account the aggregation from Mariano and Murasawa 2003)
+      restricted_loadings <- Res$C[y_pos,1:(5*n_blocks)]
+      
+      # forecast of normalized series
+      y_hat <- Res$FF[,1:(5*n_blocks)]%*%restricted_loadings
+      
+      # denormalize 
+      y_hat <- y_hat*Res$Wx[y_pos]
+      y_hat <- Res$Mx[y_pos]+y_hat
+      
+      # in-sample and out-of-sample
+      y_hat[is.na(x[,y_pos])] <- 0
+      y_hat_out <- Res$X_sm[,y_pos]
+      y_hat_out[!is.na(x[,y_pos])] <- 0
+      
+      # combine both
+      yprev <- month2qtr(ts(y_hat+y_hat_out, start = start(x), frequency = 12))
       y <- month2qtr(x[,y_pos])
     }
     
