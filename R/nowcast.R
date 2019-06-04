@@ -164,13 +164,17 @@ nowcast <- function(formula, data, r = NULL, q = NULL, p = NULL, method = 'EM', 
     if(!is.matrix(blocks)){blocks <- as.matrix(blocks)}
     
     # determine the number of blocks
+    blocks <- as.matrix(blocks) # variables should be rows, columns the blocks
     n_blocks <- dim(blocks)[2]
     
     x <- ts(model.frame(formula, data, na.action = NULL), start = start(data), frequency = frequency(data))
     
     # new frequency
     new_frequency <- c(frequency[y_position], frequency[-y_position])
-    blocks <- rbind(blocks[y_position,],blocks[-y_position,])
+    
+    # reshuffling the blocks
+    blocks <- rbind(matrix(blocks[y_position,],ncol = n_blocks),matrix(blocks[-y_position,], ncol = n_blocks))
+    
     # determine the number of quarterly series
     nQ <- sum(new_frequency==4)
     
