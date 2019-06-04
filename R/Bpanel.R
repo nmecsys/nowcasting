@@ -31,6 +31,10 @@
 #'   \item{trans = 6: yearly rate of change
 #'   
 #'   \deqn{\frac{x_{i,t} - x_{i,t-12}}{x_{i,t-12}}}}
+#'
+#'   \item{trans = 7: quarterly rate of change
+#'   
+#'   \deqn{\frac{x_{i,t} - x_{i,t-3}}{x_{i,t-3}}}}
 #'  } 
 #' 
 #' @param NA.replace A \code{boolean} indicating whether missing values, not part of the jagged edges, should be replaced.
@@ -64,8 +68,8 @@ Bpanel <- function(base, trans, NA.replace = T, aggregate = F, k.ma = 3, na.prop
     stop('the number of elements in the vector must be equal to the number of columns of base')
   }
   
-  if(sum(!names(table(trans)) %in% c(0:6)) != 0){
-    stop('the only available transformations are 0, 1, 2, 3, 4, 5 and 6.')
+  if(sum(!names(table(trans)) %in% c(0:7)) != 0){
+    stop('the only available transformations are 0, 1, 2, 3, 4, 5, 6, and 7.')
   }
   
   if(na.prop < 0 | na.prop > 1){
@@ -92,8 +96,11 @@ Bpanel <- function(base, trans, NA.replace = T, aggregate = F, k.ma = 3, na.prop
       temp <- diff(base[,j],12)
       base1[-c(1:12),j] <- temp  
     }else if(trans[j] == 6){ # yearly rate of change
-      temp <- diff(base[,j], 12) / stats::lag(base[,j],-12)
+      temp <- diff(base[,j],12) / stats::lag(base[,j],-12)
       base1[-c(1:12),j] <- temp  
+    }else if(trans[j] == 7){ # quarterly rate of change
+      temp <- diff(base[,j],3) / stats::lag(base[,j],-3)
+      base1[-c(1:12),j] <- temp
     }else if(trans[j] == 0){ # no transformation
       base1[,j] <- base[,j]
     }

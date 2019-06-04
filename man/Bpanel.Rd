@@ -37,6 +37,10 @@ Bpanel(base, trans, NA.replace = T, aggregate = F, k.ma = 3,
   \item{trans = 6: yearly rate of change
   
   \deqn{\frac{x_{i,t} - x_{i,t-12}}{x_{i,t-12}}}}
+
+  \item{trans = 7: quarterly rate of change
+  
+  \deqn{\frac{x_{i,t} - x_{i,t-3}}{x_{i,t-3}}}}
  }}
 
 \item{NA.replace}{A \code{boolean} indicating whether missing values, not part of the jagged edges, should be replaced.}
