@@ -234,50 +234,16 @@ nowcast <- function(formula, data, r = NULL, q = NULL, p = NULL, method = 'EM', 
     fore_x <- ts(Res$X_sm, start = start(x), frequency = 12)
     colnames(fore_x) <- colnames(x)
     
-    # in-sample and out of sample forecasts of y
-    
-      # index for selecting the columns in the factor loadings matrix and the factor matrix 
-      idx_aux <- NULL
-      if(nQ==0){
-        idx_aux <- idx_factor 
-      }else if(nQ!=0 && r==1){
-        idx_aux <- sort(as.vector(sapply(0:4, FUN = function(x){idx_factor+x})))
-      }else{
-        idx_aux <- sort(as.vector(sapply(0:4, FUN = function(x){idx_factor+x*r})))
-      }
-    
-      # restricted vector of loadings (takes into account the aggregation from Mariano and Murasawa 2003 if the variable is quarterly)
-      restricted_loadings <- Res$C[y_pos,idx_aux]
-      
-      # forecast of normalized series
-      y_hat <- Res$FF[,idx_aux]%*%restricted_loadings
-      
-      # undo normalization
-      y_hat <- y_hat*Res$Wx[y_pos]
-      y_hat <- Res$Mx[y_pos]+y_hat
-      
-      # in-sample and out-of-sample
-      y_hat[is.na(x[,y_pos])] <- 0
-      y_hat_out <- Res$X_sm[,y_pos]
-      y_hat_out[!is.na(x[,y_pos])] <- 0
-      
-      
     # y monthly
     if(new_frequency[idx_new[y_pos]]==12){
-      
-      # combine both in-sample and out-of-sample
-      yprev <- ts(y_hat+y_hat_out, start = start(x), frequency = 12)
+      yprev <- ts(Res$X_sm[,y_pos], start = start(x), frequency = 12)
       y <- x[,y_pos]
-      
     }
     
     # y quarterly
     if(new_frequency[idx_new[y_pos]]==4){
-      
-      # combine both in-sample and out-of-sample
-      yprev <- month2qtr(ts(y_hat+y_hat_out, start = start(x), frequency = 12))
+      yprev <- month2qtr(ts(Res$X_sm[,y_pos], start = start(x), frequency = 12))
       y <- month2qtr(x[,y_pos])
-      
     }
     
     # Observed and forecast y
