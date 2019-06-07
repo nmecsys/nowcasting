@@ -22,7 +22,9 @@ bridge <- function(y, x, freq_y){
   dados <- cbind(y, window(fatoresTRI, start = start(y), frequency = frequency(y)))
   colnames(dados) <- c("Y", paste0("Factor",1:ncol(data.frame(fatoresTRI))))
   
-  reg <- stats::lm(Y ~ ., data = na.omit(data.frame(dados)))
+  Balanced_panel <- na.omit(data.frame(dados))
+  
+  reg <- stats::lm(Y ~ ., data = Balanced_panel)
   fit <- stats::ts(fitted(reg), end = end(na.omit(dados)), frequency = frequency(y))
   
   Qmax <- max(which(!is.na(dados[,1])))
