@@ -234,17 +234,60 @@ nowcast <- function(formula, data, r = NULL, q = NULL, p = NULL, method = 'EM', 
     fore_x <- ts(Res$X_sm, start = start(x), frequency = 12)
     colnames(fore_x) <- colnames(x)
     
-    # y monthly
-    if(new_frequency[idx_new[y_pos]]==12){
-      yprev <- ts(Res$X_sm[,y_pos], start = start(x), frequency = 12)
-      y <- x[,y_pos]
-    }
+    # Fitted Values
+      # finding varepsilon in the FF matrix
+      ncol_eps <- nQ*5+ncol(x)-nQ
+      idx_eps <- (ncol(Res$FF)-ncol_eps):ncol(Res$FF)
+      idx_eps_y <- ncol(Res$FF)-ncol_eps-1+which(Res$C[y_pos,idx_eps]>0)
+      
+      # finding the autocorelation coefficient of the AR(1) process imposed on varepsilon
+      alpha <- solve(t(Res$FF[-nrow(Res$FF),min(idx_eps_y)])%*%Res$FF[-nrow(Res$FF),min(idx_eps_y)])%*%(t(Res$FF[-nrow(Res$FF),min(idx_eps_y)])%*%Res$FF[-1,min(idx_eps_y)])
+      
+      
+      # y monthly
+      if(new_frequency[idx_new[y_pos]]==12){
+        # expected error in next period
+        error_hat <- c(0,rep(alpha,length(Res$FF[-nrow(Res$FF),min(idx_eps_y)]))*Res$FF[-nrow(Res$FF),min(idx_eps_y)])
+        
+        # fitted value
+        yprev <- ts(Res$FF[,1:(ncol(Res$FF)-ncol_eps-1)]%*%Res$C[y_pos,1:(ncol(Res$FF)-ncol_eps-1)]+error_hat, start = start(x), frequency = 12)
+        
+        # denormalize the fitted values
+        yprev <- yprev*Res$Wx[y_pos]+Res$Mx[y_pos]
+        
+        # observed values
+        y <- x[,y_pos]
+      }
+      
+      # y quarterly
+      if(new_frequency[idx_new[y_pos]]==4){
+        # expected error in next period
+        error_hat <- Res$FF[,idx_eps_y[5]]+rep((1+alpha+alpha^2+alpha^3),nrow(Res$FF))*Res$FF[,idx_eps_y[4]]
+        
+        # fitted value
+        yprev <- ts(as.vector(Res$FF[,1:(ncol(Res$FF)-ncol_eps-1)]%*%Res$C[y_pos,1:(ncol(Res$FF)-ncol_eps-1)]+error_hat), start = start(x), frequency = 12)
+        
+        # denormalize the fitted values
+        yprev <- yprev*Res$Wx[y_pos]+Res$Mx[y_pos]
+        
+        # quarterly values
+        yprev <- month2qtr(yprev)
+        
+        # observed values
+        y <- month2qtr(x[,y_pos])
+      }
     
-    # y quarterly
-    if(new_frequency[idx_new[y_pos]]==4){
-      yprev <- month2qtr(ts(Res$X_sm[,y_pos], start = start(x), frequency = 12))
-      y <- month2qtr(x[,y_pos])
-    }
+    # # y monthly
+    # if(new_frequency[idx_new[y_pos]]==12){
+    #   yprev <- ts(Res$X_sm[,y_pos], start = start(x), frequency = 12)
+    #   y <- x[,y_pos]
+    # }
+    # 
+    # # y quarterly
+    # if(new_frequency[idx_new[y_pos]]==4){
+    #   yprev <- month2qtr(ts(Res$X_sm[,y_pos], start = start(x), frequency = 12))
+    #   y <- month2qtr(x[,y_pos])
+    # }
     
     # Observed and forecast y
     Y <- cbind(y,yprev,yprev)
