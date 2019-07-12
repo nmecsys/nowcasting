@@ -440,7 +440,8 @@ outliers_correction <- function(x, k.ma = 3, NA.replace){
   if(NA.replace == T){
     outlier <- abs(x - median(x, na.rm = T)) > (4 * stats::IQR(x, na.rm = T)) & !missing
   }else{
-    outlier <- abs(x - median(x, na.rm = T)) > (4 * stats::IQR(x, na.rm = T)) & missing 
+    outlier <- abs(x - median(x, na.rm = T)) > (4 * stats::IQR(x, na.rm = T)) & !missing
+    outlier[is.na(outlier)] = FALSE
     }
   Z <- x
   
@@ -452,7 +453,7 @@ outliers_correction <- function(x, k.ma = 3, NA.replace){
   xpad <- c(Z[1]*ones(k.ma,1), Z, Z[length(Z)]*ones(k.ma,1))
   x_ma <- xpad*NA
   for(j in (k.ma + 1):(length(xpad) - k.ma)){
-    x_ma[j - k.ma] <- mean(xpad[(j - k.ma):(j + k.ma)])
+    x_ma[j - k.ma] <- mean(xpad[(j - k.ma):(j + k.ma)],na.rm=TRUE)
   }
   x_ma <- x_ma[1:length(x)]
   
