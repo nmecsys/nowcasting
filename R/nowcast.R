@@ -164,7 +164,7 @@ nowcast <- function(formula, data, r = NULL, q = NULL, p = NULL, method = 'EM', 
     if(!is.matrix(blocks)){blocks <- as.matrix(blocks)}
     
     # determine the number of blocks
-    blocks <- as.matrix(blocks) # variables should be rows, columns the blocks
+    blocks <- as.matrix(blocks, ncol=ncol(blocks)) # variables should be rows, columns the blocks
     n_blocks <- dim(blocks)[2]
     
     x <- ts(model.frame(formula, data, na.action = NULL), start = start(data), frequency = frequency(data))
@@ -196,7 +196,7 @@ nowcast <- function(formula, data, r = NULL, q = NULL, p = NULL, method = 'EM', 
         x <- x[,idx_new]
         
         # adapting blocks
-        blocks <- as.matrix(blocks[idx_new,])
+        blocks <- as.matrix(blocks[idx_new,], ncol = n_blocks)
         
       # 2) position of the target variable
       y_pos <- which(colnames(x)==colnames(k)[1])
@@ -229,6 +229,7 @@ nowcast <- function(formula, data, r = NULL, q = NULL, p = NULL, method = 'EM', 
     
     # Factors and estimated explanatory variables
     factors <- list(dynamic_factors = ts(Res$FF[,idx_factor], start = start(x), frequency = 12))
+    factors$dynamic_factors = as.matrix(factors$dynamic_factors,ncol=n_blocks)
     colnames(factors$dynamic_factors) <- as.vector(sapply(X = 1:dim(blocks)[2],FUN = function(X){paste0("Block",X,"_factor",1:r)}))
     
     fore_x <- ts(Res$X_sm, start = start(x), frequency = 12)
