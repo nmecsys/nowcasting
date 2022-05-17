@@ -229,6 +229,7 @@ nowcast <- function(formula, data, r = NULL, q = NULL, p = NULL, method = 'EM', 
     
     # Factors and estimated explanatory variables
     factors <- list(dynamic_factors = ts(Res$FF[,idx_factor], start = start(x), frequency = 12))
+    factors$dynamic_factors = as.matrix(factors$dynamic_factors,ncol=n_blocks)
     colnames(factors$dynamic_factors) <- as.vector(sapply(X = 1:dim(blocks)[2],FUN = function(X){paste0("Block",X,"_factor",1:r)}))
     
     fore_x <- ts(Res$X_sm, start = start(x), frequency = 12)
